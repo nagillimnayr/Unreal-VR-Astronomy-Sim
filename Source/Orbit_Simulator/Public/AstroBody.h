@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void CalculateAcceleration();
+	virtual void CalculateAcceleration(float DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
 	virtual void UpdateVelocity();
 	UFUNCTION(BlueprintCallable, Category = "Motion")

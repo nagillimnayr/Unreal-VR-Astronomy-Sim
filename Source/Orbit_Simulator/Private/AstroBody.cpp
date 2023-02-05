@@ -21,8 +21,9 @@ void AAstroBody::BeginPlay()
 	
 }
 
-void AAstroBody::CalculateAcceleration()
+void AAstroBody::CalculateAcceleration(float DeltaTime)
 {
+	
 }
 
 void AAstroBody::UpdateVelocity()
@@ -37,6 +38,14 @@ void AAstroBody::UpdatePosition()
 void AAstroBody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FVector NewLocation = GetActorLocation();
+	FRotator NewRotation = GetActorRotation();
+	double RunningTime = GetGameTimeSinceCreation();
+	double DeltaHeight = (FMath::Sin(RunningTime + DeltaTime) - FMath::Sin(RunningTime));
+	NewLocation.Z += DeltaHeight * 20.0;
+	double DeltaRotation = DeltaTime * 20.0;
+	NewRotation.Yaw += DeltaRotation;
+	SetActorLocationAndRotation(NewLocation, NewRotation);
 
 }
 
