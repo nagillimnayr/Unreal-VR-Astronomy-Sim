@@ -1,0 +1,15 @@
+{
+    "Version": "1.1",
+    "Data": {
+        "Source": "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\orbit_simulator\\source\\orbit_simulator\\astrobody.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\orbit_simulator\\intermediate\\build\\win64\\orbit_simulatoreditor\\development\\engine\\sharedpch.engine.shadowerrors.inclorderunreal5_0.h.pch",
+        "Includes": [
+            "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\orbit_simulator\\intermediate\\build\\win64\\unrealeditor\\development\\orbit_simulator\\definitions.orbit_simulator.h",
+            "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\orbit_simulator\\source\\orbit_simulator\\astrobody.h",
+            "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\orbit_simulator\\intermediate\\build\\win64\\unrealeditor\\inc\\orbit_simulator\\uht\\astrobody.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
