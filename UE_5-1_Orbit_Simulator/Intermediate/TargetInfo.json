@@ -2,12 +2,12 @@
 	"Targets": [
 		{
 			"Name": "Orbit_Simulator",
-			"Path": "C:\\Users\\Ryan\\Desktop\\Applied Project\\UE 5_1 Orbit Simulator\\Orbit_Simulator\\Source\\Orbit_Simulator.Target.cs",
+			"Path": "C:\\Users\\Ryan\\Desktop\\Applied Project\\UE 5_1 Orbit Simulator\\Unreal-3D-Orbit-Sim\\UE_5-1_Orbit_Simulator\\Source\\Orbit_Simulator.Target.cs",
 			"Type": "Game"
 		},
 		{
 			"Name": "Orbit_SimulatorEditor",
-			"Path": "C:\\Users\\Ryan\\Desktop\\Applied Project\\UE 5_1 Orbit Simulator\\Orbit_Simulator\\Source\\Orbit_SimulatorEditor.Target.cs",
+			"Path": "C:\\Users\\Ryan\\Desktop\\Applied Project\\UE 5_1 Orbit Simulator\\Unreal-3D-Orbit-Sim\\UE_5-1_Orbit_Simulator\\Source\\Orbit_SimulatorEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]

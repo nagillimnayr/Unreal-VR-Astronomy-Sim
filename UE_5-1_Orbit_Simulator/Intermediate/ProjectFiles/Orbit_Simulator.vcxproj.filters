@@ -42,12 +42,6 @@
     <Filter Include="Source\Orbit_Simulator">
       <UniqueIdentifier>{DA600400-1020-3C74-9A92-E17664349B67}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\Orbit_Simulator\AstroBody.cpp">
-      <Filter>Source\Orbit_Simulator</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\Orbit_Simulator\AstroBody.h">
-      <Filter>Source\Orbit_Simulator</Filter>
-    </ClInclude>
     <None Include="..\..\Source\Orbit_Simulator\Orbit_Simulator.Build.cs">
       <Filter>Source\Orbit_Simulator</Filter>
     </None>

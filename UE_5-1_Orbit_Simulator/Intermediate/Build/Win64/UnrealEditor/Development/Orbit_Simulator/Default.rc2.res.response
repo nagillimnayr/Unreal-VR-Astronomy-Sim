@@ -70,5 +70,5 @@
 /DPROJECT_COPYRIGHT_STRING="Fill out your copyright notice in the Description page of Project Settings."
 /DPROJECT_PRODUCT_NAME=SimBlankProjectID=AE1695F24F83A62C544555953FF67735
 /DPROJECT_PRODUCT_IDENTIFIER=Orbit_Simulator
-/fo "C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Orbit_Simulator\Intermediate\Build\Win64\UnrealEditor\Development\Orbit_Simulator\Default.rc2.res"
+/fo "C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Intermediate\Build\Win64\UnrealEditor\Development\Orbit_Simulator\Default.rc2.res"
 "..\Build\Windows\Resources\Default.rc2"
