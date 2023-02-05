@@ -63,10 +63,16 @@
     <ClCompile Include="..\..\Source\Orbit_Simulator\Private\AstroBody_Base.cpp">
       <Filter>Source\Orbit_Simulator\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Orbit_Simulator\Private\Simulation.cpp">
+      <Filter>Source\Orbit_Simulator\Private</Filter>
+    </ClCompile>
     <Filter Include="Source\Orbit_Simulator\Public">
       <UniqueIdentifier>{9F26D2DD-3DFB-3443-A975-0B1CDD48BD4F}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\Orbit_Simulator\Public\AstroBody_Base.h">
+      <Filter>Source\Orbit_Simulator\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Orbit_Simulator\Public\Simulation.h">
       <Filter>Source\Orbit_Simulator\Public</Filter>
     </ClInclude>
   </ItemGroup>

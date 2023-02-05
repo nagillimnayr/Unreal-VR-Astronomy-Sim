@@ -1047,3 +1047,645 @@ LogConfig: Set CVar [[r.Shadow.DetectVertexShaderLayerAtRuntime:1]]
 [2023.02.05-06.38.22:970][  0]LogAutomationController: Ignoring very large delta of 17311918.00 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
 [2023.02.05-06.38.57:383][521]LogSlate: Window 'Source Control Login' being destroyed
 [2023.02.05-06.40.17:334][ 14]LogDerivedDataCache: C:/Users/Ryan/AppData/Local/UnrealEngine/Common/DerivedDataCache: Maintenance finished in +00:00:01.199 and deleted 0 files with total size 0 MiB. Scanned 1294 files in 1289 folders with total size 40 MiB.
+[2023.02.05-07.03.11:147][871]LogEditorClassViewer: Warning: Class /Script/InteractiveToolsFramework.GizmoActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.03.11:147][871]LogEditorClassViewer: Warning: Class /Script/ModelingComponents.PreviewGeometryActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.03.11:147][871]LogEditorClassViewer: Warning: Class /Script/ModelingComponents.PreviewMeshActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.03.11:220][871]LogSlate: Took 0.006730 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-BoldCondensed.ttf' (158K)
+[2023.02.05-07.03.24:538][663]LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody
+[2023.02.05-07.03.24:542][663]LogChaos: FPhysicsSolverBase::AsyncDt:-1.000000
+[2023.02.05-07.03.26:389][663]LogSlate: Window 'Add Blueprint Class' being destroyed
+[2023.02.05-07.03.26:555][663]LogViewport: Scene viewport resized to 980x500, mode Windowed.
+[2023.02.05-07.03.26:701][664]LogAutomationController: Ignoring very large delta of 2.21 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: === FShaderJobCache stats ===
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: Total job queries 65, among them cache hits 2 (3.08%)
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: Tracking 63 distinct input hashes that result in 58 distinct outputs (92.06%)
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: RAM used: 0.63 MB (0.00 GB) of 819.20 MB (0.80 GB) budget. Usage: 0.08%
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: === Shader Compilation stats ===
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: Shaders Compiled: 0
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: Jobs assigned 0, completed 0 (0.00%)
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: Time at least one job was in flight (either pending or executed): 0.00 s
+[2023.02.05-07.03.26:706][664]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.03.29:222][789]LogViewport: Scene viewport resized to 1520x885, mode Windowed.
+[2023.02.05-07.04.03:089][513]LogViewport: Scene viewport resized to 1509x885, mode Windowed.
+[2023.02.05-07.04.03:191][518]LogViewport: Scene viewport resized to 1490x885, mode Windowed.
+[2023.02.05-07.04.03:228][520]LogViewport: Scene viewport resized to 1479x885, mode Windowed.
+[2023.02.05-07.04.03:269][522]LogViewport: Scene viewport resized to 1470x885, mode Windowed.
+[2023.02.05-07.04.03:336][524]LogViewport: Scene viewport resized to 1462x885, mode Windowed.
+[2023.02.05-07.04.03:373][526]LogViewport: Scene viewport resized to 1449x885, mode Windowed.
+[2023.02.05-07.04.03:410][528]LogViewport: Scene viewport resized to 1425x885, mode Windowed.
+[2023.02.05-07.04.03:445][530]LogViewport: Scene viewport resized to 1408x885, mode Windowed.
+[2023.02.05-07.04.03:480][532]LogViewport: Scene viewport resized to 1396x885, mode Windowed.
+[2023.02.05-07.04.03:516][534]LogViewport: Scene viewport resized to 1386x885, mode Windowed.
+[2023.02.05-07.04.03:585][538]LogViewport: Scene viewport resized to 1373x885, mode Windowed.
+[2023.02.05-07.04.03:626][540]LogViewport: Scene viewport resized to 1362x885, mode Windowed.
+[2023.02.05-07.04.03:754][547]LogViewport: Scene viewport resized to 1353x885, mode Windowed.
+[2023.02.05-07.04.03:824][549]LogViewport: Scene viewport resized to 1347x885, mode Windowed.
+[2023.02.05-07.06.22:099][868]LogEditorTransaction: Undo Modify Component(s)
+[2023.02.05-07.07.57:496][520]BlueprintLog: New page: Compile AstroBody
+[2023.02.05-07.07.57:649][520]LogUObjectHash: Compacting FUObjectHashTables data took   6.35ms
+[2023.02.05-07.07.59:879][623]LogFileHelpers: InternalPromptForCheckoutAndSave started...
+[2023.02.05-07.08.00:004][623]LogPackageLocalizationCache: Processed 45 localized package path(s) for 1 prioritized culture(s) in 0.017307 seconds
+[2023.02.05-07.08.00:012][623]LogSerialization: UsePackageTrailer: 'true'
+[2023.02.05-07.08.00:018][623]LogSavePackage: Moving output files for package: /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody
+[2023.02.05-07.08.00:018][623]LogSavePackage: Moving '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Saved/AstroBodyEFADE3164A4D57CE483AF49224523D10.tmp' to '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Blueprints/AstroBody/AstroBody.uasset'
+[2023.02.05-07.08.01:018][623]LogFileHelpers: InternalPromptForCheckoutAndSave took 1.13 sec
+[2023.02.05-07.08.01:026][623]AssetCheck: New page: Asset Save: AstroBody
+[2023.02.05-07.08.01:026][623]LogContentValidation: Display: Validating /Script/Engine.Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody
+[2023.02.05-07.08.24:258][845]LogLiveCoding: Display: Starting Live Coding compile.
+[2023.02.05-07.08.52:664][131]LogLiveCoding: Display:    Creating library C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_0.lib and object C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_0.exp
+[2023.02.05-07.08.52:835][133]LogClass: UPackage /Script/Orbit_Simulator Reload.
+[2023.02.05-07.08.52:835][133]LogClass: UClass AstroBody_Base Reload.
+[2023.02.05-07.08.52:836][133]LogClass: Could not find existing class AstroBody_Base in package /Script/Orbit_Simulator for reload, assuming new or modified class
+[2023.02.05-07.08.52:858][133]Re-instancing AstroBody_Base after reload.
+[2023.02.05-07.08.53:059][133]LogUObjectHash: Compacting FUObjectHashTables data took   0.96ms
+[2023.02.05-07.08.53:510][134]Display: Reload/Re-instancing Complete: 1 package changed, 1 class changed
+[2023.02.05-07.08.53:511][134]LogLiveCoding: Warning: Live coding succeeded, data type changes may cause packaging to fail if assets reference the new or updated data types
+[2023.02.05-07.11.54:207][656]LogSlate: Window 'AstroBody' being destroyed
+[2023.02.05-07.11.54:213][656]LogSlate: Window 'AstroBody' being destroyed
+[2023.02.05-07.11.54:221][656]LogWorld: UWorld::CleanupWorld for World_0, bSessionEnded=true, bCleanupResources=true
+[2023.02.05-07.11.54:224][656]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.11.56:992][766]LogLiveCoding: Display: Starting Live Coding compile.
+[2023.02.05-07.12.09:289][349]LogLiveCoding: Display:    Creating library C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_1.lib and object C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_1.exp
+[2023.02.05-07.12.09:876][352]LogUObjectHash: Compacting FUObjectHashTables data took   2.93ms
+[2023.02.05-07.12.10:256][353]Display: Reload/Re-instancing Complete: 1 package changed, 1 class unchanged
+[2023.02.05-07.12.10:257][353]LogLiveCoding: Display: Live coding succeeded
+[2023.02.05-07.12.34:035][703]LogActorFactory: Actor Factory attempting to spawn BlueprintGeneratedClass /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody_C
+[2023.02.05-07.12.34:035][703]LogActorFactory: Actor Factory attempting to spawn BlueprintGeneratedClass /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody_C
+[2023.02.05-07.12.34:046][703]LogActorFactory: Actor Factory spawned Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody as actor: AstroBody_C /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim:PersistentLevel.AstroBody_C_0
+[2023.02.05-07.12.34:048][703]LogActorFactory: Actor Factory spawned Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody as actor: AstroBody_C /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim:PersistentLevel.AstroBody_C_0
+[2023.02.05-07.12.34:053][703]LogActorFactory: Loading ActorFactory Class /Script/Engine.LevelInstance
+[2023.02.05-07.12.34:717][731]LogActorFactory: Actor Factory attempting to spawn BlueprintGeneratedClass /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody_C
+[2023.02.05-07.12.34:717][731]LogActorFactory: Actor Factory attempting to spawn BlueprintGeneratedClass /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody_C
+[2023.02.05-07.12.34:722][731]LogActorFactory: Actor Factory spawned Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody as actor: AstroBody_C /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim:PersistentLevel.AstroBody_C_1
+[2023.02.05-07.12.34:724][731]LogActorFactory: Actor Factory spawned Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody as actor: AstroBody_C /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim:PersistentLevel.AstroBody_C_1
+[2023.02.05-07.13.21:433][476]LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody
+[2023.02.05-07.13.21:435][476]LogChaos: FPhysicsSolverBase::AsyncDt:-1.000000
+[2023.02.05-07.14.08:349][860]LogFileHelpers: InternalPromptForCheckoutAndSave started...
+[2023.02.05-07.14.08:449][860]LogSavePackage: Moving output files for package: /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody
+[2023.02.05-07.14.08:449][860]LogSavePackage: Moving '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Saved/AstroBody03199A9D4DF3F580ABFF209BC9B7D615.tmp' to '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Blueprints/AstroBody/AstroBody.uasset'
+[2023.02.05-07.14.08:459][860]LogFileHelpers: InternalPromptForCheckoutAndSave took 110 ms (total: 1.24 sec)
+[2023.02.05-07.14.08:470][860]AssetCheck: New page: Asset Save: AstroBody
+[2023.02.05-07.14.08:471][860]LogContentValidation: Display: Validating /Script/Engine.Blueprint /Game/Orbit_Sim/Blueprints/AstroBody/AstroBody.AstroBody
+[2023.02.05-07.14.09:544][912]BlueprintLog: New page: Compile AstroBody
+[2023.02.05-07.14.09:785][912]LogUObjectHash: Compacting FUObjectHashTables data took   2.07ms
+[2023.02.05-07.14.49:048][689]LogFileHelpers: InternalPromptForCheckoutAndSave started...
+[2023.02.05-07.14.49:181][689]LogUObjectHash: Compacting FUObjectHashTables data took   2.38ms
+[2023.02.05-07.14.49:204][689]LogSavePackage: Moving output files for package: /Game/Orbit_Sim/Levels/Orbit_Sim
+[2023.02.05-07.14.49:205][689]LogSavePackage: Moving '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Saved/Orbit_Sim37DDC75A40B3FADF72223C8B7ED37FBA.tmp' to '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Levels/Orbit_Sim.umap'
+[2023.02.05-07.14.49:222][689]LogFileHelpers: Saving map 'Orbit_Sim' took 0.104
+[2023.02.05-07.14.49:230][689]LogFileHelpers: InternalPromptForCheckoutAndSave took 181 ms (total: 1.43 sec)
+[2023.02.05-07.14.49:236][689]AssetCheck: New page: Asset Save: Orbit_Sim
+[2023.02.05-07.14.49:236][689]LogContentValidation: Display: Validating /Script/Engine.World /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: === FShaderJobCache stats ===
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Total job queries 109, among them cache hits 15 (13.76%)
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Tracking 82 distinct input hashes that result in 66 distinct outputs (80.49%)
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: RAM used: 0.73 MB (0.00 GB) of 819.20 MB (0.80 GB) budget. Usage: 0.09%
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: === Shader Compilation stats ===
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Shaders Compiled: 5
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Jobs assigned 13, completed 5 (38.46%)
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Average time worker was idle: 455.13 s
+[2023.02.05-07.14.54:876][921]LogShaderCompilers: Display: Time job spent in pending queue: average 0.16 s, longest 1.08 s
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Job execution time: average 1.75 s, max 2.16 s
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Job life time (pending + execution): average 1.88 s, max 2.19
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Time at least one job was in flight (either pending or executed): 3.37 s
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Jobs were issued in 13 batches (only local compilation was used), average 1.00 jobs/batch
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Average processing rate: 1.48 jobs/sec
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Total thread time: 3.58 s
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Total thread preprocess time: 0.22 s
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Percentage time preprocessing: 6.21%
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Effective parallelization: 1.06 (times faster than compiling all shaders on one thread). Compare with number of workers: 8
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Top 4 most expensive shader types by average time:
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                 TBasePassPSFNoLightMapPolicy (compiled    1 times, average 0.85 sec, max 0.85 sec, min 0.85 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                 TBasePassVSFNoLightMapPolicy (compiled    1 times, average 0.84 sec, max 0.84 sec, min 0.84 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                                 FLumenCardVS (compiled    1 times, average 0.75 sec, max 0.75 sec, min 0.75 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                          FLumenCardPS<false> (compiled    2 times, average 0.57 sec, max 0.65 sec, min 0.49 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: Top 4 shader types by total compile time:
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                          FLumenCardPS<false> - 31.85% of total time (compiled    2 times, average 0.57 sec, max 0.65 sec, min 0.49 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                 TBasePassPSFNoLightMapPolicy - 23.84% of total time (compiled    1 times, average 0.85 sec, max 0.85 sec, min 0.85 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                 TBasePassVSFNoLightMapPolicy - 23.46% of total time (compiled    1 times, average 0.84 sec, max 0.84 sec, min 0.84 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display:                                                 FLumenCardVS - 20.85% of total time (compiled    1 times, average 0.75 sec, max 0.75 sec, min 0.75 sec)
+[2023.02.05-07.14.54:877][921]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.17.07:408][815]LogSlate: Window 'Project Settings' being destroyed
+[2023.02.05-07.17.07:419][815]LogSlate: Window 'Project Settings' being destroyed
+[2023.02.05-07.17.25:526][869]LogFileHelpers: InternalPromptForCheckoutAndSave started...
+[2023.02.05-07.17.25:686][869]LogUObjectHash: Compacting FUObjectHashTables data took   2.01ms
+[2023.02.05-07.17.25:695][869]LogSavePackage: Moving output files for package: /Game/Orbit_Sim/Levels/Orbit_Sim
+[2023.02.05-07.17.25:696][869]LogSavePackage: Moving '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Saved/Orbit_Sim94385B3B4DCDF4CCBB14AA91FC60C900.tmp' to '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Levels/Orbit_Sim.umap'
+[2023.02.05-07.17.25:704][869]LogFileHelpers: Saving map 'Orbit_Sim' took 0.108
+[2023.02.05-07.17.25:711][869]LogFileHelpers: InternalPromptForCheckoutAndSave took 185 ms (total: 1.61 sec)
+[2023.02.05-07.17.25:720][869]AssetCheck: New page: Asset Save: Orbit_Sim
+[2023.02.05-07.17.25:720][869]LogContentValidation: Display: Validating /Script/Engine.World /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim
+[2023.02.05-07.17.28:044][  2]LogLiveCoding: Display: Starting Live Coding compile.
+[2023.02.05-07.17.31:210][177]LogLiveCoding: Display:    Creating library C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_2.lib and object C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_2.exp
+[2023.02.05-07.17.31:497][181]LogUObjectHash: Compacting FUObjectHashTables data took   2.41ms
+[2023.02.05-07.17.31:942][182]Display: Reload/Re-instancing Complete: No object changes detected
+[2023.02.05-07.17.31:942][182]LogLiveCoding: Display: Live coding succeeded
+[2023.02.05-07.17.36:965][460]LogDebuggerCommands: Repeating last play command: Selected Viewport
+[2023.02.05-07.17.36:984][460]LogPlayLevel: PlayLevel: No blueprints needed recompiling
+[2023.02.05-07.17.36:992][460]PIE: New page: PIE session: Orbit_Sim (Feb. 4, 2023, 3:17:36 p.m.)
+[2023.02.05-07.17.37:019][460]LogOnline: OSS: Created online subsystem instance for: NULL
+[2023.02.05-07.17.37:020][460]LogOnline: OSS: TryLoadSubsystemAndSetDefault: Loaded subsystem for module [NULL]
+[2023.02.05-07.17.37:021][460]LogPlayLevel: Creating play world package: /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim
+[2023.02.05-07.17.37:190][460]LogPlayLevel: PIE: StaticDuplicateObject took: (0.168642s)
+[2023.02.05-07.17.37:190][460]LogPlayLevel: PIE: Created PIE world by copying editor world from /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim to /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim.Orbit_Sim (0.168915s)
+[2023.02.05-07.17.37:194][460]LogChaos: FPhysicsSolverBase::AsyncDt:0.033333
+[2023.02.05-07.17.37:197][460]LogAIModule: Creating AISystem for world Orbit_Sim
+[2023.02.05-07.17.37:200][460]LogPlayLevel: PIE: World Init took: (0.009308s)
+[2023.02.05-07.17.37:290][460]LogUObjectHash: Compacting FUObjectHashTables data took   1.55ms
+[2023.02.05-07.17.37:298][460]LogAudio: Display: Creating Audio Device:                 Id: 2, Scope: Unique, Realtime: True
+[2023.02.05-07.17.37:299][460]LogAudioMixer: Display: Audio Mixer Platform Settings:
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Sample Rate:						  48000
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Callback Buffer Frame Size Requested: 1024
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Callback Buffer Frame Size To Use:	  1024
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Number of buffers to queue:			  1
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Max Channels (voices):				  0
+[2023.02.05-07.17.37:300][460]LogAudioMixer: Display: 	Number of Async Source Workers:		  4
+[2023.02.05-07.17.37:300][460]LogAudio: Display: AudioDevice MaxSources: 32
+[2023.02.05-07.17.37:302][460]LogAudio: Display: Audio Spatialization Plugin: None (built-in).
+[2023.02.05-07.17.37:302][460]LogAudio: Display: Audio Reverb Plugin: None (built-in).
+[2023.02.05-07.17.37:302][460]LogAudio: Display: Audio Occlusion Plugin: None (built-in).
+[2023.02.05-07.17.37:307][460]LogAudioMixer: Display: Initializing audio mixer using platform API: 'XAudio2'
+[2023.02.05-07.17.37:338][460]LogAudioMixer: Display: Using Audio Hardware Device Headphone (Realtek(R) Audio)
+[2023.02.05-07.17.37:341][460]LogAudioMixer: Display: Initializing Sound Submixes...
+[2023.02.05-07.17.37:341][460]LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+[2023.02.05-07.17.37:341][460]LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+[2023.02.05-07.17.37:343][460]LogAudioMixer: FMixerPlatformXAudio2::StartAudioStream() called. InstanceID=2
+[2023.02.05-07.17.37:344][460]LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048, InstanceID=2
+[2023.02.05-07.17.37:346][460]LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal(), InstanceID=2
+[2023.02.05-07.17.37:346][460]LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time. InstanceID=2
+[2023.02.05-07.17.37:346][460]LogInit: FAudioDevice initialized.
+[2023.02.05-07.17.37:347][460]LogAudio: Display: Audio Device (ID: 2) registered with world 'Orbit_Sim'.
+[2023.02.05-07.17.37:373][460]LogLoad: Game class is 'Orbit_SimulatorGameModeBase'
+[2023.02.05-07.17.37:376][460]LogWorld: Bringing World /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim.Orbit_Sim up for play (max tick rate 60) at 2023.02.04-23.17.37
+[2023.02.05-07.17.37:386][460]LogWorld: Bringing up level for play took: 0.012748
+[2023.02.05-07.17.37:390][460]LogOnline: OSS: Created online subsystem instance for: :Context_6
+[2023.02.05-07.17.37:430][460]PIE: Server logged in
+[2023.02.05-07.17.37:431][460]PIE: Play in editor total start time 0.456 seconds.
+[2023.02.05-07.17.42:817][724]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2023.02.05-07.17.42:817][724]LogWorld: BeginTearingDown for /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim
+[2023.02.05-07.17.42:820][724]LogWorld: UWorld::CleanupWorld for Orbit_Sim, bSessionEnded=true, bCleanupResources=true
+[2023.02.05-07.17.42:821][724]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.17.42:831][724]LogPlayLevel: Display: Shutting down PIE online subsystems
+[2023.02.05-07.17.42:839][724]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.17.42:894][724]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2023.02.05-07.17.42:906][724]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2
+[2023.02.05-07.17.42:909][724]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2
+[2023.02.05-07.17.42:994][724]LogUObjectHash: Compacting FUObjectHashTables data took   2.08ms
+[2023.02.05-07.17.43:088][725]LogPlayLevel: Display: Destroying online subsystem :Context_6
+[2023.02.05-07.17.50:503][159]Cmd: CAMERA ALIGN ACTIVEVIEWPORTONLY
+[2023.02.05-07.17.56:117][479]LogFileHelpers: InternalPromptForCheckoutAndSave started...
+[2023.02.05-07.17.56:242][479]LogUObjectHash: Compacting FUObjectHashTables data took   1.70ms
+[2023.02.05-07.17.56:259][479]LogSavePackage: Moving output files for package: /Game/Orbit_Sim/Levels/Orbit_Sim
+[2023.02.05-07.17.56:260][479]LogSavePackage: Moving '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Saved/Orbit_Sim2697A8BB44F77AF8A9CAD6B0F55E7289.tmp' to '../../../../../../Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Levels/Orbit_Sim.umap'
+[2023.02.05-07.17.56:268][479]LogFileHelpers: Saving map 'Orbit_Sim' took 0.071
+[2023.02.05-07.17.56:277][479]LogFileHelpers: InternalPromptForCheckoutAndSave took 160 ms (total: 1.77 sec)
+[2023.02.05-07.17.56:286][479]AssetCheck: New page: Asset Save: Orbit_Sim
+[2023.02.05-07.17.56:286][479]LogContentValidation: Display: Validating /Script/Engine.World /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim
+[2023.02.05-07.17.57:607][553]LogDebuggerCommands: Repeating last play command: Selected Viewport
+[2023.02.05-07.17.57:617][553]LogPlayLevel: PlayLevel: No blueprints needed recompiling
+[2023.02.05-07.17.57:617][553]PIE: New page: PIE session: Orbit_Sim (Feb. 4, 2023, 3:17:57 p.m.)
+[2023.02.05-07.17.57:642][553]LogPlayLevel: Creating play world package: /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim
+[2023.02.05-07.17.57:790][553]LogPlayLevel: PIE: StaticDuplicateObject took: (0.148348s)
+[2023.02.05-07.17.57:790][553]LogPlayLevel: PIE: Created PIE world by copying editor world from /Game/Orbit_Sim/Levels/Orbit_Sim.Orbit_Sim to /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim.Orbit_Sim (0.148732s)
+[2023.02.05-07.17.57:790][553]LogChaos: FPhysicsSolverBase::AsyncDt:0.033333
+[2023.02.05-07.17.57:792][553]LogAIModule: Creating AISystem for world Orbit_Sim
+[2023.02.05-07.17.57:792][553]LogPlayLevel: PIE: World Init took: (0.001001s)
+[2023.02.05-07.17.57:829][553]LogUObjectHash: Compacting FUObjectHashTables data took   1.91ms
+[2023.02.05-07.17.57:831][553]LogAudio: Display: Creating Audio Device:                 Id: 3, Scope: Unique, Realtime: True
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: Audio Mixer Platform Settings:
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Sample Rate:						  48000
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Callback Buffer Frame Size Requested: 1024
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Callback Buffer Frame Size To Use:	  1024
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Number of buffers to queue:			  1
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Max Channels (voices):				  0
+[2023.02.05-07.17.57:831][553]LogAudioMixer: Display: 	Number of Async Source Workers:		  4
+[2023.02.05-07.17.57:831][553]LogAudio: Display: AudioDevice MaxSources: 32
+[2023.02.05-07.17.57:832][553]LogAudio: Display: Audio Spatialization Plugin: None (built-in).
+[2023.02.05-07.17.57:832][553]LogAudio: Display: Audio Reverb Plugin: None (built-in).
+[2023.02.05-07.17.57:832][553]LogAudio: Display: Audio Occlusion Plugin: None (built-in).
+[2023.02.05-07.17.57:834][553]LogAudioMixer: Display: Initializing audio mixer using platform API: 'XAudio2'
+[2023.02.05-07.17.57:855][553]LogAudioMixer: Display: Using Audio Hardware Device Headphone (Realtek(R) Audio)
+[2023.02.05-07.17.57:856][553]LogAudioMixer: Display: Initializing Sound Submixes...
+[2023.02.05-07.17.57:856][553]LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+[2023.02.05-07.17.57:856][553]LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+[2023.02.05-07.17.57:856][553]LogAudioMixer: FMixerPlatformXAudio2::StartAudioStream() called. InstanceID=3
+[2023.02.05-07.17.57:856][553]LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048, InstanceID=3
+[2023.02.05-07.17.57:858][553]LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal(), InstanceID=3
+[2023.02.05-07.17.57:858][553]LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time. InstanceID=3
+[2023.02.05-07.17.57:858][553]LogInit: FAudioDevice initialized.
+[2023.02.05-07.17.57:859][553]LogAudio: Display: Audio Device (ID: 3) registered with world 'Orbit_Sim'.
+[2023.02.05-07.17.57:862][553]LogLoad: Game class is 'Orbit_SimulatorGameModeBase'
+[2023.02.05-07.17.57:862][553]LogWorld: Bringing World /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim.Orbit_Sim up for play (max tick rate 60) at 2023.02.04-23.17.57
+[2023.02.05-07.17.57:863][553]LogWorld: Bringing up level for play took: 0.000871
+[2023.02.05-07.17.57:865][553]LogOnline: OSS: Created online subsystem instance for: :Context_7
+[2023.02.05-07.17.57:866][553]PIE: Server logged in
+[2023.02.05-07.17.57:867][553]PIE: Play in editor total start time 0.25 seconds.
+[2023.02.05-07.18.33:391][758]Set new viewmode: Wireframe
+[2023.02.05-07.18.34:482][823]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.18.34:483][823]LogShaderCompilers: Display: === FShaderJobCache stats ===
+[2023.02.05-07.18.34:483][823]LogShaderCompilers: Display: Total job queries 119, among them cache hits 15 (12.61%)
+[2023.02.05-07.18.34:483][823]LogShaderCompilers: Display: Tracking 99 distinct input hashes that result in 79 distinct outputs (79.80%)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: RAM used: 0.83 MB (0.00 GB) of 819.20 MB (0.80 GB) budget. Usage: 0.10%
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: === Shader Compilation stats ===
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Shaders Compiled: 22
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Jobs assigned 27, completed 22 (81.48%)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Average time worker was idle: 188.31 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Time job spent in pending queue: average 0.31 s, longest 1.59 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Job execution time: average 1.33 s, max 2.16 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Job life time (pending + execution): average 1.71 s, max 2.81
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Time at least one job was in flight (either pending or executed): 7.18 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Jobs were issued in 27 batches (only local compilation was used), average 1.00 jobs/batch
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Average processing rate: 3.06 jobs/sec
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Total thread time: 15.31 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Total thread preprocess time: 0.91 s
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Percentage time preprocessing: 5.94%
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Effective parallelization: 2.13 (times faster than compiling all shaders on one thread). Compare with number of workers: 8
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Top 5 most expensive shader types by average time:
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                 TBasePassPSFNoLightMapPolicy (compiled    4 times, average 0.99 sec, max 1.17 sec, min 0.78 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:             TShadowDepthVSVertexShadowDepth_VirtualShadowMap (compiled    1 times, average 0.99 sec, max 0.99 sec, min 0.99 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                 TBasePassVSFNoLightMapPolicy (compiled    4 times, average 0.95 sec, max 1.11 sec, min 0.75 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                                 FLumenCardVS (compiled    4 times, average 0.82 sec, max 1.02 sec, min 0.67 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:              TShadowDepthPSPixelShadowDepth_VirtualShadowMap (compiled    1 times, average 0.60 sec, max 0.60 sec, min 0.60 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: Top 5 shader types by total compile time:
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                 TBasePassPSFNoLightMapPolicy - 25.93% of total time (compiled    4 times, average 0.99 sec, max 1.17 sec, min 0.78 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                 TBasePassVSFNoLightMapPolicy - 24.76% of total time (compiled    4 times, average 0.95 sec, max 1.11 sec, min 0.75 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                                 FLumenCardVS - 21.41% of total time (compiled    4 times, average 0.82 sec, max 1.02 sec, min 0.67 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:                                          FLumenCardPS<false> - 13.74% of total time (compiled    4 times, average 0.53 sec, max 0.65 sec, min 0.41 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display:             TShadowDepthVSVertexShadowDepth_VirtualShadowMap - 6.48% of total time (compiled    1 times, average 0.99 sec, max 0.99 sec, min 0.99 sec)
+[2023.02.05-07.18.34:484][823]LogShaderCompilers: Display: ================================================
+[2023.02.05-07.18.34:607][828]Set new viewmode: Wireframe
+[2023.02.05-07.18.36:663][980]Set new viewmode: Wireframe
+[2023.02.05-07.18.37:189][ 24]Set new viewmode: Wireframe
+[2023.02.05-07.18.37:500][ 51]Set new viewmode: Wireframe
+[2023.02.05-07.18.37:723][ 69]Set new viewmode: Wireframe
+[2023.02.05-07.18.37:970][ 88]Set new viewmode: Unlit
+[2023.02.05-07.18.38:801][158]Set new viewmode: Lit
+[2023.02.05-07.18.40:444][288]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2023.02.05-07.18.40:444][288]LogWorld: BeginTearingDown for /Game/Orbit_Sim/Levels/UEDPIE_0_Orbit_Sim
+[2023.02.05-07.18.40:445][288]LogWorld: UWorld::CleanupWorld for Orbit_Sim, bSessionEnded=true, bCleanupResources=true
+[2023.02.05-07.18.40:445][288]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.18.40:454][288]LogPlayLevel: Display: Shutting down PIE online subsystems
+[2023.02.05-07.18.40:468][288]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.18.40:520][288]LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+[2023.02.05-07.18.40:521][288]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=3
+[2023.02.05-07.18.40:522][288]LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=3
+[2023.02.05-07.18.40:532][288]LogUObjectHash: Compacting FUObjectHashTables data took   1.73ms
+[2023.02.05-07.18.40:616][289]LogPlayLevel: Display: Destroying online subsystem :Context_7
+[2023.02.05-07.20.42:369][952]LogEditorClassViewer: Warning: Class /Script/InteractiveToolsFramework.GizmoActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.20.42:370][952]LogEditorClassViewer: Warning: Class /Script/ModelingComponents.PreviewGeometryActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.20.42:370][952]LogEditorClassViewer: Warning: Class /Script/ModelingComponents.PreviewMeshActor has parent /Script/InteractiveToolsFramework.InternalToolFrameworkActor, but this parent is not found. The Class will not be shown in ClassViewer.
+[2023.02.05-07.21.07:785][218]Running C:/Program Files/Epic Games/UE_5.1/Engine/Build/BatchFiles/Build.bat  -projectfiles -project="C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Orbit_Simulator.uproject" -game -rocket -progress
+[2023.02.05-07.21.07:892][218]Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -projectfiles -project="C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim/UE_5-1_Orbit_Simulator/Orbit_Simulator.uproject" -game -rocket -progress
+[2023.02.05-07.21.08:396][218]Log file: C:\Users\Ryan\AppData\Local\UnrealBuildTool\Log_GPF.txt
+[2023.02.05-07.21.08:497][218]
+[2023.02.05-07.21.08:497][218]Some Platforms were skipped due to invalid SDK setup: IOS, Android, Linux, LinuxArm64.
+[2023.02.05-07.21.08:497][218]See the log file for detailed information
+[2023.02.05-07.21.08:497][218]
+[2023.02.05-07.21.08:497][218]Discovering modules, targets and source code for project...
+[2023.02.05-07.21.10:306][218]Binding IntelliSense data...
+[2023.02.05-07.21.11:313][218]Exception while generating include data for UnrealEditor: Unable to instantiate module 'CSpice_Library': System.NullReferenceException: Object reference not set to an instance of an object.
+[2023.02.05-07.21.11:313][218]   at CSpice_Library.CSpiceLibPath(ReadOnlyTargetRules targetRules) in C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Marketplace\MaxQ\Source\ThirdParty\CSpice_Library\CSpice_Library.Build.cs:line 77
+[2023.02.05-07.21.11:313][218]   at CSpice_Library..ctor(ReadOnlyTargetRules Target) in C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\Marketplace\MaxQ\Source\ThirdParty\CSpice_Library\CSpice_Library.Build.cs:line 25
+[2023.02.05-07.21.11:313][218](referenced via allmodules option -> Spice.Build.cs)
+[2023.02.05-07.21.11:616][218]Binding IntelliSense data... 100%
+[2023.02.05-07.21.11:616][218]Writing project files...
+[2023.02.05-07.21.13:831][218]Writing project files... 100%
+[2023.02.05-07.21.14:289][218]LogLiveCoding: Display: Starting Live Coding compile.
+[2023.02.05-07.21.14:330][218]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.14:331][218]LogSlate: Window 'Add C++ Class' being destroyed
+[2023.02.05-07.21.14:345][218]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.14:367][219]LogAutomationController: Ignoring very large delta of 8.07 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+[2023.02.05-07.21.14:371][219]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.15:249][220]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.15:325][221]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.15:658][222]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.15:991][223]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.16:324][224]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.16:657][225]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.17:181][226]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.17:324][227]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.17:657][228]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.18:376][229]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.18:389][230]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.18:723][231]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.19:056][232]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.19:389][233]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.19:722][234]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.20:055][235]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.20:426][236]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.20:723][237]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.21:055][238]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.21:389][239]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.21:722][240]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.22:056][241]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.22:389][242]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.22:722][243]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.23:055][244]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.23:511][245]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.23:722][246]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.24:056][247]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.24:604][248]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.24:722][249]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.25:056][250]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.25:428][251]LogLiveCoding: Display:    Creating library C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_3.lib and object C:\Users\Ryan\Desktop\Applied Project\UE 5_1 Orbit Simulator\Unreal-3D-Orbit-Sim\UE_5-1_Orbit_Simulator\Binaries\Win64\UnrealEditor-Orbit_Simulator.patch_3.exp
+[2023.02.05-07.21.25:696][251]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.25:893][252]LogUObjectHash: Compacting FUObjectHashTables data took   2.35ms
+[2023.02.05-07.21.26:268][252]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.26:300][253]Display: Reload/Re-instancing Complete: No object changes detected
+[2023.02.05-07.21.26:301][253]LogLiveCoding: Display: Live coding succeeded
+[2023.02.05-07.21.26:336][253]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.26:670][254]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.27:002][255]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.27:335][256]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.27:670][257]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.28:002][258]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.28:335][259]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.28:669][260]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.29:003][261]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.29:337][262]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.29:670][263]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.30:002][264]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.30:336][265]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.30:670][266]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.31:004][267]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.31:337][268]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.31:670][269]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.32:003][270]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.32:337][271]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.32:670][272]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.33:003][273]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.33:336][274]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.33:671][275]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.34:004][276]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.34:338][277]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.34:670][278]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.35:004][279]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.35:337][280]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.35:669][281]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:003][282]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:337][283]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:348][284]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:362][285]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:404][286]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:463][287]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:519][288]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:558][289]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:636][290]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:672][291]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:731][292]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:758][293]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:771][294]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:785][295]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:802][296]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:816][297]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:828][298]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:839][299]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:855][300]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:868][301]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:886][302]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:903][303]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:920][304]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:936][305]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:949][306]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:966][307]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:981][308]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.36:995][309]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:009][310]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:023][311]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:058][312]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:076][313]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:099][314]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:114][315]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:134][316]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:145][317]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:174][318]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:197][319]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:211][320]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:235][321]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:254][322]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:276][323]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:294][324]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:313][325]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:334][326]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:353][327]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:363][328]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:380][329]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:421][330]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:435][331]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:452][332]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:465][333]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:485][334]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:501][335]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:524][336]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:540][337]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:556][338]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:581][339]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:593][340]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.37:929][341]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:260][342]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:594][343]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:928][344]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:939][345]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:951][346]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:967][347]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:981][348]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.38:996][349]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:009][350]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:025][351]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:040][352]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:059][353]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:082][354]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:094][355]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:135][356]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:151][357]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:161][358]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:175][359]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:187][360]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:200][361]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:213][362]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:225][363]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:240][364]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:254][365]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:271][366]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:286][367]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:304][368]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:319][369]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:333][370]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:350][371]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:364][372]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:380][373]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:393][374]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:418][375]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:434][376]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:449][377]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:467][378]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:481][379]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:496][380]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:509][381]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:525][382]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:543][383]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:559][384]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:569][385]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:589][386]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:603][387]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:618][388]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:633][389]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:646][390]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:663][391]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:675][392]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:692][393]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:705][394]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:723][395]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:737][396]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:751][397]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:766][398]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:782][399]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:800][400]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:814][401]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:830][402]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:845][403]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:860][404]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:881][405]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:896][406]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:912][407]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:924][408]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:942][409]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:960][410]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:976][411]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.39:993][412]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:008][413]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:022][414]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:038][415]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:054][416]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:068][417]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:083][418]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:099][419]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:117][420]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:130][421]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:145][422]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:159][423]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:175][424]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:196][425]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:209][426]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:228][427]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:242][428]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:255][429]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:273][430]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:285][431]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:618][432]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.40:951][433]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.41:283][434]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.41:617][435]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.41:951][436]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.42:283][437]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.42:617][438]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.42:950][439]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.43:284][440]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.43:617][441]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.43:951][442]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.44:284][443]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.44:617][444]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.44:951][445]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.45:284][446]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.45:618][447]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.45:951][448]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.46:284][449]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.46:617][450]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.46:950][451]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.47:284][452]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.47:618][453]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.47:951][454]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.48:285][455]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.48:619][456]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.48:952][457]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.49:285][458]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.49:619][459]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.49:952][460]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.50:286][461]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.50:618][462]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.50:952][463]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.51:286][464]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.51:620][465]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.51:952][466]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.52:287][467]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.52:619][468]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.52:953][469]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.53:287][470]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.53:620][471]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.53:953][472]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.54:287][473]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.54:620][474]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.54:953][475]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.55:286][476]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.55:621][477]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.55:953][478]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.56:288][479]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.56:622][480]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.56:955][481]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.57:287][482]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.57:620][483]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.57:953][484]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.58:287][485]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.58:623][486]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.58:954][487]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.59:287][488]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.21.59:621][489]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.22.00:140][490]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.22.00:903][491]LogVSAccessor: Warning: Visual Studio is open but could not be queried - it may be blocked by a modal operation
+[2023.02.05-07.22.05:406][505]LogSlate: Window 'AstroBody' being destroyed
+[2023.02.05-07.22.05:410][505]LogSlate: Window 'AstroBody' being destroyed
+[2023.02.05-07.22.05:419][505]LogWorld: UWorld::CleanupWorld for World_4, bSessionEnded=true, bCleanupResources=true
+[2023.02.05-07.22.05:419][505]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Bridge/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Bridge/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/FX/Niagara/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/FX/Niagara/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/MovieScene/SequencerScripting/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/MovieScene/SequencerScripting/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosCaching/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosCaching/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosClothEditor/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosClothEditor/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosNiagara/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosNiagara/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosSolverPlugin/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/ChaosSolverPlugin/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/Dataflow/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/Dataflow/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/FullBodyIK/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/FullBodyIK/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/GeometryFlow/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/GeometryFlow/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/GeometryCollectionPlugin/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/GeometryCollectionPlugin/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/MeshLODToolset/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/MeshLODToolset/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/MeshModelingToolsetExp/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/MeshModelingToolsetExp/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/PythonScriptPlugin/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/PythonScriptPlugin/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/UVEditor/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Experimental/UVEditor/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/ControlRig/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/ControlRig/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/ControlRigSpline/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/ControlRigSpline/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/IKRig/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Animation/IKRig/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/BlueprintHeaderView/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/BlueprintHeaderView/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/GeometryMode/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/GeometryMode/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:103][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/GLTFImporter/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/GLTFImporter/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ModelingToolsEditorMode/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ModelingToolsEditorMode/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/SpeedTreeImporter/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/SpeedTreeImporter/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/VirtualProduction/Takes/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/VirtualProduction/Takes/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Enterprise/DatasmithContent/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Enterprise/DatasmithContent/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Enterprise/GLTFExporter/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Enterprise/GLTFExporter/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Media/MediaCompositing/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Media/MediaCompositing/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Media/MediaPlate/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Media/MediaPlate/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Interchange/Runtime/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Interchange/Runtime/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/2D/Paper2D/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/2D/Paper2D/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Developer/AnimationSharing/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Developer/AnimationSharing/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/AudioSynesthesia/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/AudioSynesthesia/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/AudioWidgets/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/AudioWidgets/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/GeometryProcessing/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/GeometryProcessing/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/GeoReferencing/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/GeoReferencing/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/Metasound/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/Metasound/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/MeshModelingToolset/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/MeshModelingToolset/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/ResonanceAudio/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/ResonanceAudio/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/SunPosition/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/SunPosition/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/Synthesis/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/Synthesis/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/WaveTable/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Runtime/WaveTable/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ObjectMixer/LightMixer/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ObjectMixer/LightMixer/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.21:104][103]SourceControl: fatal: C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ObjectMixer/ObjectMixer/Content: 'C:/Program Files/Epic Games/UE_5.1/Engine/Plugins/Editor/ObjectMixer/ObjectMixer/Content' is outside repository at 'C:/Users/Ryan/Desktop/Applied Project/UE 5_1 Orbit Simulator/Unreal-3D-Orbit-Sim'
+[2023.02.05-07.22.52:336][103]LogSlate: Window 'Submit Files' being destroyed
+[2023.02.05-07.22.53:666][103]LogSourceControl: commit successful: [develop d41dce1] Added attributes to AstroBody_Base
+[2023.02.05-07.22.53:815][103]SourceControl: [develop d41dce1] Added attributes to AstroBody_Base
+[2023.02.05-07.22.53:815][103]SourceControl:  3 files changed, 11 insertions(+)
+[2023.02.05-07.22.53:815][103]SourceControl:  create mode 100644 UE_5-1_Orbit_Simulator/Content/Orbit_Sim/Blueprints/AstroBody/AstroBody.uasset
+[2023.02.05-07.22.53:846][103]SourceControl: Commited [develop d41dce1] Added attributes to AstroBody_Base.
+[2023.02.05-07.22.53:859][104]LogAutomationController: Ignoring very large delta of 32.77 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests

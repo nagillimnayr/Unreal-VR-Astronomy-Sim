@@ -4,7 +4,11 @@
 #include "AstroBody_Base.h"
 
 // Sets default values
-AAstroBody_Base::AAstroBody_Base()
+AAstroBody_Base::AAstroBody_Base() :
+	mass(0.0), 
+	radius(100.0),
+	initialVelocity(ForceInitToZero),
+	velocity(ForceInitToZero)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;

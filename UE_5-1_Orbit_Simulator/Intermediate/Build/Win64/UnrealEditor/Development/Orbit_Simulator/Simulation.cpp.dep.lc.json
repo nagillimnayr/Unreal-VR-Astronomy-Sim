@@ -1,0 +1,14 @@
+{
+    "Version": "1.1",
+    "Data": {
+        "Source": "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\unreal-3d-orbit-sim\\ue_5-1_orbit_simulator\\source\\orbit_simulator\\private\\simulation.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\unreal-3d-orbit-sim\\ue_5-1_orbit_simulator\\intermediate\\build\\win64\\orbit_simulatoreditor\\development\\engine\\sharedpch.engine.shadowerrors.inclorderunreal5_0.h.pch",
+        "Includes": [
+            "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\unreal-3d-orbit-sim\\ue_5-1_orbit_simulator\\intermediate\\build\\win64\\unrealeditor\\development\\orbit_simulator\\definitions.orbit_simulator.h",
+            "c:\\users\\ryan\\desktop\\applied project\\ue 5_1 orbit simulator\\unreal-3d-orbit-sim\\ue_5-1_orbit_simulator\\source\\orbit_simulator\\public\\simulation.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
