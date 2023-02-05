@@ -33,10 +33,10 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double mass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double initialVelocity; // Scalar
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") FVector velocity;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") FVector acceleration;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double velocityMagnitude; // Scalar
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double accelerationMagnitude; // Scalar
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double Mass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double InitialVelocity; // Scalar
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") FVector Velocity;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") FVector Acceleration;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double VelocityMagnitude; // Scalar
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double AccelerationMagnitude; // Scalar
 };

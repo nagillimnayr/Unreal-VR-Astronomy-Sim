@@ -33,6 +33,7 @@ protected:
 	static const double ASTRONOMICAL_UNIT;
 	static const double SOLAR_MASS;
 
+	// Unit Conversion Multipliers
 	static const double SECONDS_IN_DAY;
 	static const double DISTANCE_MULTIPLIER;
 	static const double KM_TO_M;

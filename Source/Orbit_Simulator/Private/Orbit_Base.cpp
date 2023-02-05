@@ -4,7 +4,9 @@
 #include "Orbit_Base.h"
 
 // Sets default values
-AOrbit_Base::AOrbit_Base()
+AOrbit_Base::AOrbit_Base() :
+	CentralBody(nullptr),
+	OrbitingBody(nullptr)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -23,5 +25,8 @@ void AOrbit_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// If either body is invalid, do nothing 
+	if (!CentralBody || !OrbitingBody) {return;}
+	
 }
 

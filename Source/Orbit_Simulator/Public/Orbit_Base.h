@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "AstroBody.h"
+
 #include "Orbit_Base.generated.h"
 
 UCLASS()
@@ -18,9 +20,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	AAstroBody* CentralBody;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	AAstroBody* OrbitingBody;
+	UPROPERTY(E)
 };
