@@ -30,5 +30,4 @@ protected:
 	AAstroBody* CentralBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	AAstroBody* OrbitingBody;
-	UPROPERTY(E)
 };
