@@ -2,6 +2,7 @@
 
 
 #include "Orbit_Base.h"
+#include "Sim.h"
 
 // Sets default values
 AOrbit_Base::AOrbit_Base() :
@@ -17,7 +18,15 @@ AOrbit_Base::AOrbit_Base() :
 void AOrbit_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	InitializeOrbitingBody();
+}
+
+
+void AOrbit_Base::UpdateOrbitingBody(const float DeltaTime)
+{
+	OrbitingBody->CalculateAcceleration(CentralBody);
+	OrbitingBody->UpdateVelocity(DeltaTime);
+	OrbitingBody->UpdatePosition(DeltaTime);
 }
 
 // Called every frame
@@ -25,8 +34,34 @@ void AOrbit_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// If either body is invalid, do nothing 
-	if (!CentralBody || !OrbitingBody) {return;}
-	
+	// If either body is invalid, destroy Orbit and 
+	if (!CentralBody || !OrbitingBody) { Destroy(); return;}
+
+	UpdateOrbitingBody(DeltaTime);
 }
 
+
+void AOrbit_Base::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+}
+
+void AOrbit_Base::InitializeOrbitingBody()
+{
+	if (!CentralBody || ! OrbitingBody) {return;}
+	
+	// Get direction vector from Orbiting Body to Central Body
+	FVector Direction = (CentralBody->GetActorLocation() - OrbitingBody->GetActorLocation());
+	// Get Rotator from Direction
+	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+
+	// Set Rotation of Orbiting Body so that its Forward Vector is pointing at Central Body
+	OrbitingBody->SetActorRotation(Rotation);
+	
+	// Scalar multiply Initial Velocity with Orbiting Body's Right Vector so that Velocity is Orthogonal
+	// to the Direction Vector
+	double InitialVelocity = OrbitingBody->GetInitialVelocity() * ASim::KM_TO_M; // Convert Initial Velocity from km to m
+	FVector Velocity = OrbitingBody->GetActorRightVector() * InitialVelocity;
+	OrbitingBody->InitializeVelocity(Velocity); // Set Orbiting Body's Velocity
+}

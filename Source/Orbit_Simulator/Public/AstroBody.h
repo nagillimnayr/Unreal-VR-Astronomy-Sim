@@ -15,16 +15,15 @@ public:
 	// Sets default values for this actor's properties
 	AAstroBody();
 
+	UFUNCTION(BlueprintCallable, Category = "Motion")
+	virtual void CalculateAcceleration(AAstroBody* OtherBody);
+	UFUNCTION(BlueprintCallable, Category = "Motion")
+	virtual void UpdateVelocity(const double DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Motion")
+	virtual void UpdatePosition(const double DeltaTime);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void CalculateAcceleration(float DeltaTime);
-	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdateVelocity();
-	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdatePosition();
 
 public:	
 	// Called every frame
@@ -32,11 +31,29 @@ public:
 	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	// Getters
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetInitialVelocity() const {return InitialVelocity;};
+	
+	// Setters
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void InitializeVelocity(FVector& Velocity) {this->OrbitalVelocity = Velocity;}
+
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double Mass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") double InitialVelocity; // Scalar
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion") FVector Velocity;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") FVector Acceleration;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double VelocityMagnitude; // Scalar
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion") double AccelerationMagnitude; // Scalar
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	double mass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	double InitialVelocity; // Scalar
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	FVector OrbitalVelocity;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
+	FVector Acceleration;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
+	double VelocityMagnitude; // Scalar
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
+	double AccelerationMagnitude; // Scalar
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
+	double OrbitalDistance; // Scalar
+
 };

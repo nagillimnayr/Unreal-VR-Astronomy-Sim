@@ -21,10 +21,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void UpdateOrbitingBody(float DeltaTime);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+	virtual void PostInitProperties() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void InitializeOrbitingBody();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	AAstroBody* CentralBody;

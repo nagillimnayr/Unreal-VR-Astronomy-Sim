@@ -2,16 +2,18 @@
 
 
 #include "Sim.h"
+#include "AstroBody.h"
+#include "Orbit_Base.h"
 
 // Initialize static constants
-const double ASim::GRAVITATIONAL_CONSTANT = 60674e-11; // m^3/kg/s^2
-const double ASim::ASTRONOMICAL_UNIT = 1.495978707e11; // AU in m
+const double ASim::GRAVITATIONAL_CONSTANT = 6.674e-11; // m^3/kg/s^2
+//const double ASim::ASTRONOMICAL_UNIT = 1.495978707e11; // AU in m
 const double ASim::SOLAR_MASS = 1.989e30; // Mass of the sun in kg
 
 // Unit Conversion Multipliers
-const double ASim::SECONDS_IN_DAY = 86400; // 1 second in simulation = 1 day
-const double ASim::DISTANCE_MULTIPLIER = 1e11; // 1 in-editor unit = 1x10^11m
-const double ASim::KM_TO_M = 1000;
+const double ASim::SECONDS_IN_DAY = 86400.0; // 1 second in simulation = 1 day
+const double ASim::DISTANCE_MULTIPLIER = 1e11 / 1000.0; // 1 in-editor unit = 1x10^8m, 1000 in-editor units = 1x10^11m
+const double ASim::KM_TO_M = 1000.0;
 
 // Sets default values
 ASim::ASim()

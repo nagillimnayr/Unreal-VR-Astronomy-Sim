@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AstroBody.h"
+#include "Sim.h"
+#include "GameProjectGeneration/Classes/TemplateProjectDefs.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
-	Mass(0.0),
+	mass(0.0),
 	InitialVelocity(0.0),
-	Velocity(ForceInitToZero),
+	OrbitalVelocity(ForceInitToZero),
 	Acceleration(ForceInitToZero)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -21,38 +23,52 @@ void AAstroBody::BeginPlay()
 	
 }
 
-void AAstroBody::CalculateAcceleration(float DeltaTime)
+void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 {
+	FVector OtherPos = OtherBody->GetActorLocation();
+	FVector ThisPos = GetActorLocation();
+	FVector Difference = OtherPos - ThisPos;
+	double DistanceSquared = (Difference * ASim::DISTANCE_MULTIPLIER).SquaredLength(); // Multiply by DISTANCE_MULTIPLIER
+	//FVector Direction = Difference.GetSafeNormal(1.0); // Normalized Direction Vector pointing from this Body to the other Body
+	FVector Direction = Difference;
+	Direction.Normalize(); // Normalized Direction Vector pointing from this Body to the other Body
 	
+	// Calculate gravitational force
+	double Force = (ASim::GRAVITATIONAL_CONSTANT * OtherBody->mass * ASim::SOLAR_MASS) / DistanceSquared;
+	Acceleration = Direction * Force;
+
+	AccelerationMagnitude = Force;
+	OrbitalDistance = (Difference/* * ASim::DISTANCE_MULTIPLIER*/).Length(); // Get distance between Bodies
 }
 
-void AAstroBody::UpdateVelocity()
+void AAstroBody::UpdateVelocity(const double DeltaTime)
 {
+	OrbitalVelocity += Acceleration * (DeltaTime /** ASim::SECONDS_IN_DAY*/);
+	VelocityMagnitude = OrbitalVelocity.Length() / ASim::DISTANCE_MULTIPLIER;
 }
 
-void AAstroBody::UpdatePosition()
+void AAstroBody::UpdatePosition(const double DeltaTime)
 {
+	FVector Position = GetActorLocation();
+
+	// Update Position based on Velocity
+	// Divide by DISTANCE_MULTIPLIER so the result will be in in-editor units
+	Position += OrbitalVelocity * (DeltaTime /** ASim::SECONDS_IN_DAY */ / ASim::DISTANCE_MULTIPLIER);
+	SetActorLocation(Position);
 }
 
 // Called every frame
 void AAstroBody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FVector NewLocation = GetActorLocation();
-	FRotator NewRotation = GetActorRotation();
-	double RunningTime = GetGameTimeSinceCreation();
-	double DeltaHeight = (FMath::Sin(RunningTime + DeltaTime) - FMath::Sin(RunningTime));
-	NewLocation.Z += DeltaHeight * 20.0;
-	double DeltaRotation = DeltaTime * 20.0;
-	NewRotation.Yaw += DeltaRotation;
-	SetActorLocationAndRotation(NewLocation, NewRotation);
+	
 
 }
 
 void AAstroBody::PostInitProperties()
 {
 	Super::PostInitProperties();
-	//velocity = initialVelocity;
+
 }
 
 #if WITH_EDITOR
