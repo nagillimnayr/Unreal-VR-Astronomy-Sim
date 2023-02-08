@@ -28,7 +28,6 @@ AAstroBody::AAstroBody() :
 
 	// Initialize arrow
 	XArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("X-Arrow"));
-	XArrow->RegisterComponent();
 	XArrow->SetupAttachment(RootComponent);
 	XArrow->SetHiddenInGame(false, true);
 	XArrow->SetArrowColor(FLinearColor::Red);
