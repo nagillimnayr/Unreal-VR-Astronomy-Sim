@@ -39,8 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void InitializeVelocity(FVector& Velocity) {this->OrbitalVelocity = Velocity;}
 
-	/*UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* VisualMesh;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* StaticSphereMesh;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
@@ -58,4 +58,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalDistance; // Scalar
 
+	// Arrow
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UArrowComponent* XArrow;
 };

@@ -2,6 +2,8 @@
 
 #include "AstroBody.h"
 #include "Sim.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
@@ -12,6 +14,25 @@ AAstroBody::AAstroBody() :
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	StaticSphereMesh  = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
+	StaticSphereMesh->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+
+	if (SphereMeshAsset.Succeeded())
+	{
+		StaticSphereMesh->SetStaticMesh(SphereMeshAsset.Object);
+		StaticSphereMesh->SetRelativeLocation(FVector::ZeroVector);
+	}
+
+	// Initialize arrow
+	XArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("X-Arrow"));
+	XArrow->RegisterComponent();
+	XArrow->SetupAttachment(RootComponent);
+	XArrow->SetHiddenInGame(false, true);
+	XArrow->SetArrowColor(FLinearColor::Red);
+	XArrow->SetRelativeLocation(FVector::ZeroVector);
 
 }
 
@@ -42,7 +63,7 @@ void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 
 void AAstroBody::UpdateVelocity(const double DeltaTime)
 {
-	OrbitalVelocity += Acceleration * (DeltaTime /** ASim::SECONDS_IN_DAY*/);
+	OrbitalVelocity += Acceleration * (DeltaTime * ASim::SECONDS_IN_DAY);
 	VelocityMagnitude = OrbitalVelocity.Length() / ASim::DISTANCE_MULTIPLIER;
 }
 
@@ -52,8 +73,12 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 
 	// Update Position based on Velocity
 	// Divide by DISTANCE_MULTIPLIER so the result will be in in-editor units
-	Position += OrbitalVelocity * (DeltaTime /** ASim::SECONDS_IN_DAY */ / ASim::DISTANCE_MULTIPLIER);
-	SetActorLocation(Position);
+	Position += OrbitalVelocity * (DeltaTime * ASim::SECONDS_IN_DAY  / ASim::DISTANCE_MULTIPLIER);
+	bool check = SetActorLocation(Position);
+	if (!check)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Updating Position"));
+	}
 }
 
 // Called every frame
