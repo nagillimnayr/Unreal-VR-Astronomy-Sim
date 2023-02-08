@@ -2,7 +2,6 @@
 
 #include "AstroBody.h"
 #include "Sim.h"
-#include "GameProjectGeneration/Classes/TemplateProjectDefs.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :

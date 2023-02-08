@@ -39,7 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void InitializeVelocity(FVector& Velocity) {this->OrbitalVelocity = Velocity;}
 
-
+	/*UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* VisualMesh;*/
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double mass;
