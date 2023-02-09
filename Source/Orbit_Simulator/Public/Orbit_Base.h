@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AstroBody.h"
 
 #include "Orbit_Base.generated.h"
+
+class AAstroBody;
 
 UCLASS()
 class ORBIT_SIMULATOR_API AOrbit_Base : public AActor
@@ -31,7 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void InitializeOrbitingBody();
 
-protected:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	AAstroBody* CentralBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")

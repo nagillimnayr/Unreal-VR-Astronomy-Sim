@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "AstroBody.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
+
 UCLASS()
 class ORBIT_SIMULATOR_API AAstroBody : public AActor
 {
@@ -58,7 +61,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalDistance; // Scalar
 
+public:
 	// Arrow
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* XArrow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* TrailSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* TrailComponent;
 };

@@ -4,19 +4,22 @@
 #include "Sim.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
 	mass(0.0),
 	InitialVelocity(0.0),
-	OrbitalVelocity(ForceInitToZero),
-	Acceleration(ForceInitToZero)
+	OrbitalVelocity(FVector::ZeroVector),
+	Acceleration(FVector::ZeroVector)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	StaticSphereMesh  = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
-	StaticSphereMesh->SetupAttachment(RootComponent);
+	StaticSphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
+	//StaticSphereMesh->SetupAttachment(RootComponent);
+	SetRootComponent(StaticSphereMesh);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
 
@@ -29,9 +32,14 @@ AAstroBody::AAstroBody() :
 	// Initialize arrow
 	XArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("X-Arrow"));
 	XArrow->SetupAttachment(RootComponent);
+	XArrow->SetVisibility(true, true);
 	XArrow->SetHiddenInGame(false, true);
 	XArrow->SetArrowColor(FLinearColor::Red);
 	XArrow->SetRelativeLocation(FVector::ZeroVector);
+	XArrow->ArrowSize = 2.0;
+	XArrow->ArrowLength = 75.0;
+	XArrow->bUseInEditorScaling = false;
+
 
 }
 
@@ -39,6 +47,22 @@ AAstroBody::AAstroBody() :
 void AAstroBody::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// Initialize Niagara System/ Component
+	if (TrailSystem)
+	{
+		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, StaticSphereMesh, NAME_None,
+			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,
+			false);
+		//TrailComponent->Activate();
+		TrailComponent->SetVisibility(true);
+		TrailComponent->SetHiddenInGame(false);
+		//TrailComponent->ActivateSystem();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error initializing Niagara System"));
+	}
 	
 }
 

@@ -2,6 +2,7 @@
 
 
 #include "Orbit_Base.h"
+#include "AstroBody.h"
 #include "Sim.h"
 
 // Sets default values
