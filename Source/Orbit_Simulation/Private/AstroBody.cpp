@@ -32,7 +32,7 @@ AAstroBody::AAstroBody() :
 
 	// Initialize arrow
 	XArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("X-Arrow"));
-	XArrow->SetupAttachment(RootComponent);
+	XArrow->SetupAttachment(StaticSphereMesh);
 	XArrow->SetVisibility(true, true);
 	XArrow->SetHiddenInGame(false, true);
 	XArrow->SetArrowColor(FLinearColor::Red);
@@ -55,10 +55,8 @@ void AAstroBody::BeginPlay()
 		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, StaticSphereMesh, NAME_None,
 			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,
 			false);
-		//TrailComponent->Activate();
 		TrailComponent->SetVisibility(true);
 		TrailComponent->SetHiddenInGame(false);
-		//TrailComponent->ActivateSystem();
 	}
 	else
 	{
@@ -113,8 +111,8 @@ void AAstroBody::Tick(float DeltaTime)
 
 	// Sidereal rotation
 	FRotator NewRotation = GetActorRotation();
-	NewRotation.Add(0.0, 0.0, SiderealRotation * 360.0
-		* DeltaTime);
+	double DeltaRotation = SiderealRotation * 360.0 * DeltaTime;
+	NewRotation.Add(0.0, DeltaRotation, 0.0);
 	SetActorRotation(NewRotation);
 }
 
