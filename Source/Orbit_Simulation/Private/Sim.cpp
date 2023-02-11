@@ -40,10 +40,10 @@ void ASim::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	Timer += DeltaTime;
 
-	if(Timer > 365.25)
+	/*if(Timer > 365.25)
 	{
 		UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause Game after one year
-	}
+	}*/
 
 }
 

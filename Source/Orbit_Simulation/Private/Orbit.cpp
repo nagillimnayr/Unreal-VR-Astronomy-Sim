@@ -19,8 +19,14 @@ AOrbit::AOrbit() :
 void AOrbit::BeginPlay()
 {
 	Super::BeginPlay();
-	InitializeOrbitingBody();
-	UpdateOrbitalDistance();
+	
+	// If either body is invalid, destroy Orbit and return
+	if (!CentralBody || !OrbitingBody) { Destroy(); return;}
+	else
+	{
+		InitializeOrbitingBody();
+		UpdateOrbitalDistance();
+	}
 }
 
 

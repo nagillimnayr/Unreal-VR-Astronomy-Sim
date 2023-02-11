@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "Trajectory.generated.h"
 
-class USplineComponent;
+
 UCLASS()
 class ORBIT_SIMULATION_API ATrajectory : public AActor
 {
@@ -24,6 +24,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void DrawEllipse();
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void UpdateSplineMesh();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -41,5 +45,13 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	UMaterialInterface* AlternateMaterial;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	int NumberOfPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	double SemiMajorAxis;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	double SemiMinorAxis;
 	
 };

@@ -73,7 +73,7 @@ public:
 	UNiagaraComponent* TrailComponent;
 
 	// Sidereal rotation
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double SiderealRotation; // Value of 1 = one full 360 degree revolution each day. (i.e. Earth's sidereal rotation)
 	
 

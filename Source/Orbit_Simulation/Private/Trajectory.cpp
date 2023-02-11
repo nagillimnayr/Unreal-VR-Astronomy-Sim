@@ -4,7 +4,10 @@
 #include "Trajectory.h"
 
 // Sets default values
-ATrajectory::ATrajectory()
+ATrajectory::ATrajectory() :
+NumberOfPoints(360),
+SemiMajorAxis(1000.0),
+SemiMinorAxis(1000.0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,14 +27,46 @@ ATrajectory::ATrajectory()
 void ATrajectory::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	DrawEllipse();
+	UpdateSplineMesh();
+}
 
-	if (!Mesh) {return;}
-
-	/*SplineComponent->AddPoint();
-	SplineComponent->AddPoints();
-	SplineComponent->AddSplinePoint();*/
+// Called when the game starts or when spawned
+void ATrajectory::BeginPlay()
+{
+	Super::BeginPlay();
 	
-	for (int SplineSegment = 0; SplineSegment < SplineComponent->GetNumberOfSplinePoints() - 1; SplineSegment++)
+}
+
+void ATrajectory::DrawEllipse()
+{
+	// Clear old spline
+	SplineComponent->ClearSplinePoints(false);
+	
+	double angle = 2 * PI / NumberOfPoints;
+	// Parametric equation of an ellipse
+	for (int i = 0; i < NumberOfPoints; i++)
+	{
+		double X = SemiMajorAxis * cos(i * angle);
+		double Y = SemiMinorAxis * sin(i * angle);
+		FVector Position = FVector(X, Y, 0);
+		SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::World, false);
+	}
+	SplineComponent->UpdateSpline(); // Update Spline
+}
+
+void ATrajectory::UpdateSplineMesh()
+{
+	if (!Mesh) {return;}
+	int NumberOfSplinePoints = SplineComponent->GetNumberOfSplinePoints();
+	if (NumberOfPoints != NumberOfSplinePoints)
+	{
+		DrawEllipse();
+	}
+
+	if (!SplineComponent->IsClosedLoop()) { NumberOfSplinePoints--; }
+	
+	for (int SplineSegment = 0; SplineSegment < NumberOfSplinePoints; SplineSegment++)
 	{
 		USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 		SplineMeshComponent->SetStaticMesh(Mesh);
@@ -57,16 +92,10 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 		else
 		{
 			if (AlternateMaterial) SplineMeshComponent->SetMaterial(0, AlternateMaterial);
+			else SplineMeshComponent->SetMaterial(0, DefaultMaterial);
 		}
 		
 	}
-}
-
-// Called when the game starts or when spawned
-void ATrajectory::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 
 // Called every frame
