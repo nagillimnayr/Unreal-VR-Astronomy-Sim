@@ -12,7 +12,8 @@ AAstroBody::AAstroBody() :
 	mass(0.0),
 	InitialVelocity(0.0),
 	OrbitalVelocity(FVector::ZeroVector),
-	Acceleration(FVector::ZeroVector)
+	Acceleration(FVector::ZeroVector),
+	SiderealRotation(0.0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -109,8 +110,11 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 void AAstroBody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 
+	// Sidereal rotation
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Add(0.0, 0.0, SiderealRotation * DeltaTime);
+	SetActorRotation(NewRotation);
 }
 
 void AAstroBody::PostInitProperties()

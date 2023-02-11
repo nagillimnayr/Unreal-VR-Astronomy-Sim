@@ -66,9 +66,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* XArrow;
 
+	// Trail
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraSystem* TrailSystem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* TrailComponent;
+
+	// Sidereal rotation
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double SiderealRotation;
+	
 
 };
