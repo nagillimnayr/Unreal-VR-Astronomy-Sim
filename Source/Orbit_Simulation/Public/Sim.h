@@ -21,11 +21,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void CalculateAcceleration(float DeltaTime);
-
-	
 
 public:	
 	// Called every frame
@@ -51,6 +46,9 @@ protected:
 	TArray<AOrbit_Base*> Orbits; // Array of all the Orbits in the simulation
 	*/
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	double Timer;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int TimeScale = 1;
+	int TimeScale;
 };

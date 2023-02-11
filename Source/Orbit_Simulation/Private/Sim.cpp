@@ -2,6 +2,8 @@
 
 
 #include "Sim.h"
+
+#include "Kismet/GameplayStatics.h"
 //#include "AstroBody.h"
 //#include "Orbit_Base.h"
 
@@ -16,11 +18,13 @@ const double ASim::DISTANCE_MULTIPLIER = 1e11 / 1000.0; // 1 in-editor unit = 1x
 const double ASim::KM_TO_M = 1000.0;
 
 // Sets default values
-ASim::ASim()
+ASim::ASim() :
+Timer(0.0),
+TimeScale(1)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -30,15 +34,16 @@ void ASim::BeginPlay()
 	GetWorldSettings()->SetTimeDilation(TimeScale);
 }
 
-void ASim::CalculateAcceleration(float DeltaTime)
-{
-	
-}
-
 // Called every frame
 void ASim::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	Timer += DeltaTime;
+
+	if(Timer > 365.25)
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause Game after one year
+	}
 
 }
 
