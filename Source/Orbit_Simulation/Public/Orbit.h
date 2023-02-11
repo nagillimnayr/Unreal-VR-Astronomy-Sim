@@ -24,6 +24,9 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitingBody(float DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void UpdateOrbitalDistance();
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,4 +40,7 @@ public:
 	AAstroBody* CentralBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	AAstroBody* OrbitingBody;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Astro")
+	double OrbitalDistance;
 };

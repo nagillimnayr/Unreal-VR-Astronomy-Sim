@@ -8,7 +8,6 @@
 
 class UNiagaraSystem;
 class UNiagaraComponent;
-class USplineMeshComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API AAstroBody : public AActor

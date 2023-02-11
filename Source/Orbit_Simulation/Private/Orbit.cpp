@@ -13,6 +13,7 @@ AOrbit::AOrbit() :
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	UpdateOrbitalDistance();
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +29,13 @@ void AOrbit::UpdateOrbitingBody(const float DeltaTime)
 	OrbitingBody->CalculateAcceleration(CentralBody);
 	OrbitingBody->UpdateVelocity(DeltaTime);
 	OrbitingBody->UpdatePosition(DeltaTime);
+
+	UpdateOrbitalDistance();
+}
+
+void AOrbit::UpdateOrbitalDistance()
+{
+	OrbitalDistance = FVector::Distance(CentralBody->GetActorLocation(), OrbitingBody->GetActorLocation());
 }
 
 // Called every frame
@@ -35,7 +43,7 @@ void AOrbit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// If either body is invalid, destroy Orbit and 
+	// If either body is invalid, destroy Orbit and return
 	if (!CentralBody || !OrbitingBody) { Destroy(); return;}
 
 	UpdateOrbitingBody(DeltaTime);
