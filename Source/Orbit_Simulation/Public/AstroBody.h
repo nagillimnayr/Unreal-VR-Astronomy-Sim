@@ -74,7 +74,7 @@ public:
 
 	// Sidereal rotation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	double SiderealRotation;
+	double SiderealRotation; // Value of 1 = one full 360 degree revolution each day. (i.e. Earth's sidereal rotation)
 	
 
 };

@@ -113,7 +113,8 @@ void AAstroBody::Tick(float DeltaTime)
 
 	// Sidereal rotation
 	FRotator NewRotation = GetActorRotation();
-	NewRotation.Add(0.0, 0.0, SiderealRotation * DeltaTime);
+	NewRotation.Add(0.0, 0.0, SiderealRotation * 360.0
+		* DeltaTime);
 	SetActorRotation(NewRotation);
 }
 
