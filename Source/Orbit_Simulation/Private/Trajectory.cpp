@@ -2,6 +2,7 @@
 
 
 #include "Trajectory.h"
+#include "MeshAttributes.h"
 
 // Sets default values
 ATrajectory::ATrajectory() :
@@ -16,10 +17,11 @@ SemiMinorAxis(1000.0)
 	if (SplineComponent)
 	{
 		SetRootComponent(SplineComponent);
+		SplineComponent->SetCastShadow(false); // Disable Shadows
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Updating Position"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Creating Spline Component"));
 	}
 	
 }
@@ -45,7 +47,7 @@ void ATrajectory::DrawEllipse()
 	
 	double angle = 2 * PI / NumberOfPoints;
 	// Parametric equation of an ellipse
-	for (int i = 0; i < NumberOfPoints; i++)
+	for (int i = 0; i <= NumberOfPoints; i++)
 	{
 		double X = SemiMajorAxis * cos(i * angle);
 		double Y = SemiMinorAxis * sin(i * angle);
@@ -59,12 +61,18 @@ void ATrajectory::UpdateSplineMesh()
 {
 	if (!Mesh) {return;}
 	int NumberOfSplinePoints = SplineComponent->GetNumberOfSplinePoints();
-	if (NumberOfPoints != NumberOfSplinePoints)
+	/*for (auto SplineMesh : SplineMeshes)
+	{
+		SplineMesh->DestroyComponent();
+	}*/
+	/*SplineMeshes.Empty();
+	SplineMeshes.Reserve(NumberOfSplinePoints + 1);*/
+	/*if (NumberOfPoints != NumberOfSplinePoints)
 	{
 		DrawEllipse();
-	}
+	}*/
 
-	if (!SplineComponent->IsClosedLoop()) { NumberOfSplinePoints--; }
+	//if (!SplineComponent->IsClosedLoop()) { NumberOfSplinePoints--; }
 	
 	for (int SplineSegment = 0; SplineSegment < NumberOfSplinePoints; SplineSegment++)
 	{
@@ -95,6 +103,9 @@ void ATrajectory::UpdateSplineMesh()
 			else SplineMeshComponent->SetMaterial(0, DefaultMaterial);
 		}
 		
+		SplineMeshComponent->SetCastShadow(false); // Disable Shadows
+
+		//SplineMeshes.Add(SplineMeshComponent); // Add Spline Mesh to array
 	}
 }
 
@@ -104,4 +115,3 @@ void ATrajectory::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

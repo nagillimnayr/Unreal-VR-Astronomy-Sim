@@ -36,19 +36,28 @@ public:
 	static const double DISTANCE_MULTIPLIER;
 	static const double KM_TO_M;
 
+	// Fixed Time Step
+	static const double FIXED_TIMESTEP;
+
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 protected:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation
+	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<AOrbit_Base*> Orbits; // Array of all the Orbits in the simulation
-	*/
+	TArray<AOrbit*> Orbits; // Array of all the Orbits in the simulation
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	double Timer;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	double Days = 0.0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int Years = 0;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TimeScale;
+
+	double Remainder;
 };

@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "Trajectory.generated.h"
 
+class AAstroBody;
 
 UCLASS()
 class ORBIT_SIMULATION_API ATrajectory : public AActor
@@ -32,6 +33,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spline")
+	TArray<USplineMeshComponent*> SplineMeshes; // Array of Spline Meshes*/
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	USplineComponent* SplineComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
@@ -53,5 +57,7 @@ public:
 	double SemiMajorAxis;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	double SemiMinorAxis;
+
 	
+
 };

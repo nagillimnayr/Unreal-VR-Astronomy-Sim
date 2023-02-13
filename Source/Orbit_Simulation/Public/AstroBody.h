@@ -8,6 +8,7 @@
 
 class UNiagaraSystem;
 class UNiagaraComponent;
+class UArrowComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API AAstroBody : public AActor
@@ -27,6 +28,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:	
 	// Called every frame
@@ -37,34 +40,54 @@ public:
 	// Getters
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetInitialVelocity() const {return InitialVelocity;};
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	const FVector& GetVelocityVector() const {return VelocityVector;};
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetMassOfBody() const {return mass;};
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetOrbitalDistance() const {return OrbitalDistance;};
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	void InitializeVelocity(FVector& Velocity) {this->OrbitalVelocity = Velocity;}
+	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity;}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* StaticSphereMesh;
 	
 protected:
+	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double mass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double InitialVelocity; // Scalar
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	FVector OrbitalVelocity;
+	FVector VelocityVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	FVector Acceleration;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	double VelocityMagnitude; // Scalar
+	double OrbitalSpeed; // Scalar
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double AccelerationMagnitude; // Scalar
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalDistance; // Scalar
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	double Radius;
+	
+	// Sidereal rotation
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	double SiderealRotation; // Value of 1 = one full 360 degree revolution each day. (i.e. Earth's sidereal rotation)
+
 public:
-	// Arrow
+	// Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UArrowComponent* XArrow;
+	USceneComponent* SceneRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* StaticSphereMesh;
+	
+	// Arrows
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UArrowComponent* AccelerationArrow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UArrowComponent* VelocityArrow;
 
 	// Trail
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -72,9 +95,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* TrailComponent;
 
-	// Sidereal rotation
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double SiderealRotation; // Value of 1 = one full 360 degree revolution each day. (i.e. Earth's sidereal rotation)
-	
 
 };
