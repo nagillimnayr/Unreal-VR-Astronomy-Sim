@@ -226,9 +226,15 @@ double AOrbit::ComputeArgumentOfPeriapsis(const FVector& AscendingNodeVector, co
 	return ArgumentOfPeriapsis;
 }
 
-double AOrbit::ComputeTrueAnomaly(const FVector& Position, const FVector& Velocity)
+double AOrbit::ComputeTrueAnomaly(const FVector& EccentricityVector, const FVector& Position, const FVector& Velocity)
 {
-	return 0.0;
+	
+	const double angle = FVector::DotProduct(EccentricityVector, Position) / (Eccentricity * OrbitalDistance);
+	if (FVector::DotProduct(Position, Velocity) < 0.0)
+	{
+		return 360 - FMath::Acos(angle);
+	}
+	return FMath::Acos(angle);
 }
 
 double AOrbit::ComputeArgumentOfLatitude(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude, const FVector& Position)

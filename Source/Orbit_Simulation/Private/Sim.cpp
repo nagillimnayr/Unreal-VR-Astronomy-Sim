@@ -53,7 +53,13 @@ void ASim::BeginPlay()
 	for (auto Actor : Actors)
 	{
 		// Cast to AOrbit*
-		Orbits.Add(Cast<AOrbit>(Actor));
+		AOrbit* orbit = Cast<AOrbit, AActor>(Actor);
+
+		// Don't add element if already in array
+		if (!Orbits.Contains(orbit))
+		{
+			Orbits.Add(orbit); // Add to array
+		}
 	}
 }
 

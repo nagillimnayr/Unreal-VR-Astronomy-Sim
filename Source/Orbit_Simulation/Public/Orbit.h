@@ -88,7 +88,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	double ComputeArgumentOfPeriapsis(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude, const FVector& EccentricityVector);
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	double ComputeTrueAnomaly(const FVector& Position, const FVector&  Velocity);
+	double ComputeTrueAnomaly(const FVector& EccentricityVector, const FVector& Position, const FVector&  Velocity);
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	double ComputeArgumentOfLatitude(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude, const FVector& Position);
 	

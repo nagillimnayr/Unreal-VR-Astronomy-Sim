@@ -61,3 +61,15 @@ protected:
 
 	double Remainder;
 };
+
+// Constants
+#define AU = 1.495978707e11; // Astronomical Unit
+
+// Semi-Major axes of planets in AU
+#define MARS_SMA = 1.52371034;
+#define MERCURY_SMA = 0.38709927;
+#define VENUS_SMA = 0.72333566;
+#define JUPITER_SMA = 5.20288700;
+#define SATURN_SMA = 9.53667594;
+#define URANUS_SMA = 19.18916464;
+#define NEPTUNE_SMA = 30.06992276;
