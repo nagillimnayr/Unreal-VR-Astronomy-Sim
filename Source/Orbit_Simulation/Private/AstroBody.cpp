@@ -129,7 +129,7 @@ void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 void AAstroBody::UpdateVelocity(const double DeltaTime)
 {
 	VelocityVector += Acceleration * (DeltaTime * ASim::SECONDS_IN_DAY);
-	OrbitalSpeed = VelocityVector.Length();
+	OrbitalSpeed = VelocityVector.Length() / ASim::KM_TO_M;
 	
 	if(!VelocityArrow) {return;}
 	FRotator Rotation = FRotationMatrix::MakeFromX(VelocityVector).Rotator();

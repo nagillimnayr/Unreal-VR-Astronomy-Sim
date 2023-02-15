@@ -58,7 +58,7 @@ protected:
 	double mass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double InitialVelocity; // Scalar
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Motion")
 	FVector VelocityVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	FVector Acceleration;

@@ -23,12 +23,34 @@ SemiMinorAxis(1000.0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Creating Spline Component"));
 	}
-	
+
+	// Initialize Mesh
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CylinderMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
+	if (CylinderMeshAsset.Succeeded())
+	{
+		Mesh = CylinderMeshAsset.Object;
+	}
+
+	// Initialize Material
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat1(TEXT("/ControlRig/Controls/ControlRigGizmoMaterial"));
+	if (Mat1.Succeeded())
+	{
+		DefaultMaterial = Mat1.Object;
+		AlternateMaterial = Mat1.Object;
+	}
 }
 
 void ATrajectory::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	ForwardAxis = ESplineMeshAxis::Z;
+	SetActorScale3D(FVector(0.05, 0.05, 0.05));
+	DrawEllipse();
+	UpdateSplineMesh();
+}
+
+void ATrajectory::Update()
+{
 	DrawEllipse();
 	UpdateSplineMesh();
 }
@@ -44,14 +66,14 @@ void ATrajectory::DrawEllipse()
 {
 	// Clear old spline
 	SplineComponent->ClearSplinePoints(false);
-	
+	FVector Center = GetActorLocation();
 	double angle = 2 * PI / NumberOfPoints;
 	// Parametric equation of an ellipse
 	for (int i = 0; i <= NumberOfPoints; i++)
 	{
-		double X = SemiMajorAxis * cos(i * angle);
-		double Y = SemiMinorAxis * sin(i * angle);
-		FVector Position = FVector(X, Y, 0);
+		double X = Center.X + SemiMajorAxis * cos(i * angle);
+		double Y = Center.Y + SemiMinorAxis * sin(i * angle);
+		FVector Position = FVector(X, Y, Center.Z);
 		SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::World, false);
 	}
 	SplineComponent->UpdateSpline(); // Update Spline

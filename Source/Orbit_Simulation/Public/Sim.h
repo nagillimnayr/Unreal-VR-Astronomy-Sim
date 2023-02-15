@@ -65,6 +65,20 @@ protected:
 // Constants
 #define AU = 1.495978707e11; // Astronomical Unit
 
+// Orbital Parameters of Planets in-editor units
+/*
+ * Mercury:
+	- Distance: 698.1
+ * Venus: 
+ * Earth: 1495.978707
+ * Mars: 2428.5
+ * Jupiter: 
+ * Saturn:
+ * Uranus:
+ * Neptune:
+
+*/
+
 // Semi-Major axes of planets in AU
 #define MARS_SMA = 1.52371034;
 #define MERCURY_SMA = 0.38709927;

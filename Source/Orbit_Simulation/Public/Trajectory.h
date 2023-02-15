@@ -21,6 +21,17 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void SetSemiMajorAxis(const double a) { SemiMajorAxis = a; }
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void SetSemiMinorAxis(const double b) { SemiMinorAxis = b; }
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void SetClosedLoop(const bool Closed) { isClosedLoop = Closed; }
+
+	
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void Update();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,6 +69,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	double SemiMinorAxis;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	bool isClosedLoop = true;
 	
 
 };

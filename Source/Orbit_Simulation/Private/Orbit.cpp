@@ -8,9 +8,14 @@
 
 // Sets default values
 AOrbit::AOrbit() :
-	CentralBody(nullptr),
-	OrbitingBody(nullptr),
-	Trajectory(nullptr)
+CentralBody(nullptr),
+OrbitingBody(nullptr),
+Trajectory(nullptr),
+PerihelionDistance(1000),
+SemiMajorAxis(100),
+SemiMinorAxis(100),
+Eccentricity(0),
+Inclination(0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -29,9 +34,28 @@ void AOrbit::BeginPlay()
 	{
 		InitializeOrbitingBody();
 		UpdateOrbitalDistance();
+		
+		/*CalculateTrajectory();
+		DrawTrajectory();*/
 	}
 
 	// Calculate Semi-Major and Semi-Minor Axes
+}
+
+void AOrbit::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	// If either body is invalid, destroy Orbit and return
+	if (!CentralBody || !OrbitingBody) { return; }
+	else
+	{
+		InitializeOrbitingBody();
+		UpdateOrbitalDistance();
+		
+		// CalculateTrajectory();
+		// DrawTrajectory();
+	}
 }
 
 
@@ -73,6 +97,10 @@ void AOrbit::PostInitProperties()
 void AOrbit::InitializeOrbitingBody()
 {
 	if (!CentralBody || ! OrbitingBody) {return;}
+
+	// Position body on X-axis
+	FVector StartPosition = FVector(1.0, 0.0, 0.0) * PerihelionDistance;
+	OrbitingBody->SetActorLocation(StartPosition);
 	
 	// Get direction vector from Orbiting Body to Central Body
 	FVector Direction = (CentralBody->GetActorLocation() - OrbitingBody->GetActorLocation());
@@ -94,10 +122,36 @@ void AOrbit::InitializeOrbitingBody()
 
 void AOrbit::DrawTrajectory()
 {
+	if (!Trajectory || !OrbitingBody || !CentralBody) { return; }
+	Trajectory->SetClosedLoop(true);
+	
+	if (Eccentricity >= 1.0)
+	{
+		// If Eccentricity is greater than one, trajectory is either parabolic or hyperbolic
+		Trajectory->SetClosedLoop(false);
+	}
+	else
+	{
+		Trajectory->SetClosedLoop(true);
+	}
+	/*if (FMath::Abs(Eccentricity) < DBL_EPSILON)
+	{
+		// if Eccentricity is 0, Orbit is circular.
+		Trajectory->SetSemiMajorAxis(SemiMajorAxis);
+		Trajectory->SetSemiMinorAxis(SemiMajorAxis);
+	}*/
+
+	Trajectory->SetActorLocation(EllipticalCenter);
+	Trajectory->SetSemiMajorAxis(SemiMajorAxis);
+	Trajectory->SetSemiMinorAxis(SemiMinorAxis);
+	
+	Trajectory->Update();
+	
 }
 
-void AOrbit::UpdateTrajectory()
+void AOrbit::CalculateTrajectory()
 {
+	if (!OrbitingBody || !CentralBody) { return; }
 	// Get the Orbital State Vectors (Position and Velocity)
 	const FVector Position = OrbitingBody->GetActorLocation() - CentralBody->GetActorLocation();
 	const FVector Velocity = OrbitingBody->GetVelocityVector();
@@ -111,43 +165,60 @@ void AOrbit::UpdateTrajectory()
 	if (abs(SGP) < DBL_EPSILON) { return; } // Cannot continue if SGP is zero
 
 	// 1. Compute Specific Angular Momentum
-	const FVector SpecificAngularMomentum = ComputeSpecificAngularMomentum(Position, Velocity);
+	SpecificAngularMomentum = ComputeSpecificAngularMomentum(Position, Velocity);
 	// 2. Compute Ascending Node Vector
-	const FVector AscendingNodeVector = ComputeAscendingNodeVector(SpecificAngularMomentum);
+	AscendingNodeVector = ComputeAscendingNodeVector();
 	
 	// 3. Compute Eccentricity Vector
-	const FVector EccentricityVector = ComputeEccentricityVector(Velocity, Position, SpecificAngularMomentum, SGP);
+	EccentricityVector = ComputeEccentricityVector(Velocity, Position, SGP);
 
 	// 4. Compute Semi-Latus Rectum
-	const double SemiLatusRectum = ComputeSemiLatusRectum(SpecificAngularMomentum, SGP);
+	SemiLatusRectum = ComputeSemiLatusRectum(SGP);
 
 	// 5. Compute the Inclination
-	Inclination = ComputeInclination(SpecificAngularMomentum);
+	Inclination = ComputeInclination();
 
 	// If Inclination is zero, the following values will also be zero
 	LongitudeOfAscendingNode = 0.0;
 	ArgumentOfPeriapsis = 0.0;
+	const double AscendingNodeMagnitude = AscendingNodeVector.Length();
 	if(FMath::Abs(Inclination) > DBL_EPSILON) 
 	{
-		const double AscendingNodeMagnitude = AscendingNodeVector.Length();
 		// If Ascending Node Magnitude is Zero, abort
 		if (FMath::Abs(AscendingNodeMagnitude) < DBL_EPSILON) { return; }
 		
 		// 6. Compute Longitude of the Ascending Node
-		LongitudeOfAscendingNode = ComputeLongitudeOfAscendingNode(AscendingNodeVector, AscendingNodeMagnitude);
+		LongitudeOfAscendingNode = ComputeLongitudeOfAscendingNode(AscendingNodeMagnitude);
 
 		// 7. Compute Argument of Periapsis
-		ArgumentOfPeriapsis = ComputeArgumentOfPeriapsis(AscendingNodeVector, AscendingNodeMagnitude, EccentricityVector);
-		
-		// If Eccentricity is Zero, use Argument of Latitude instead of True Anomaly
-		if(FMath::Abs(Eccentricity) < DBL_EPSILON)
-		{
-			double ArgumentOfLatitude = ComputeArgumentOfLatitude(AscendingNodeVector, AscendingNodeMagnitude, Position);
-		}
+		ArgumentOfPeriapsis = ComputeArgumentOfPeriapsis(AscendingNodeMagnitude);
 	}
 
-	// If Eccentricity and Inclination are both Zero,  we must use the True Longitude
-	double TrueLongitude = Position.X / OrbitalDistance;
+	// If Eccentricity is Zero, use Argument of Latitude instead of True Anomaly
+	if(FMath::Abs(Eccentricity) > DBL_EPSILON)
+	{
+		TrueAnomaly = ComputeTrueAnomaly(Position, Velocity);
+	}
+	else if (FMath::Abs(Inclination) > DBL_EPSILON)
+	{
+		// If Eccentricity is Zero, use Argument of Latitude instead of True Anomaly
+		double ArgumentOfLatitude = ComputeArgumentOfLatitude(AscendingNodeMagnitude, Position);
+	}
+	else
+	{
+		// If Eccentricity and Inclination are both Zero,  we must use the True Longitude
+		double TrueLongitude = Position.X / OrbitalDistance;
+	}
+
+	SemiMinorAxis = FMath::Sqrt(SemiMajorAxis * SemiLatusRectum);
+	
+	Apoapsis = SemiMajorAxis * (1 + Eccentricity);
+	Periapsis = SemiMajorAxis * (1 - Eccentricity);
+
+
+	FVector AscendingNodeDirection = AscendingNodeVector / AscendingNodeMagnitude;
+	EllipticalCenter = AscendingNodeVector - (AscendingNodeDirection * SemiMajorAxis);
+
 }
 
 FVector AOrbit::ComputeSpecificAngularMomentum(const FVector& Position, const FVector& Velocity)
@@ -156,27 +227,28 @@ FVector AOrbit::ComputeSpecificAngularMomentum(const FVector& Position, const FV
 	return Position.Cross(Velocity);
 }
 
-FVector AOrbit::ComputeAscendingNodeVector(const FVector& SpecificAngularMomentum)
+FVector AOrbit::ComputeAscendingNodeVector()
 {
 	// Cross product of the unit vector of the Z-axis, and the specific angular momentum
 	return FVector(0.0, 0.0, 1.0).Cross(SpecificAngularMomentum);
 }
 
-FVector AOrbit::ComputeEccentricityVector(const FVector& Velocity, const FVector& Position, const FVector& SpecificAngularMomentum, const double SGP)
+FVector AOrbit::ComputeEccentricityVector(const FVector& Velocity, const FVector& Position,const double SGP)
 {
+	
 	// Cross product of Velocity and Specific Angular Momentum, divided by the Universal Gravitational Parameter,
 	// Minus the Position Vector divided by its magnitude
-	const FVector EccentricityVector = (Velocity.Cross(SpecificAngularMomentum) / SGP) - (Position / Position.Length());
+	EccentricityVector = (Velocity.Cross(SpecificAngularMomentum) / SGP) - (Position / Position.Length());
 	Eccentricity = EccentricityVector.Length();
 	return EccentricityVector;
 }
 
-double AOrbit::ComputeSemiLatusRectum( const FVector& SpecificAngularMomentum, double SGP)
+double AOrbit::ComputeSemiLatusRectum( double SGP)
 {
-	double SemiLatusRectum = SpecificAngularMomentum.SquaredLength() / SGP;
+	SemiLatusRectum = SpecificAngularMomentum.SquaredLength() / SGP;
 	if (abs(1 - Eccentricity) < DBL_EPSILON) // Dont divide by zero
 	{ // If Eccentricity is 1, Orbit is Parabolic, if greater than 1, it is Hyperbolic
-		SemiMajorAxis = 0;
+		SemiMajorAxis = 0.0;
 	}
 	else
 	{
@@ -185,13 +257,13 @@ double AOrbit::ComputeSemiLatusRectum( const FVector& SpecificAngularMomentum, d
 	return SemiLatusRectum;
 }
 
-double AOrbit::ComputeInclination(const FVector& SpecificAngularMomentum)
+double AOrbit::ComputeInclination()
 {
 	const double angle = FVector::DotProduct(FVector(0.0, 0.0, 1.0), SpecificAngularMomentum) / SpecificAngularMomentum.Length();
 	return FMath::Acos(angle);
 }
 
-double AOrbit::ComputeLongitudeOfAscendingNode(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude)
+double AOrbit::ComputeLongitudeOfAscendingNode(const double AscendingNodeMagnitude)
 {
 	if (abs(AscendingNodeMagnitude) < DBL_EPSILON)
 	{
@@ -206,7 +278,7 @@ double AOrbit::ComputeLongitudeOfAscendingNode(const FVector& AscendingNodeVecto
 	return LongitudeOfAscendingNode;
 }
 
-double AOrbit::ComputeArgumentOfPeriapsis(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude, const FVector& EccentricityVector)
+double AOrbit::ComputeArgumentOfPeriapsis(const double AscendingNodeMagnitude)
 {
 	if (abs(AscendingNodeMagnitude) < DBL_EPSILON)
 	{
@@ -226,7 +298,7 @@ double AOrbit::ComputeArgumentOfPeriapsis(const FVector& AscendingNodeVector, co
 	return ArgumentOfPeriapsis;
 }
 
-double AOrbit::ComputeTrueAnomaly(const FVector& EccentricityVector, const FVector& Position, const FVector& Velocity)
+double AOrbit::ComputeTrueAnomaly(const FVector& Position, const FVector& Velocity)
 {
 	
 	const double angle = FVector::DotProduct(EccentricityVector, Position) / (Eccentricity * OrbitalDistance);
@@ -237,7 +309,7 @@ double AOrbit::ComputeTrueAnomaly(const FVector& EccentricityVector, const FVect
 	return FMath::Acos(angle);
 }
 
-double AOrbit::ComputeArgumentOfLatitude(const FVector& AscendingNodeVector, const double AscendingNodeMagnitude, const FVector& Position)
+double AOrbit::ComputeArgumentOfLatitude(const double AscendingNodeMagnitude, const FVector& Position)
 {
 	return 0.0;
 }
