@@ -4,7 +4,7 @@
 #include "Sim.h"
 
 #include "Kismet/GameplayStatics.h"
-//#include "AstroBody.h"
+#include "AstroBody.h"
 #include "Orbit.h"
 
 // Initialize static constants
@@ -46,12 +46,13 @@ void ASim::BeginPlay()
 	Super::BeginPlay();
 	// GetWorldSettings()->SetTimeDilation(TimeScale);
 	
-	TArray<AActor*> Actors;
+	/*TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  Actors);
 
 	// Copy references into Orbits array
 	for (auto Actor : Actors)
 	{
+		if (!Actor) { continue; }
 		// Cast to AOrbit*
 		AOrbit* orbit = Cast<AOrbit, AActor>(Actor);
 
@@ -59,6 +60,45 @@ void ASim::BeginPlay()
 		if (!Orbits.Contains(orbit))
 		{
 			Orbits.Add(orbit); // Add to array
+		}
+	}*/
+}
+
+void ASim::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	TArray<AActor*> Actors;
+	// Find all AOrbits
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  Actors);
+
+	// Copy references into Orbits array
+	for (auto Actor : Actors)
+	{
+		if (!Actor) { continue; }
+		// Cast to AOrbit*
+		AOrbit* orbit = Cast<AOrbit, AActor>(Actor);
+
+		// Don't add element if already in array
+		if (!Orbits.Contains(orbit))
+		{
+			Orbits.Add(orbit); // Add to array
+		}
+	}
+
+	// Find all AAstroBodys
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAstroBody::StaticClass(),  Actors);
+	// Copy references into Bodies array
+	for (auto Actor : Actors)
+	{
+		if (!Actor) { continue; }
+		// Cast to AAstroBody*
+		AAstroBody* body = Cast<AAstroBody, AActor>(Actor);
+
+		// Don't add element if already in array
+		if (!Bodies.Contains(body))
+		{
+			Bodies.Add(body); // Add to array
 		}
 	}
 }
@@ -97,7 +137,8 @@ void ASim::Tick(float DeltaTime)
 		// Iterate through every orbit and update each
 		for (auto orbit : Orbits)
 		{
-			orbit->Update(FIXED_TIMESTEP);
+			if(!orbit) {continue;}
+			orbit->UpdateOrbit(FIXED_TIMESTEP);
 		}
 	}
 }

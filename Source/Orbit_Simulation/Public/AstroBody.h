@@ -25,6 +25,11 @@ public:
 	virtual void UpdateVelocity(const double DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
 	virtual void UpdatePosition(const double DeltaTime);
+	
+	UFUNCTION(BlueprintCallable, Category = "Arrow")
+	virtual void UpdateVelocityArrow();
+	UFUNCTION(BlueprintCallable, Category = "Arrow")
+	virtual void UpdateAccelerationArrow();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,8 +44,6 @@ public:
 
 	// Getters
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetInitialVelocity() const {return InitialVelocity;};
-	UFUNCTION(BlueprintCallable, Category = "Astro")
 	const FVector& GetVelocityVector() const {return VelocityVector;};
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMassOfBody() const {return mass;};
@@ -49,21 +52,36 @@ public:
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity;}
+	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity; this->OrbitalSpeed = Velocity.Length();}
 
 	
 protected:
 	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
 	double mass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double InitialVelocity; // Scalar
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Motion")
 	FVector VelocityVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	FVector Acceleration;
+	FVector AccelerationVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	double OrbitalSpeed; // Scalar
+	double OrbitalSpeed; // Scalar magnitude of Velocity Vector
+public:
+	[[nodiscard]] double GetOrbitalSpeed() const
+	{
+		return OrbitalSpeed;
+	}
+
+	[[nodiscard]] double GetAccelerationMagnitude() const
+	{
+		return AccelerationMagnitude;
+	}
+
+	[[nodiscard]] double GetOrbitalDistance1() const
+	{
+		return OrbitalDistance;
+	}
+
+protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double AccelerationMagnitude; // Scalar
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "AstroConstants.h"
 #include "Sim.generated.h"
 
 class AAstroBody;
@@ -21,6 +22,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:	
 	// Called every frame
@@ -43,8 +45,8 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 protected:
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<AOrbit*> Orbits; // Array of all the Orbits in the simulation
 
@@ -62,28 +64,4 @@ protected:
 	double Remainder;
 };
 
-// Constants
-#define AU = 1.495978707e11; // Astronomical Unit
 
-// Orbital Parameters of Planets in-editor units
-/*
- * Mercury:
-	- Distance: 698.1
- * Venus: 
- * Earth: 1495.978707
- * Mars: 2428.5
- * Jupiter: 
- * Saturn:
- * Uranus:
- * Neptune:
-
-*/
-
-// Semi-Major axes of planets in AU
-#define MARS_SMA = 1.52371034;
-#define MERCURY_SMA = 0.38709927;
-#define VENUS_SMA = 0.72333566;
-#define JUPITER_SMA = 5.20288700;
-#define SATURN_SMA = 9.53667594;
-#define URANUS_SMA = 19.18916464;
-#define NEPTUNE_SMA = 30.06992276;
