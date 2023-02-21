@@ -39,6 +39,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void InitializeOrbitingBody();
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void OrientOrbitingBodyTowardsCenter();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
@@ -63,13 +65,13 @@ public:
 	double Eccentricity;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
 	double SemimajorAxis;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
-	double Inclination = 0.0;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
+	double Inclination;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
 	double LongitudeOfAscendingNode;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
 	double ArgumentOfPeriapsis;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
 	double TrueAnomaly;
 
 	// Other Orbital Parameters
@@ -108,6 +110,9 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateOrbit();
+	
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void OrientOrbit();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void DrawTrajectory();

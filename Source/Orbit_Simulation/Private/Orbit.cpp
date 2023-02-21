@@ -31,16 +31,17 @@ void AOrbit::BeginPlay()
 	
 	// If either body is invalid, destroy Orbit and return
 	if (!CentralBody || !OrbitingBody) { Destroy(); }
-	else
+	/*else
 	{
-		InitializeOrbitingBody();
+		/*InitializeOrbitingBody();
 		UpdateOrbitalDistance();
-		PeriapsisVector = OrbitingBody->GetActorLocation();
-		CalculateOrbit();
+		CalculateOrbit();#1#
+
+		
 		//InitializeTrajectory();
 		//CalculateTrajectory();
 		//DrawTrajectory();
-	}
+	}*/
 
 }
 
@@ -93,17 +94,17 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 		InitialOrbitalSpeed = Neptune::MinOrbitalVelocity;
 	}*/
 	
-	// If either body is invalid, destroy Orbit and return
+	// If either body is invalid, return
 	if (!CentralBody || !OrbitingBody) { return; }
-	
+
+	OrientOrbit();
 	InitializeOrbitingBody();
 	UpdateOrbitalDistance();
 	//PeriapsisVector = OrbitingBody->GetActorLocation();
 	CalculateOrbit();
 	
-	//CalculateTrajectory();
 	DrawTrajectory();
-	
+
 }
 
 
@@ -146,18 +147,11 @@ void AOrbit::InitializeOrbitingBody()
 {
 	if (!CentralBody || ! OrbitingBody) {return;}
 
-	// Position body on X-axis
-	FVector StartPosition = CentralBody->GetActorLocation() + FVector(1.0, 0.0, 0.0) * PeriapsisRadius;
-	OrbitingBody->SetActorLocation(StartPosition);
-	PeriapsisVector = StartPosition;
+	// Position body at Periapsis
+	OrbitingBody->SetActorLocation(PeriapsisVector);
 	
-	// Get direction vector from Orbiting Body to Central Body
-	FVector Direction = (CentralBody->GetActorLocation() - OrbitingBody->GetActorLocation());
-	// Get Rotator from Direction
-	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-
-	// Set Rotation of Orbiting Body so that its Forward Vector is pointing at Central Body
-	OrbitingBody->SetActorRotation(Rotation);
+	// Orient Orbiting Body so its forward vector is pointing towards the Central Body
+	OrientOrbitingBodyTowardsCenter();
 	
 	// Scalar multiply Initial Orbital Speed with Orbiting Body's Right Vector so that Velocity is Orthogonal
 	// to the Direction Vector
@@ -167,6 +161,17 @@ void AOrbit::InitializeOrbitingBody()
 	// Initialize arrows
 	OrbitingBody->UpdateAccelerationArrow();
 	OrbitingBody->UpdateVelocityArrow();
+}
+
+void AOrbit::OrientOrbitingBodyTowardsCenter()
+{
+	// Get direction vector from Orbiting Body to Central Body
+	FVector Direction = (CentralBody->GetActorLocation() - OrbitingBody->GetActorLocation());
+	// Get Rotator from Direction
+	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+
+	// Set Rotation of Orbiting Body so that its Forward Vector is pointing at Central Body
+	OrbitingBody->SetActorRotation(Rotation);
 }
 
 
@@ -180,9 +185,22 @@ void AOrbit::CalculateOrbit()
 	CalculateLinearEccentricity(); // Also eccentricity, semi-latus rectum, and semi-minor axis.
 	//CalculateEccentricityFromApsides();
 	CalculatePeriodFromSemiMajorAxis();
-
-	DrawTrajectory();
 	
+}
+
+void AOrbit::OrientOrbit()
+{
+	// Get Forward Vector of Central Body (X-Axis)
+	FVector ReferenceAxis = CentralBody->GetActorForwardVector(); 
+	// Rotate Vector by the Argument of Periapsis around the Z-Axis
+	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(-ArgumentOfPeriapsis, FVector::ZAxisVector);
+	// Set Position Vector of Periapsis
+	PeriapsisVector = RotatedVector * PeriapsisRadius;
+
+	// Rotate Trajectory
+	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
+	Trajectory->SetActorRotation(Rotation);
+
 }
 
 void AOrbit::DrawTrajectory()

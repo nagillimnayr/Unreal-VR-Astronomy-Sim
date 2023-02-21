@@ -58,10 +58,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int Years = 0;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int TimeScale;
 
 	double Remainder;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int TimeScale;
 };
 
 

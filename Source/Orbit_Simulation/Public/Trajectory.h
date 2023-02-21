@@ -21,12 +21,12 @@ public:
 	ATrajectory();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	
-	UFUNCTION(BlueprintCallable, Category = "Spline")
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetSemimajorAxis(const double a) {
 		SemimajorAxis = a; 
-		SemimajorAxisArrow->ArrowLength = SemiminorAxis;
+		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 	}
-	UFUNCTION(BlueprintCallable, Category = "Spline")
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetSemiminorAxis(const double b) {
 		SemiminorAxis = b; 
 		SemiminorAxisArrow->ArrowLength = SemiminorAxis;

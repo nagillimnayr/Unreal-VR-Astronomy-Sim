@@ -23,8 +23,8 @@ const double ASim::FIXED_TIMESTEP = 1.0 / STEPS_PER_SECOND; // 1/60th of a secon
 // Sets default values
 ASim::ASim() :
 Timer(0.0),
-TimeScale(1),
-Remainder(0.0)
+Remainder(0.0),
+TimeScale(1)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -46,9 +46,12 @@ void ASim::BeginPlay()
 	Super::BeginPlay();
 	// GetWorldSettings()->SetTimeDilation(TimeScale);
 	
-	/*TArray<AActor*> Actors;
+	Timer = 0.0; // Reset Timer
+	
+	TArray<AActor*> Actors;
+	// Find all AOrbits
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  Actors);
-
+	
 	// Copy references into Orbits array
 	for (auto Actor : Actors)
 	{
@@ -61,13 +64,30 @@ void ASim::BeginPlay()
 		{
 			Orbits.Add(orbit); // Add to array
 		}
-	}*/
+	}
+
+	// Find all AAstroBodys
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAstroBody::StaticClass(),  Actors);
+	// Copy references into Bodies array
+	for (auto Actor : Actors)
+	{
+		if (!Actor) { continue; }
+		// Cast to AAstroBody*
+		AAstroBody* body = Cast<AAstroBody, AActor>(Actor);
+
+		// Don't add element if already in array
+		if (!Bodies.Contains(body))
+		{
+			Bodies.Add(body); // Add to array
+		}
+	}
 }
 
 void ASim::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	
+	/*
 	TArray<AActor*> Actors;
 	// Find all AOrbits
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  Actors);
@@ -100,7 +120,7 @@ void ASim::OnConstruction(const FTransform& Transform)
 		{
 			Bodies.Add(body); // Add to array
 		}
-	}
+	}*/
 }
 
 // Called every frame
@@ -118,9 +138,9 @@ void ASim::Tick(float DeltaTime)
 	}*/
 	if(Days >= 365.25)
 	{
-		//UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause Game after one year
 		Days -= 365.25;
 		Years++;
+		//UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause Game after one year
 	}
 	
 	// Because increasing the Time Dilation just multiplies DeltaTime, which increase the Time Step and

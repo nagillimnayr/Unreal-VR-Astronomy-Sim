@@ -14,9 +14,11 @@ SemiminorAxis(1000.0)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create Scene Root Component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
-	
+
+	// Create Spline Component
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	if (SplineComponent)
 	{
@@ -55,6 +57,7 @@ SemiminorAxis(1000.0)
 		SemimajorAxisArrow->ArrowSize = 1.0;
 		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 		SemimajorAxisArrow->bUseInEditorScaling = false;
+		SemimajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	}
 	SemiminorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-minor Axis"));
 	if (SemiminorAxisArrow)
@@ -67,6 +70,7 @@ SemiminorAxis(1000.0)
 		SemiminorAxisArrow->bUseInEditorScaling = false;
 		FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
 		SemiminorAxisArrow->SetRelativeRotation(Rotation);
+		SemiminorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	}
 	
 	SplineComponent->ClearSplinePoints();
@@ -81,12 +85,17 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 	//SplineComponent->ClearSplinePoints();
 	InitializeSpline();
 	InitializeSplineMesh();
+	
+	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
+	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
 }
 
 void ATrajectory::Update()
 {
 	DrawEllipse();
 	UpdateSplineMesh();
+	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
+	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
 }
 
 // Called when the game starts or when spawned
@@ -160,9 +169,11 @@ void ATrajectory::InitializeSplineMesh()
 		SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
 		SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
+		// Start Point
 		const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineSegment, ESplineCoordinateSpace::Local);
 		const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineSegment, ESplineCoordinateSpace::Local);
-		
+
+		// End Point
 		const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(SplineSegment + 1, ESplineCoordinateSpace::Local);
 		const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(SplineSegment + 1, ESplineCoordinateSpace::Local);
 
