@@ -81,6 +81,16 @@ void ASim::BeginPlay()
 			Bodies.Add(body); // Add to array
 		}
 	}
+
+	// Sort based on distance from origin
+	Bodies.Sort([](const AAstroBody& Body1, const AAstroBody& Body2)
+	{
+		return Body1.GetActorLocation().Length() < Body2.GetActorLocation().Length();
+	});
+	Orbits.Sort([](const AOrbit& Orbit1, const AOrbit& Orbit2)
+	{
+		return Orbit1.OrbitingBody->GetActorLocation().Length() < Orbit2.OrbitingBody->GetActorLocation().Length();
+	});
 }
 
 void ASim::OnConstruction(const FTransform& Transform)
@@ -129,7 +139,8 @@ void ASim::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	//Timer += FIXED_TIMESTEP * TimeScale;
-	Timer += DeltaTime * TimeScale; // Update timer
+	//Timer += DeltaTime * TimeScale; // Update timer
+	Timer += DeltaTime; // Update timer
 
 	Days += DeltaTime * TimeScale;
 	/*if(Timer >= 365.25)

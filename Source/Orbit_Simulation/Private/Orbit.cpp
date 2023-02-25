@@ -105,6 +105,14 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	
 	DrawTrajectory();
 
+	
+	// Orient Orbiting Body so its forward vector is pointing towards the Central Body
+	OrientOrbitingBodyTowardsCenter();
+	
+	// Scalar multiply Initial Orbital Speed with Orbiting Body's Right Vector so that Velocity is Orthogonal
+	// to the Direction Vector
+	FVector Velocity = OrbitingBody->GetActorRightVector() * InitialOrbitalSpeed * ASim::KM_TO_M;
+	OrbitingBody->InitializeVelocity(Velocity); // Set Orbiting Body's Velocity
 }
 
 
@@ -147,6 +155,9 @@ void AOrbit::InitializeOrbitingBody()
 {
 	if (!CentralBody || ! OrbitingBody) {return;}
 
+	// Set Orbiting Body's reference to Orbit
+	OrbitingBody->Orbit = this;
+
 	// Position body at Periapsis
 	OrbitingBody->SetActorLocation(PeriapsisVector);
 	
@@ -184,7 +195,7 @@ void AOrbit::CalculateOrbit()
 	CalculateApoapsisRadius(); // Also elliptical center and Apoapsis Vector
 	CalculateLinearEccentricity(); // Also eccentricity, semi-latus rectum, and semi-minor axis.
 	//CalculateEccentricityFromApsides();
-	CalculatePeriodFromSemiMajorAxis();
+	//CalculatePeriodFromSemiMajorAxis();
 	
 }
 
@@ -197,9 +208,9 @@ void AOrbit::OrientOrbit()
 	// Set Position Vector of Periapsis
 	PeriapsisVector = RotatedVector * PeriapsisRadius;
 
-	// Rotate Trajectory
+	/*// Rotate Trajectory
 	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
-	Trajectory->SetActorRotation(Rotation);
+	Trajectory->SetActorRotation(Rotation);*/
 
 }
 
@@ -229,7 +240,9 @@ void AOrbit::DrawTrajectory()
 	Trajectory->SetSemiminorAxis(SemiminorAxis);
 	
 	Trajectory->Update();
-	
+	// Rotate Trajectory
+	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
+	Trajectory->SetActorRotation(Rotation);
 }
 
 /*void AOrbit::CalculateTrajectory()

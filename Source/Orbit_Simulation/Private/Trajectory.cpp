@@ -9,7 +9,8 @@ ATrajectory::ATrajectory() :
 ForwardAxis(ESplineMeshAxis::Z),
 NumberOfPoints(32),
 SemimajorAxis(1000.0),
-SemiminorAxis(1000.0)
+SemiminorAxis(1000.0),
+MeshScale(FVector2D(0.05, 0.05))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -58,6 +59,8 @@ SemiminorAxis(1000.0)
 		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 		SemimajorAxisArrow->bUseInEditorScaling = false;
 		SemimajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+		SemimajorAxisArrow->SetVisibility(false);
+		SemimajorAxisArrow->SetHiddenInGame(true);
 	}
 	SemiminorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-minor Axis"));
 	if (SemiminorAxisArrow)
@@ -71,6 +74,8 @@ SemiminorAxis(1000.0)
 		FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
 		SemiminorAxisArrow->SetRelativeRotation(Rotation);
 		SemiminorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+		SemiminorAxisArrow->SetVisibility(false);
+		SemiminorAxisArrow->SetHiddenInGame(true);
 	}
 	
 	SplineComponent->ClearSplinePoints();
@@ -81,18 +86,18 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	ForwardAxis = ESplineMeshAxis::Z;
-	SetActorScale3D(FVector(0.05, 0.05, 0.05));
+	SetActorScale3D(FVector(1.0, 1.0, 1.0));
 	//SplineComponent->ClearSplinePoints();
 	InitializeSpline();
 	InitializeSplineMesh();
-	
+	Update();
 	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
 }
 
 void ATrajectory::Update()
 {
-	DrawEllipse();
+	UpdateEllipse();
 	UpdateSplineMesh();
 	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
@@ -123,17 +128,17 @@ void ATrajectory::InitializeSpline()
 	// Parametric equation of an ellipse
 	for (int i = 0; i < NumberOfPoints; i++)
 	{
-		double X = Center.X + SemimajorAxis * cos(i * angle);
-		double Y = Center.Y + SemiminorAxis * sin(i * angle);
+		double X = SemimajorAxis * cos(i * angle);
+		double Y = SemiminorAxis * sin(i * angle);
 		FVector Position = FVector(X, Y, Center.Z);
-		SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::World, false);
+		SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::Local, false);
 	}
 	
 	SplineComponent->SetClosedLoop(isClosedLoop);
 	SplineComponent->UpdateSpline(); // Update Spline
 }
 
-void ATrajectory::DrawEllipse()
+void ATrajectory::UpdateEllipse()
 {
 	FVector Center = GetActorLocation();
 	double angle = 2 * PI / NumberOfPoints;
@@ -141,10 +146,10 @@ void ATrajectory::DrawEllipse()
 	// Parametric equation of an ellipse
 	for (int i = 0; i < NumberOfPoints; i++)
 	{
-		double X = Center.X + SemimajorAxis * cos(i * angle);
-		double Y = Center.Y + SemiminorAxis * sin(i * angle);
+		double X = SemimajorAxis * cos(i * angle);
+		double Y = SemiminorAxis * sin(i * angle);
 		FVector Position = FVector(X, Y, Center.Z);
-		SplineComponent->SetLocationAtSplinePoint(i, Position, ESplineCoordinateSpace::World, false);
+		SplineComponent->SetLocationAtSplinePoint(i, Position, ESplineCoordinateSpace::Local, false);
 	}
 	
 	SplineComponent->SetClosedLoop(isClosedLoop);
@@ -178,6 +183,8 @@ void ATrajectory::InitializeSplineMesh()
 		const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(SplineSegment + 1, ESplineCoordinateSpace::Local);
 
 		SplineMeshComponent->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
+		SplineMeshComponent->SetStartScale(MeshScale);
+		SplineMeshComponent->SetEndScale(MeshScale);
 
 		SplineMeshComponent->SetForwardAxis(ForwardAxis);
 		if (SplineSegment % 2 == 0)
@@ -211,6 +218,8 @@ void ATrajectory::UpdateSplineMesh()
 		const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(index + 1, ESplineCoordinateSpace::Local);
 
 		SplineMeshes[index]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
+		SplineMeshes[index]->SetStartScale(MeshScale);
+		SplineMeshes[index]->SetEndScale(MeshScale);
 	}
 }
 

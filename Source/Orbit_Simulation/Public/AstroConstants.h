@@ -129,7 +129,7 @@ namespace Jupiter
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = ; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 14.75385; // Degrees*/
 }
 
 namespace Saturn
@@ -152,7 +152,7 @@ namespace Saturn
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = ; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 92.43194; // Degrees*/
 }
 
 namespace Uranus
@@ -175,7 +175,7 @@ namespace Uranus
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = ; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 170.96424; // Degrees*/
 }
 
 namespace Neptune
@@ -198,7 +198,7 @@ namespace Neptune
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = ; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 44.97135; // Degrees*/
 }
 
 namespace Pluto

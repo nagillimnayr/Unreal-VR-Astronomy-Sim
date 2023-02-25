@@ -6,12 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "AstroBody.generated.h"
 
+class AOrbit;
 class UNiagaraSystem;
 class UNiagaraComponent;
 class UArrowComponent;
 
 UCLASS()
-class ORBIT_SIMULATION_API AAstroBody : public AActor
+class ORBIT_SIMULATION_API AAstroBody : public APawn
 {
 	GENERATED_BODY()
 	
@@ -47,8 +48,8 @@ public:
 	const FVector& GetVelocityVector() const {return VelocityVector;};
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMassOfBody() const {return mass;};
-	UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetOrbitalDistance() const {return OrbitalDistance;};
+	/*UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetOrbitalDistance() const {return OrbitalDistance;};*/
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Astro")
@@ -66,7 +67,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalSpeed; // Scalar magnitude of Velocity Vector
 public:
-	[[nodiscard]] double GetOrbitalSpeed() const
+	/*[[nodiscard]] double GetOrbitalSpeed() const
 	{
 		return OrbitalSpeed;
 	}
@@ -76,10 +77,10 @@ public:
 		return AccelerationMagnitude;
 	}
 
-	[[nodiscard]] double GetOrbitalDistance1() const
+	[[nodiscard]] double GetOrbitalDistance() const
 	{
 		return OrbitalDistance;
-	}
+	}*/
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
@@ -113,5 +114,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* TrailComponent;
 
-
+	// Reference to Orbit
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	AOrbit* Orbit;
 };

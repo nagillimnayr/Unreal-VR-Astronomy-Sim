@@ -9,11 +9,12 @@
 
 // Sets default values
 AAstroBody::AAstroBody() :
-	mass(0.0),
-	VelocityVector(FVector::ZeroVector),
-	AccelerationVector(FVector::ZeroVector),
-	Radius(1.0),
-	SiderealRotation(0.0)
+mass(0.0),
+VelocityVector(FVector::ZeroVector),
+AccelerationVector(FVector::ZeroVector),
+Radius(1.0),
+SiderealRotation(0.0),
+Orbit(nullptr)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;

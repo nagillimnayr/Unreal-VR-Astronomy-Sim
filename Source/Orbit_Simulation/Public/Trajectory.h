@@ -49,7 +49,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void UpdateSplineMesh();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void DrawEllipse();
+	void UpdateEllipse();
 public:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spline")
@@ -87,5 +87,8 @@ public:
 	UArrowComponent* SemimajorAxisArrow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	UArrowComponent* SemiminorAxisArrow;
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	FVector2D MeshScale;
 };

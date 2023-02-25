@@ -54,12 +54,12 @@ SplineMeshCount(0)
 		Mesh = CylinderMeshAsset.Object;
 	}
 	
-	// Initialize Material
+	/*// Initialize Material
 	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat(TEXT("/Engine/VREditor/UI/KeyDiskMaterial.KeyDiskMaterial"));
 	if (Mat.Succeeded())
 	{
 		DefaultMaterial = Mat.Object;
-	}
+	}*/
 	
 	SplineComponent->ClearSplinePoints();
 	SplineMeshes.Empty();
