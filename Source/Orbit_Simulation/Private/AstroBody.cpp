@@ -6,14 +6,15 @@
 #include "Components/ArrowComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/SpotLightComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
 mass(0.0),
 VelocityVector(FVector::ZeroVector),
 AccelerationVector(FVector::ZeroVector),
-Radius(1.0),
-SiderealRotation(0.0),
+Size(1.0),
 Orbit(nullptr)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -63,6 +64,12 @@ Orbit(nullptr)
 		VelocityArrow->bUseInEditorScaling = false;
 	}
 
+	// Initialize SpotLight
+	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
+	SpotLightBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpotLightBoom"));
+	SpotLightBoom->SetupAttachment(RootComponent); // Attach boom to root
+	SpotLight->SetupAttachment(SpotLightBoom); // Attach SpotLight to boom
+	
 }
 
 // Called when the game starts or when spawned
@@ -93,7 +100,7 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SetActorScale3D(FVector(1.0, 1.0, 1.0));
-	StaticSphereMesh->SetWorldScale3D(FVector(Radius, Radius, Radius)); // Set size of Sphere
+	StaticSphereMesh->SetWorldScale3D(FVector(Size, Size, Size)); // Set size of Sphere
 	
 	
 	/*AccelerationArrow->AttachToComponent(SceneRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -105,6 +112,22 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	VelocityArrow->ArrowLength = 75 + (25 * Radius);*/
 	
 	StaticSphereMesh->CastShadow = false; // Disable shadows
+
+	// Set the Attenuation Radius of the SpotLight to be relative to the boom's arm length and the body's size
+	SpotLightBoom->TargetArmLength = 300 * Size;
+	double SpotlightRadius = SpotLightBoom->TargetArmLength + (50.0 * Size);
+	SpotLight->SetAttenuationRadius(SpotlightRadius);
+	SpotLight->SetOuterConeAngle(15.0);
+}
+
+void AAstroBody::UpdateSpotLight(AActor* Source)
+{
+	FVector Direction = GetActorLocation() - Source->GetActorLocation(); // Get Direction Vector to Target
+	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator(); // Get Rotator from Direction Vector
+	SpotLightBoom->SetWorldRotation(Rotation); // Set new rotation
+
+	// Aim SpotLight
+	//UpdateSpotLight();
 }
 
 void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
@@ -122,8 +145,6 @@ void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 	AccelerationVector = Direction * Force;
 
 	AccelerationMagnitude = Force;
-	OrbitalDistance = Difference.Length(); // Get distance between Bodies
-	
 	
 	UpdateAccelerationArrow();
 	//AccelerationArrow->ArrowLength = FMath::Max(0.1, AccelerationMagnitude);
@@ -171,11 +192,6 @@ void AAstroBody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Sidereal rotation
-	FRotator NewRotation = GetActorRotation();
-	double DeltaRotation = SiderealRotation * 360.0 * DeltaTime;
-	NewRotation.Add(0.0, DeltaRotation, 0.0);
-	StaticSphereMesh-> SetRelativeRotation(NewRotation);
 }
 
 void AAstroBody::PostInitProperties()

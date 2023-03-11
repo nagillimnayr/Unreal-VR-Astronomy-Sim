@@ -9,6 +9,7 @@
 
 class AAstroBody;
 class AOrbit;
+class ARetrogradePath;
 
 UCLASS()
 class ORBIT_SIMULATION_API ASim : public AActor
@@ -40,16 +41,28 @@ public:
 
 	// Fixed Time Step
 	static const double FIXED_TIMESTEP;
-
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	void AddRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Push(Path); }
+	void RemoveRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Remove(Path); }
 	
 protected:
+	// References to other Actors
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<AOrbit*> Orbits; // Array of all the Orbits in the simulation
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TArray<ARetrogradePath*> RetrogradePaths; // Array of all the Orbits in the simulation
+	
+
+public:
+	// Time
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int TimeScale;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	double Timer;
 	
@@ -58,12 +71,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int Years = 0;
 	
-
 	double Remainder;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int TimeScale;
 };
 
 

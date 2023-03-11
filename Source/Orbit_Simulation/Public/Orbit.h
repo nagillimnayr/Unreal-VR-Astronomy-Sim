@@ -33,7 +33,7 @@ public:
 	virtual void PostInitProperties() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	void UpdateOrbit(float DeltaTime);
+	void UpdateOrbitingBody(float DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitalDistance();
 
@@ -112,7 +112,7 @@ protected:
 	void CalculateOrbit();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void OrientOrbit();
+	void RotateOrbit();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void DrawTrajectory();

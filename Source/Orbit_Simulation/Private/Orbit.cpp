@@ -31,6 +31,7 @@ void AOrbit::BeginPlay()
 	
 	// If either body is invalid, destroy Orbit and return
 	if (!CentralBody || !OrbitingBody) { Destroy(); }
+	
 	/*else
 	{
 		/*InitializeOrbitingBody();
@@ -43,69 +44,24 @@ void AOrbit::BeginPlay()
 		//DrawTrajectory();
 	}*/
 
+	
+	CalculatePeriodFromSemiMajorAxis();
 }
 
 void AOrbit::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	
-
-	/*if(Tags[0].Compare(FName(TEXT("Mercury"))))
-	{
-		PeriapsisRadius = Mercury::PeriapsisRadius;
-		InitialOrbitalSpeed = Mercury::MaxOrbitalVelocity;
-		
-	}
-	else if(Tags[0].Compare(FName(TEXT("Venus"))))
-	{
-		PeriapsisRadius = Venus::PeriapsisRadius;
-		InitialOrbitalSpeed = Venus::MaxOrbitalVelocity;
-	}
-	else if(Tags[0].Compare(FName(TEXT("Earth"))))
-	{
-		PeriapsisRadius = 1470.95;
-		InitialOrbitalSpeed = 30.29;
-	}
-	else if(Tags[0].Compare(FName(TEXT("Mars"))))
-	{
-		PeriapsisRadius = 2066.50;
-		InitialOrbitalSpeed = 26.50;
-	}*/
-	
-	
-	/*else if(Tags[0].Compare(FName(TEXT("Saturn"))))
-	{
-		PeriapsisRadius = Saturn::PeriapsisRadius;
-		InitialOrbitalSpeed = Saturn::MinOrbitalVelocity;
-	}
-	else if(Tags[0].Compare(FName(TEXT("Jupiter"))))
-	{
-		PeriapsisRadius = Jupiter::PeriapsisRadius;
-		InitialOrbitalSpeed = Jupiter::MinOrbitalVelocity;
-	}
-	else if(Tags[0].Compare(FName(TEXT("Uranus"))))
-	{
-		PeriapsisRadius = Uranus::PeriapsisRadius;
-		InitialOrbitalSpeed = Uranus::MinOrbitalVelocity;
-	}
-	else if(Tags[0].Compare(FName(TEXT("Neptune"))))
-	{
-		PeriapsisRadius = Neptune::PeriapsisRadius;
-		InitialOrbitalSpeed = Neptune::MinOrbitalVelocity;
-	}*/
-	
 	// If either body is invalid, return
 	if (!CentralBody || !OrbitingBody) { return; }
 
-	OrientOrbit();
+	RotateOrbit();
 	InitializeOrbitingBody();
 	UpdateOrbitalDistance();
-	//PeriapsisVector = OrbitingBody->GetActorLocation();
 	CalculateOrbit();
 	
 	DrawTrajectory();
 
-	
 	// Orient Orbiting Body so its forward vector is pointing towards the Central Body
 	OrientOrbitingBodyTowardsCenter();
 	
@@ -113,10 +69,12 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	// to the Direction Vector
 	FVector Velocity = OrbitingBody->GetActorRightVector() * InitialOrbitalSpeed * ASim::KM_TO_M;
 	OrbitingBody->InitializeVelocity(Velocity); // Set Orbiting Body's Velocity
+
+	OrbitingBody->UpdateSpotLight(CentralBody);
 }
 
 
-void AOrbit::UpdateOrbit(const float DeltaTime)
+void AOrbit::UpdateOrbitingBody(const float DeltaTime)
 {
 	OrbitingBody->CalculateAcceleration(CentralBody);
 	OrbitingBody->UpdateVelocity(DeltaTime);
@@ -142,6 +100,10 @@ void AOrbit::Tick(float DeltaTime)
 	// results in a less accurate simulation, we can instead call the update function multiple times per tick
 	// to emulate Unity's FixedUpdate();
 	//Update(DeltaTime);
+
+
+	// Update SpotLight
+	OrbitingBody->UpdateSpotLight(CentralBody);
 }
 
 
@@ -195,11 +157,11 @@ void AOrbit::CalculateOrbit()
 	CalculateApoapsisRadius(); // Also elliptical center and Apoapsis Vector
 	CalculateLinearEccentricity(); // Also eccentricity, semi-latus rectum, and semi-minor axis.
 	//CalculateEccentricityFromApsides();
-	//CalculatePeriodFromSemiMajorAxis();
+	CalculatePeriodFromSemiMajorAxis();
 	
 }
 
-void AOrbit::OrientOrbit()
+void AOrbit::RotateOrbit()
 {
 	// Get Forward Vector of Central Body (X-Axis)
 	FVector ReferenceAxis = CentralBody->GetActorForwardVector(); 
@@ -228,17 +190,13 @@ void AOrbit::DrawTrajectory()
 	{
 		Trajectory->SetClosedLoop(true);
 	}
-	/*if (FMath::Abs(Eccentricity) < DBL_EPSILON)
-	{
-		// if Eccentricity is 0, Orbit is circular.
-		Trajectory->SetSemiMajorAxis(SemiMajorAxis);
-		Trajectory->SetSemiMinorAxis(SemiMajorAxis);
-	}*/
 
+	// Set parameters of Trajectory object
 	Trajectory->SetActorLocation(EllipticalCenter);
 	Trajectory->SetSemimajorAxis(SemimajorAxis);
 	Trajectory->SetSemiminorAxis(SemiminorAxis);
-	
+
+	// Update Trajectory
 	Trajectory->Update();
 	// Rotate Trajectory
 	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
@@ -443,8 +401,19 @@ void AOrbit::CalculateApoapsisRadius()
 
 void AOrbit::CalculatePeriodFromSemiMajorAxis()
 {
-	OrbitalPeriod = 2.0L * Sim::Pi * FMath::Sqrt(FMath::Pow(SemimajorAxis * ASim::DISTANCE_MULTIPLIER, 3.0) / ASim::GRAVITATIONAL_CONSTANT * (CentralBody->GetMassOfBody() * ASim::SOLAR_MASS));
-	OrbitalPeriod /= ASim::SECONDS_IN_DAY;
+	/*OrbitalPeriod = 2.0L * Sim::Pi * FMath::Sqrt(FMath::Pow(SemimajorAxis /** ASim::DISTANCE_MULTIPLIER#1#, 3.0) /
+		ASim::GRAVITATIONAL_CONSTANT * (CentralBody->GetMassOfBody()/* * ASim::SOLAR_MASS#1#));*/
+
+	// To simplify the equation, we can factor out the powers of 10
+	//const double G = ASim::GRAVITATIONAL_CONSTANT / 1e-11;
+	//const double SM = ASim::GRAVITATIONAL_CONSTANT / 1e30;
+
+	// 10^-11 * 10^30 = 10^19
+	// (10^8)^3 = 10^24
+	// 10^24 / 10^19 = 10^5
+	
+	OrbitalPeriod = 2.0 * Sim::Pi * FMath::Pow(SemimajorAxis, 1.5) * FMath::Sqrt( 1e5 / (Sim::G * CentralBody->GetMassOfBody() * Sim::SM)) / Sim::SECONDS_IN_DAY;
+	
 }
 
 void AOrbit::CalculateSemiMajorAxisFromPeriod(const double Period)

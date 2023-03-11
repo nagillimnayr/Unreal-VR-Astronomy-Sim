@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AstroBody.h"
 #include "Orbit.h"
+#include "RetrogradePath.h"
 
 // Initialize static constants
 const double ASim::GRAVITATIONAL_CONSTANT = 6.674e-11; // m^3/kg/s^2
@@ -22,20 +23,12 @@ const double ASim::FIXED_TIMESTEP = 1.0 / STEPS_PER_SECOND; // 1/60th of a secon
 
 // Sets default values
 ASim::ASim() :
+TimeScale(1),
 Timer(0.0),
-Remainder(0.0),
-TimeScale(1)
+Remainder(0.0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	/*TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  Actors);
-
-	for (auto Actor : Actors) // Copy references into Orbits array
-	{
-		Orbits.Add(Cast<AOrbit>(Actor)); // Cast to AOrbit*
-	}*/
 
 	
 }
@@ -169,7 +162,7 @@ void ASim::Tick(float DeltaTime)
 		for (auto orbit : Orbits)
 		{
 			if(!orbit) {continue;}
-			orbit->UpdateOrbit(FIXED_TIMESTEP);
+			orbit->UpdateOrbitingBody(FIXED_TIMESTEP);
 		}
 	}
 }

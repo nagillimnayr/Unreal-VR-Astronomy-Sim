@@ -14,6 +14,7 @@ ReferenceBody(nullptr),
 OtherBody(nullptr),
 Duration(3650.0),
 Interval(5),
+MeshScale(0.2, 0.2),
 ForwardAxis(ESplineMeshAxis::Z),
 SplinePointCount(0),
 SplineMeshCount(0)
@@ -69,18 +70,24 @@ void ARetrogradePath::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	//ForwardAxis = ESplineMeshAxis::Z;
-	double size = 0.2;
-	SetActorScale3D(FVector(size, size, size));
+	// Add self to Sim's array
+	Sim->AddRetrogradePath(this);
+
+	SetActorScale3D(FVector(1.0, 1.0, 1.0));
 
 	if(!ReferenceBody) return;
 
 	// Attach to Reference Body
 	SetActorLocation(ReferenceBody->GetActorLocation());
 	AttachToActor(ReferenceBody, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
 	
 	SplineComponent->SetClosedLoop(false);
+}
+
+void ARetrogradePath::Destroyed()
+{
+	Super::Destroyed();
+	Sim->RemoveRetrogradePath(this);
 }
 
 // Called when the game starts or when spawned
@@ -106,7 +113,7 @@ void ARetrogradePath::InitializeFirstPoints()
 	AddNewPoint();
 	AddNewPoint();
 	AddSplineMesh();
-	UpdateMesh();
+	//UpdateMesh();
 	
 }
 
@@ -125,14 +132,20 @@ void ARetrogradePath::AddSplineMesh()
 	if (DefaultMaterial) SplineMeshComponent->SetMaterial(0, DefaultMaterial); // Set material
 
 	SplineMeshComponent->SetCastShadow(false); // Disable Shadows
-	SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision); // Disable collision
 	SplineMeshComponent->SetVisibility(true);
 	SplineMeshComponent->SetHiddenInGame(false);
 
 	SplineMeshes.Add(SplineMeshComponent); // Add Spline Mesh to Array
+	
+	SplineMeshComponent->SetStartScale(MeshScale);
+	SplineMeshComponent->SetEndScale(MeshScale);
 
 	// Update counter
 	SplineMeshCount = SplineMeshes.Num();
+
+	// Update mesh
+	UpdateLastMesh();
 }
 
 void ARetrogradePath::UpdateMesh()
@@ -152,6 +165,8 @@ void ARetrogradePath::UpdateMesh()
 
 		// Update Spline Mesh
 		SplineMeshes.Last()->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
+		SplineMeshes.Last()->SetStartScale(MeshScale);
+		SplineMeshes.Last()->SetEndScale(MeshScale);
 	}
 }
 
@@ -182,7 +197,7 @@ void ARetrogradePath::Tick(float DeltaTime)
 		TimeSinceLastUpdate = 0.0;
 	}
 	
-	UpdateMesh();
+	//UpdateMesh();
 }
 
 void ARetrogradePath::UpdateLastPoint()
@@ -199,6 +214,22 @@ void ARetrogradePath::UpdateLastPoint()
 	// Update position of last Spline Point
 	SplineComponent->SetLocationAtSplinePoint(index, Position, ESplineCoordinateSpace::World);
 
+	// Update position of last Spline Mesh
+	UpdateLastMesh();
+}
+
+void ARetrogradePath::UpdateLastMesh()
+{
+	if(SplineMeshes.Num() == 0) return;
+	// Get index of last Spline Point
+	int index = SplineComponent->GetNumberOfSplinePoints() - 1;
+	
+	// Update position of last Spline Mesh
+	FVector StartPos = SplineComponent->GetLocationAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
+	FVector EndPos = SplineComponent->GetLocationAtSplinePoint(index, ESplineCoordinateSpace::Local);
+	FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
+	FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(index, ESplineCoordinateSpace::Local);
+	SplineMeshes.Last()->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
 }
 
 void ARetrogradePath::AddNewPoint()

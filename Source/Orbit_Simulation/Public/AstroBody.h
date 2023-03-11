@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "AstroBody.generated.h"
 
+class USpringArmComponent;
+class USpotLightComponent;
 class AOrbit;
 class UNiagaraSystem;
 class UNiagaraComponent;
@@ -37,6 +39,9 @@ protected:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+public:
+	void UpdateSpotLight(AActor* Source);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -44,15 +49,13 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// Getters
-	UFUNCTION(BlueprintCallable, Category = "Astro")
+	UFUNCTION(BlueprintCallable, Category = "Motion")
 	const FVector& GetVelocityVector() const {return VelocityVector;};
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMassOfBody() const {return mass;};
-	/*UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetOrbitalDistance() const {return OrbitalDistance;};*/
 	
 	// Setters
-	UFUNCTION(BlueprintCallable, Category = "Astro")
+	UFUNCTION(BlueprintCallable, Category = "Motion")
 	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity; this->OrbitalSpeed = Velocity.Length();}
 
 	
@@ -66,34 +69,12 @@ protected:
 	FVector AccelerationVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalSpeed; // Scalar magnitude of Velocity Vector
-public:
-	/*[[nodiscard]] double GetOrbitalSpeed() const
-	{
-		return OrbitalSpeed;
-	}
 
-	[[nodiscard]] double GetAccelerationMagnitude() const
-	{
-		return AccelerationMagnitude;
-	}
-
-	[[nodiscard]] double GetOrbitalDistance() const
-	{
-		return OrbitalDistance;
-	}*/
-
-protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double AccelerationMagnitude; // Scalar
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	double OrbitalDistance; // Scalar
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double Radius;
-	
-	// Sidereal rotation
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double SiderealRotation; // Value of 1 = one full 360 degree revolution each day. (i.e. Earth's sidereal rotation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double Size;
 
 public:
 	// Components
@@ -101,6 +82,11 @@ public:
 	USceneComponent* SceneRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* StaticSphereMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpotLightComponent> SpotLight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> SpotLightBoom;
 	
 	// Arrows
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

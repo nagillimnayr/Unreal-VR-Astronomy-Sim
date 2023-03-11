@@ -22,6 +22,8 @@ public:
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void Destroyed() override;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -33,7 +35,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
 	void UpdateLastPoint();
+	UFUNCTION(BlueprintCallable)
+	void UpdateLastMesh();
+	UFUNCTION(BlueprintCallable)
 	void AddNewPoint();
 
 protected:
@@ -65,6 +72,8 @@ protected:
 	UStaticMesh* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spline") // This should probably be a Queue
 	TArray<USplineMeshComponent*> SplineMeshes; // Array of Spline Meshes
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	FVector2D MeshScale;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;

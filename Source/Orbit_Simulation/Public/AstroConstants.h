@@ -4,9 +4,18 @@ namespace Sim
 {
 	constexpr double Pi = 3.1415926535897932;
 	constexpr double  AU = 1.495978707e11; // Astronomical Unit
-	constexpr double GRAVITATIONAL_CONSTANT = 6.674e-11; // m^3/kg/s^2
+	
+	constexpr double GRAVITATIONAL_CONSTANT = 6.6743e-11; // m^3/kg/s^2
+	constexpr double SOLAR_MASS = 1.989e30; // Mass of the sun in kg
+	constexpr double G = 6.6743;
+	constexpr double SM = 1.989;
+
 	constexpr double MASS_MULT = 1e24;
 	constexpr double DISTANCE_MULT = 1e8;
+	// Unit Conversion Multipliers
+	constexpr double SECONDS_IN_DAY = 86400.0; // 1 second in simulation = 1 day
+	constexpr double KM_TO_M = 1000.0;
+	
 }
 
 // Astronomical Bodies
@@ -24,7 +33,7 @@ namespace Mercury
 	constexpr double Radius = 2439.7; // km
 	constexpr double GM = 0.022032; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = 579.09; // x10^5 km / 10^8 m
+	constexpr double SemimajorAxis = 579.09; // x10^5 km , 10^8 m
 	
 	constexpr double PeriapsisRadius = 460.0; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 58.98; // km/s
