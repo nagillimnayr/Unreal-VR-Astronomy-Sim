@@ -1,17 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetrogradePath.h"
-#include "AstroBody.h"
+#include "SplineTrace.h"
+
 #include "Sim.h"
-#include "ToolBuilderUtil.h"
 #include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
-ARetrogradePath::ARetrogradePath() :
-ReferenceBody(nullptr),
-OtherBody(nullptr),
+ASplineTrace::ASplineTrace() :
 Duration(3650.0),
 Interval(5),
 MeshScale(0.2, 0.2),
@@ -29,7 +26,7 @@ SplineMeshCount(0)
 	{
 		Sim = Cast<ASim>(SimArray[0]);
 	}
-
+	
 	// Create Scene Root Component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
@@ -61,66 +58,62 @@ SplineMeshCount(0)
 	{
 		DefaultMaterial = Mat.Object;
 	}*/
-	
+
+	// Clear Spline
 	SplineComponent->ClearSplinePoints();
 	SplineMeshes.Empty();
 }
 
-void ARetrogradePath::OnConstruction(const FTransform& Transform)
+void ASplineTrace::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
-	// Add self to Sim's array
-	Sim->AddRetrogradePath(this);
-
+	
 	SetActorScale3D(FVector(1.0, 1.0, 1.0));
-
-	if(!ReferenceBody) return;
-
-	// Attach to Reference Body
-	SetActorLocation(ReferenceBody->GetActorLocation());
-	AttachToActor(ReferenceBody, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	
+	SetActorLocation(FVector::ZeroVector);
 	SplineComponent->SetClosedLoop(false);
-	
+
 	SetActorEnableCollision(false);
+	
 }
 
-void ARetrogradePath::Destroyed()
+void ASplineTrace::Destroyed()
 {
 	Super::Destroyed();
-	Sim->RemoveRetrogradePath(this);
 }
 
 // Called when the game starts or when spawned
-void ARetrogradePath::BeginPlay()
+void ASplineTrace::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	Timer = 0.0; // Reset Timer
-	SplineComponent->SetWorldLocation(ReferenceBody->GetActorLocation());
-
-	// Create first two points
-	InitializeFirstPoints();
-
+	
 	// Reset timer since update
 	TimeSinceLastUpdate = 0.0;
 }
 
-void ARetrogradePath::InitializeFirstPoints()
+void ASplineTrace::InitializeFirstPoints(const FVector& Position)
 {
-	if (!OtherBody || !SplineComponent || !Mesh) return;
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
 
 	// Add two initial points and one Spline Mesh between them
-	AddNewPoint();
-	AddNewPoint();
+	AddNewPoint(Position);
+	AddNewPoint(Position);
 	AddSplineMesh();
 	//UpdateMesh();
-	
 }
 
-void ARetrogradePath::AddSplineMesh()
+void ASplineTrace::AddSplineMesh()
 {
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
 	// Add Spline Mesh Component
 	USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 	SplineMeshComponent->SetMobility(EComponentMobility::Movable); // Set Mobility
@@ -150,10 +143,15 @@ void ARetrogradePath::AddSplineMesh()
 	UpdateLastMesh();
 }
 
-void ARetrogradePath::UpdateMesh()
+void ASplineTrace::UpdateMesh()
 {
-	int NumOfPoints = SplineComponent->GetNumberOfSplinePoints();
-	int NumOfMeshes = SplineMeshes.Num();
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
+	const int NumOfPoints = SplineComponent->GetNumberOfSplinePoints();
+	const int NumOfMeshes = SplineMeshes.Num();
 	
 	for(int i = 0; i < NumOfMeshes && i < NumOfPoints - 1; i++)
 	{
@@ -172,11 +170,84 @@ void ARetrogradePath::UpdateMesh()
 	}
 }
 
+void ASplineTrace::UpdateLastPoint(const FVector& Position)
+{
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
+	
+	if(SplineComponent->GetNumberOfSplinePoints() < 2)
+	{
+		InitializeFirstPoints(Position);
+		return;
+	}
+	
+
+	// Get index of last Spline Point
+	int index = SplineComponent->GetNumberOfSplinePoints() - 1;
+	
+	// Update position of last Spline Point
+	SplineComponent->SetLocationAtSplinePoint(index, Position, ESplineCoordinateSpace::World);
+
+	// Update position of last Spline Mesh
+	UpdateLastMesh();
+}
+
+void ASplineTrace::UpdateLastMesh()
+{
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
+	
+	// Get index of last Spline Point
+	const int index = SplineComponent->GetNumberOfSplinePoints() - 1;
+	
+	// Update position of last Spline Mesh
+	const FVector StartPos = SplineComponent->GetLocationAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
+	const FVector EndPos = SplineComponent->GetLocationAtSplinePoint(index, ESplineCoordinateSpace::Local);
+	const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
+	const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(index, ESplineCoordinateSpace::Local);
+	SplineMeshes.Last()->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
+}
+
+void ASplineTrace::AddNewPoint(const FVector& Position)
+{
+	if (!Mesh->IsValidLowLevel())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error: Uninitialized Mesh on SplineMesh"));
+		return;
+	}
+	
+	if(Timer >= Duration)
+	{
+		SplineComponent->RemoveSplinePoint(0); // Remove Oldest Spline Point
+		SplineMeshes[0]->DestroyComponent(); // Destroy Oldest Spline Mesh
+		SplineMeshes.RemoveAt(0); // Remove Oldest Spline Mesh
+	}
+	
+
+	
+	// Add spline point at position of other body
+	SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::World, true);	
+	
+	// Update counter
+	SplinePointCount = SplineComponent->GetNumberOfSplinePoints();
+}
+
 // Called every frame
-void ARetrogradePath::Tick(float DeltaTime)
+void ASplineTrace::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASplineTrace::Update(const FVector& Position)
+{
+	double DeltaTime = GetWorld()->GetDeltaSeconds();
 	if(!Sim) return;
 	double Delta = DeltaTime * Sim->TimeScale;
 	// Update timers
@@ -190,72 +261,15 @@ void ARetrogradePath::Tick(float DeltaTime)
 	// If not enough time has passed between updates, update position of last Spline Point
 	if(TimeSinceLastUpdate < Interval)
 	{
-		UpdateLastPoint();
+		UpdateLastPoint(Position);
 	}
 	else
 	{
-		AddNewPoint();
+		AddNewPoint(Position);
 		AddSplineMesh();
 		TimeSinceLastUpdate = 0.0;
 	}
 	
 	//UpdateMesh();
-}
-
-void ARetrogradePath::UpdateLastPoint()
-{
-	if(!OtherBody || !SplineComponent || !Mesh) return;
-	if(SplineComponent->GetNumberOfSplinePoints() < 2) return;
-	
-	// Get position of other body
-	FVector Position = OtherBody->GetActorLocation();
-
-	// Get index of last Spline Point
-	int index = SplineComponent->GetNumberOfSplinePoints() - 1;
-	
-	// Update position of last Spline Point
-	SplineComponent->SetLocationAtSplinePoint(index, Position, ESplineCoordinateSpace::World);
-
-	// Update position of last Spline Mesh
-	UpdateLastMesh();
-}
-
-void ARetrogradePath::UpdateLastMesh()
-{
-	if(!SplineComponent) return;
-	if(SplineMeshes.Num() == 0) return;
-	if(!SplineMeshes.Last()) return;
-	
-	// Get index of last Spline Point
-	int index = SplineComponent->GetNumberOfSplinePoints() - 1;
-	
-	// Update position of last Spline Mesh
-	FVector StartPos = SplineComponent->GetLocationAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
-	FVector EndPos = SplineComponent->GetLocationAtSplinePoint(index, ESplineCoordinateSpace::Local);
-	FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(index - 1, ESplineCoordinateSpace::Local);
-	FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(index, ESplineCoordinateSpace::Local);
-	SplineMeshes.Last()->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
-}
-
-void ARetrogradePath::AddNewPoint()
-{
-	if(!OtherBody || !SplineComponent || !Mesh) return;
-
-	if(Timer >= Duration)
-	{
-		SplineComponent->RemoveSplinePoint(0); // Remove Oldest Spline Point
-		SplineMeshes[0]->DestroyComponent(); // Destroy Oldest Spline Mesh
-		SplineMeshes.RemoveAt(0); // Remove Oldest Spline Mesh
-	}
-	
-	// Get position of other body
-	FVector Position = OtherBody->GetActorLocation();
-	
-	// Add spline point at position of other body
-	SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::World, true);	
-	
-	// Update counter
-	SplinePointCount = SplineComponent->GetNumberOfSplinePoints();
-
 }
 

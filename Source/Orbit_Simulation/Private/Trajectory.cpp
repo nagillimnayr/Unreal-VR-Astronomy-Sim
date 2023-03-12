@@ -3,6 +3,7 @@
 
 #include "Trajectory.h"
 #include "MeshAttributes.h"
+#include "StaticMeshAttributes.h"
 
 // Sets default values
 ATrajectory::ATrajectory() :
@@ -93,6 +94,9 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 	Update();
 	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
+
+	// Disable Collision
+	SetActorEnableCollision(false);
 }
 
 void ATrajectory::Update()

@@ -69,7 +69,11 @@ Orbit(nullptr)
 	SpotLightBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpotLightBoom"));
 	SpotLightBoom->SetupAttachment(RootComponent); // Attach boom to root
 	SpotLight->SetupAttachment(SpotLightBoom); // Attach SpotLight to boom
-	
+
+
+	// Disable collision
+	SetActorEnableCollision(false);
+	StaticSphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned
@@ -118,6 +122,9 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	double SpotlightRadius = SpotLightBoom->TargetArmLength + (50.0 * Size);
 	SpotLight->SetAttenuationRadius(SpotlightRadius);
 	SpotLight->SetOuterConeAngle(15.0);
+	
+	// Disable Collision
+	SetActorEnableCollision(false);
 }
 
 void AAstroBody::UpdateSpotLight(AActor* Source)
@@ -185,6 +192,14 @@ void AAstroBody::UpdateAccelerationArrow()
 	if(!AccelerationArrow) { return; }
 	FRotator Rotation = FRotationMatrix::MakeFromX(AccelerationVector).Rotator();
 	AccelerationArrow->SetWorldRotation(Rotation);
+}
+
+void AAstroBody::AimAccelerationArrow(AActor* Target)
+{
+	FVector Direction = Target->GetActorLocation() - GetActorLocation();
+	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	AccelerationArrow->SetWorldRotation(Rotation);
+	
 }
 
 // Called every frame

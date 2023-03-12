@@ -33,6 +33,8 @@ public:
 	virtual void UpdateVelocityArrow();
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
 	virtual void UpdateAccelerationArrow();
+	UFUNCTION(BlueprintCallable, Category = "Arrow")
+	virtual void AimAccelerationArrow(AActor* Target);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -145,8 +145,10 @@ void AOrbit::OrientOrbitingBodyTowardsCenter()
 
 	// Set Rotation of Orbiting Body so that its Forward Vector is pointing at Central Body
 	OrbitingBody->SetActorRotation(Rotation);
-}
 
+	// Aim acceleration arrow
+	OrbitingBody->AimAccelerationArrow(CentralBody);
+}
 
 // Compute Keplerian Elements from Orbital State Vectors
 
