@@ -4,6 +4,7 @@
 #include "Trajectory.h"
 #include "MeshAttributes.h"
 #include "StaticMeshAttributes.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 ATrajectory::ATrajectory() :
@@ -60,7 +61,7 @@ MeshScale(FVector2D(0.05, 0.05))
 		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 		SemimajorAxisArrow->bUseInEditorScaling = false;
 		SemimajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-		SemimajorAxisArrow->SetVisibility(false);
+		SemimajorAxisArrow->SetVisibility(true);
 		SemimajorAxisArrow->SetHiddenInGame(true);
 	}
 	SemiminorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-minor Axis"));
@@ -79,9 +80,23 @@ MeshScale(FVector2D(0.05, 0.05))
 		SemiminorAxisArrow->SetHiddenInGame(true);
 	}
 	
+	
+	
 	SplineComponent->ClearSplinePoints();
 	SplineMeshes.Empty();
-}
+
+	// Initialize Ascending Node Marker
+	AscendingNodeMarker = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ascending Node Marker"));
+	AscendingNodeMarker->SetupAttachment(SceneRoot);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MarkerMeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Orbit_Sim/Meshes/RotationHandleIndicator.RotationHandleIndicator'"));
+	
+	if (MarkerMeshAsset.Succeeded())
+	{
+		AscendingNodeMarker->SetStaticMesh(MarkerMeshAsset.Object);
+		AscendingNodeMarker->SetRelativeLocation(FVector::ZeroVector);
+		AscendingNodeMarker->CastShadow = false; // Disable shadows
+	}
+} // End of Constructor
 
 void ATrajectory::OnConstruction(const FTransform& Transform)
 {
@@ -105,6 +120,37 @@ void ATrajectory::Update()
 	UpdateSplineMesh();
 	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
 	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
+}
+
+void ATrajectory::PositionAscendingNodeMarker(double Angle)
+{
+	if(!SplineComponent) return;
+	
+	const double Fraction = (360.0  - Angle) / 360.0;
+
+	const double Distance = Fraction * SplineComponent->GetSplineLength();
+	//const FVector Position = SplineComponent->GetLocationAtTime(TimeFraction, ESplineCoordinateSpace::Local, false);
+	const FVector Position = SplineComponent->GetWorldLocationAtDistanceAlongSpline(Distance);
+
+	AscendingNodeMarker->SetWorldLocation(Position);
+	// Draw debug line
+	//DrawDebugLine(GetWorld(), GetActorLocation(), Position, FColor::Red, true, -1, 0, 10.0f);
+
+	// Arrow
+	FRotator Rotation = FRotationMatrix::MakeFromX(Position).Rotator();
+}
+
+void ATrajectory::RotateSpline(const double Angle/*, const FVector StartVector*/)
+{
+	//FVector Forward = FVector::XAxisVector;
+	SplineComponent->SetRelativeRotation(FRotator::ZeroRotator); // Reset Rotation
+	
+	//FVector RotatedVector = Forward.RotateAngleAxis(Angle, GetActorUpVector());
+	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
+
+	//SplineComponent->SetRelativeRotation(Rotation);
+	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, Angle)); // Get Rotator from Vector
+	SplineComponent->AddLocalRotation(Rotation);
 }
 
 // Called when the game starts or when spawned

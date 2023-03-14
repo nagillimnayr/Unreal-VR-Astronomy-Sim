@@ -5,6 +5,7 @@
 #include "AstroBody.h"
 #include "Sim.h"
 #include "Trajectory.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 AOrbit::AOrbit() :
@@ -21,8 +22,29 @@ Trajectory(nullptr)
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Trajectory = CreateDefaultSubobject<ATrajectory>(TEXT("Trajectory")); // Create Trajectory SubObject
+
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
+	SetRootComponent(SceneRoot);
 	
-}
+	// Initialize SpringArm
+	// The SpringArm is used with the Trajectory to ensure that the Semi-major axis always passes through the
+	// Central Body when the Trajectory is rotated, since the center of the Orbit is not necessarily at the same
+	// position as the Central Body.
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	if(CentralBody->IsValidLowLevel())
+	{
+		SpringArm->SetupAttachment(CentralBody->GetRootComponent()); // Attach SpringArm to root component of CentralBody
+		if(Trajectory)
+		{
+			// Attach Trajectory to SpringArm
+			double Length = (Trajectory->GetActorLocation() - CentralBody->GetActorLocation()).Length(); // Set length of the arm to be that of the distance
+			// between the center of the ellipse and the central body 
+			SpringArm->TargetArmLength = Length;
+			Trajectory->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		}
+	}
+	
+} // End of Constructor
 
 // Called when the game starts or when spawned
 void AOrbit::BeginPlay()
@@ -52,15 +74,18 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	
+	FlushPersistentDebugLines(GetWorld());
+	
 	// If either body is invalid, return
 	if (!CentralBody || !OrbitingBody) { return; }
 
-	RotateOrbit();
+	CalculatePeriapsisVector();
 	InitializeOrbitingBody();
 	UpdateOrbitalDistance();
 	CalculateOrbit();
 	
 	DrawTrajectory();
+	OrientOrbit();
 
 	// Orient Orbiting Body so its forward vector is pointing towards the Central Body
 	OrientOrbitingBodyTowardsCenter();
@@ -71,6 +96,9 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	OrbitingBody->InitializeVelocity(Velocity); // Set Orbiting Body's Velocity
 
 	OrbitingBody->UpdateSpotLight(CentralBody);
+
+	
+	//Trajectory->SetActorRotation(FRotator::ZeroRotator);
 }
 
 
@@ -152,6 +180,15 @@ void AOrbit::OrientOrbitingBodyTowardsCenter()
 
 // Compute Keplerian Elements from Orbital State Vectors
 
+void AOrbit::CalculatePeriapsisVector()
+{
+	// Get Forward Vector of Central Body (X-Axis)
+	FVector ReferenceAxis = CentralBody->GetActorForwardVector(); 
+	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(-ArgumentOfPeriapsis, FVector::ZAxisVector);
+	// Set Position Vector of Periapsis
+	PeriapsisVector = RotatedVector * PeriapsisRadius;
+}
+
 void AOrbit::CalculateOrbit()
 {
 	CalculateSpecifcOrbitalEnergy();
@@ -163,19 +200,74 @@ void AOrbit::CalculateOrbit()
 	
 }
 
-void AOrbit::RotateOrbit()
+void AOrbit::OrientOrbit()
+{
+	if(!Trajectory) return;
+	//Trajectory->SetActorRotation(FRotator::ZeroRotator); // Reset Rotation
+	OrientAscendingNode();
+	/*RotateToArgumentOfPeriapsis();
+	RotateToInclination();*/
+
+	Trajectory->PositionAscendingNodeMarker(ArgumentOfPeriapsis);
+}
+
+void AOrbit::OrientAscendingNode()
 {
 	// Get Forward Vector of Central Body (X-Axis)
 	FVector ReferenceAxis = CentralBody->GetActorForwardVector(); 
+	// Rotate Vector by the Longitude of the Ascending Node around the Z-Axis
+	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(-LongitudeOfAscendingNode, FVector::ZAxisVector);
+	AscendingNodeVector = RotatedVector;
+	
+	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
+	//FRotator Rotation = FRotator::MakeFromEuler(RotatedVector);
+	//Trajectory->SetActorRotation(Rotation);
+	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, LongitudeOfAscendingNode));
+	SpringArm->AddLocalRotation(Rotation);
+	
+	// Draw debug line
+	FlushPersistentDebugLines(GetWorld());
+	DrawDebugLine(GetWorld(), Trajectory->GetActorLocation(), AscendingNodeVector * SemimajorAxis, FColor::Purple, true, -1, 0, 10.0f);
+	
+}
+
+void AOrbit::OrientArgumentOfPeriapsis()
+{
+	/*FVector ReferenceAxis = AscendingNodeVector; 
 	// Rotate Vector by the Argument of Periapsis around the Z-Axis
 	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(-ArgumentOfPeriapsis, FVector::ZAxisVector);
-	// Set Position Vector of Periapsis
-	PeriapsisVector = RotatedVector * PeriapsisRadius;
 
-	/*// Rotate Trajectory
-	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
+	// Rotate Trajectory
+	FRotator Rotation = FRotator::MakeFromEuler(RotatedVector); // Get Rotator from Vector
+	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
 	Trajectory->SetActorRotation(Rotation);*/
 
+	//Trajectory->RotateSpline(-ArgumentOfPeriapsis/*, AscendingNodeVector*/);
+
+}
+
+void AOrbit::OrientInclination()
+{
+	// Rotate Trajectory using the Ascending Node Vector as the axis to rotate around
+	//FVector ReferenceAxis = AscendingNodeVector;
+	//FVector Forward = GetActorForwardVector();
+	//FVector RotatedVector = Forward.RotateAngleAxis(Inclination, ReferenceAxis);
+
+	//FRotator Rotation = FRotator::MakeFromEuler(RotatedVector); // Get Rotator from Vector
+	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
+
+	//FRotator RotationToAscendignNode = FRotationMatrix::MakeFromX(AscendingNodeVector).Rotator();
+	
+	//Trajectory->AddActorLocalRotation(Rotation);
+
+
+	/*FVector Forward = FVector::XAxisVector;
+	FVector Up = FVector::YAxisVector;
+	FVector RotatedVector = Up.RotateAngleAxis(Inclination, Forward);*/
+	//FRotator Rotation = FRotator::MakeFromEuler(FVector(Inclination, 0.0, -LongitudeOfAscendingNode)); // Get Rotator from Vector
+	//SpringArm->SetWorldRotation(Rotation);
+	
+	
 }
 
 void AOrbit::DrawTrajectory()
@@ -198,11 +290,11 @@ void AOrbit::DrawTrajectory()
 	Trajectory->SetSemimajorAxis(SemimajorAxis);
 	Trajectory->SetSemiminorAxis(SemiminorAxis);
 
-	// Update Trajectory
+	// Draw Trajectory
 	Trajectory->Update();
 	// Rotate Trajectory
-	FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
-	Trajectory->SetActorRotation(Rotation);
+	/*FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -ArgumentOfPeriapsis);
+	Trajectory->SetActorRotation(Rotation);*/
 }
 
 /*void AOrbit::CalculateTrajectory()

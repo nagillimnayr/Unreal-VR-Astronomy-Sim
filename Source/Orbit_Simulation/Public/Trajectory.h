@@ -10,6 +10,7 @@
 #include "Trajectory.generated.h"
 
 class AAstroBody;
+class USpringArmComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API ATrajectory : public AActor
@@ -37,6 +38,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void Update();
+	
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void PositionAscendingNodeMarker(double Angle);
+	
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void RotateSpline(const double Angle/*, const FVector StartVector*/);
 
 protected:
 	// Called when the game starts or when spawned
@@ -87,8 +94,13 @@ public:
 	UArrowComponent* SemimajorAxisArrow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	UArrowComponent* SemiminorAxisArrow;
+	
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	FVector2D MeshScale;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> AscendingNodeMarker;
 };

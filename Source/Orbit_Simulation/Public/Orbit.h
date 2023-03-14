@@ -11,6 +11,7 @@
 
 class AAstroBody;
 class ATrajectory;
+class USpringArmComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API AOrbit : public AActor
@@ -44,10 +45,14 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	AAstroBody* CentralBody;
+	TObjectPtr<AAstroBody> CentralBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	AAstroBody* OrbitingBody;
-
+	TObjectPtr<AAstroBody> OrbitingBody;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* SceneRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> SpringArm;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double InitialOrbitalSpeed;
@@ -109,10 +114,19 @@ protected:
 	ATrajectory* Trajectory;
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void CalculatePeriapsisVector();
+	
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateOrbit();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void RotateOrbit();
+	void OrientOrbit();
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void OrientAscendingNode();
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void OrientArgumentOfPeriapsis();
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void OrientInclination();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void DrawTrajectory();

@@ -26,12 +26,11 @@ APOVMotionMap::APOVMotionMap()
 
 	// Initialize Spline Trace
 	SplineTrace = CreateDefaultSubobject<ASplineTrace>(TEXT("SplineTrace"));
-	SplineTrace->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	
 	// Initialize Static Mesh
 	ProjectedBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projected Body"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-	if(MeshAsset.Succeeded())
+	if(MeshAsset.Succeeded() && ProjectedBody->IsValidLowLevel())
 	{
 		ProjectedBody->SetStaticMesh(MeshAsset.Object);
 		ProjectedBody->CastShadow = false; // Disable shadows
@@ -53,6 +52,12 @@ void APOVMotionMap::OnConstruction(const FTransform& Transform)
 		ProjectedBody->SetMaterial(0, DefaultMaterial);
 		ProjectedBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
+	if(SplineTrace->IsValidLowLevel())
+	{
+		SplineTrace->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
+	
 }
 
 // Called when the game starts or when spawned

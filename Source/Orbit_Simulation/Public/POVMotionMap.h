@@ -59,7 +59,7 @@ protected:
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* ProjectedBody;
+	TObjectPtr<UStaticMeshComponent> ProjectedBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UMaterialInterface> DefaultMaterial;
 };
