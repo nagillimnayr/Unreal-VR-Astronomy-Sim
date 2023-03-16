@@ -9,7 +9,7 @@
 #include "RetrogradePath.generated.h"
 
 class AAstroBody;
-class ASim;
+class ASystem;
 
 UCLASS()
 class ORBIT_SIMULATION_API ARetrogradePath : public AActor
@@ -45,7 +45,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Astro")
-	ASim* Sim;
+	ASystem* Sim;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	AAstroBody* ReferenceBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")

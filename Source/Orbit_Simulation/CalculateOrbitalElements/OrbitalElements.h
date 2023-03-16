@@ -1,0 +1,15 @@
+#pragma once
+#include "AstroConstants.h"
+
+#include "Apsides.h"
+#include "ArgumentOfPeriapsis.h"
+#include "AscendingNode.h"
+#include "Axes.h"
+#include "Eccentricity.h"
+#include "Inclination.h"
+#include "OrbitalPeriod.h"
+#include "OrbitalRadius.h"
+#include "OrbitalVelocity.h"
+#include "SpecificAngularMomentum.h"
+#include "SpecificOrbitalEnergy.h"
+#include "TrueAnomaly.h"

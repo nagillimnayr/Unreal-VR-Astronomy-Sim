@@ -12,3 +12,10 @@ Actor* SomeActor = GetWorld()->SpawnActor<Actor>();
 
 	// Get Rotator from Direction Vector
 	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+// Debug
+
+    
+	// Draw debug line
+	FlushPersistentDebugLines(GetWorld());
+	DrawDebugLine(GetWorld(), Position1, Position2, FColor::Orange, false, -1, 0, 10.0f);

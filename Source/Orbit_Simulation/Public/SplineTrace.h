@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "SplineTrace.generated.h"
 
-class ASim;
+class ASystem;
 UCLASS()
 class ORBIT_SIMULATION_API ASplineTrace : public AActor
 {
@@ -45,7 +45,7 @@ public:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sim")
-	ASim* Sim;
+	ASystem* Sim;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	double Duration; // How long the path will be traced for (in Days)

@@ -12,6 +12,7 @@
 class AAstroBody;
 class ATrajectory;
 class USpringArmComponent;
+class UArrowComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API AOrbit : public AActor
@@ -31,7 +32,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void PostInitProperties() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitingBody(float DeltaTime);
@@ -51,73 +51,77 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* SceneRoot;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpringArmComponent> SpringArm;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> SpringArm;*/
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double InitialOrbitalSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Astro")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Orbit")
 	double PeriapsisRadius;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Astro")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
 	double ApoapsisRadius;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Astro")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
 	double OrbitalRadius;
 
-	
-	// Keplerian Elements
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
-	double Eccentricity;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Keplerian Elements")
-	double SemimajorAxis;
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
+protected:
+	// Orbital Elements
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double SemiMajorAxis;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double SemiMinorAxis;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
+	double OrbitalPeriod;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double Inclination;
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double LongitudeOfAscendingNode;
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double ArgumentOfPeriapsis;
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Keplerian Elements")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
+	double Eccentricity;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double TrueAnomaly;
-
-	// Other Orbital Parameters
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	double SemiminorAxis;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector PeriapsisVector;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector ApoapsisVector;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double SemiLatusRectum;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double SpecificOrbitalEnergy;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
 	FVector SpecificAngularMomentum;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
+	double LinearEccentricity;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	FVector PeriapsisVector;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	//FVector ApoapsisVector;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
 	FVector AscendingNodeVector;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
 	FVector EccentricityVector;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	double SemilatusRectum;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	double SpecificOrbitalEnergy;
 
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UArrowComponent> SemiLatusRectumArrow;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UArrowComponent> AscendingNodeArrow;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
-	double LinearEccentricity;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
-	double OrbitalPeriod;
-
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector EllipticalCenter; // Center of Ellipse, for positioning the Trajectory object
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	FVector EllipticalCenter; // Center of Ellipse, for positioning the Trajectory object*/
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	ATrajectory* Trajectory;
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculatePeriapsisVector();
+	void OrientPeriapsisVector();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateOrbit();
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void CalculateOrbitFromEccentricity();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void OrientOrbit();
@@ -135,48 +139,8 @@ protected:
 	/*UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateTrajectory(); // Orbital State Vectors are needed to compute Keplerian Elements*/
 	
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeSpecificAngularMomentum(const FVector& Position, const FVector& Velocity);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeAscendingNodeVector();
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeEccentricityVector(const FVector& Velocity, const FVector& Position, double SGP);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeSemiLatusRectum( double SGP);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeInclination();
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeLongitudeOfAscendingNode(const double AscendingNodeMagnitude);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeArgumentOfPeriapsis(const double AscendingNodeMagnitude);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeTrueAnomaly(const FVector& Position, const FVector&  Velocity);
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void ComputeArgumentOfLatitude(const double AscendingNodeMagnitude, const FVector& Position);
-
 	
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateSpecifcOrbitalEnergy();
-	
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateSemiMajorAxisFromSpecifcOrbitalEnergy();
-
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateApoapsisRadius();
-	
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculatePeriodFromSemiMajorAxis(); // Calculate the Orbital Period based on the Semi-Major Axis
-	
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateSemiMajorAxisFromPeriod(double Period); // Calculate the Semi-Major Axis necessary for a particular Orbital Period
-
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateEccentricityFromSpecificAngularMomentum();
-
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateLinearEccentricity();
-
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void CalculateEccentricityFromApsides();
-
+public:
+	virtual void PostInitProperties() override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };

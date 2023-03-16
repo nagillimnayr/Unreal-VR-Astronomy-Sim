@@ -4,21 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AstroConstants.h"
-#include "Sim.generated.h"
+#include "System.generated.h"
 
 class AAstroBody;
 class AOrbit;
 class ARetrogradePath;
 
 UCLASS()
-class ORBIT_SIMULATION_API ASim : public AActor
+class ORBIT_SIMULATION_API ASystem : public AActor
 {
+	// This class represents a gravitationally bound system
+	// (i.e. a planetary system, stellar system, etc) 
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ASim();
+	ASystem();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,23 +30,37 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Constants
-	static const double GRAVITATIONAL_CONSTANT;
-	static const double ASTRONOMICAL_UNIT;
-	static const double SOLAR_MASS;
-
-	// Unit Conversion Multipliers
-	static const double SECONDS_IN_DAY;
-	static const double DISTANCE_MULTIPLIER;
-	static const double KM_TO_M;
 
 	// Fixed Time Step
 	static const double FIXED_TIMESTEP;
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	UFUNCTION(BlueprintCallable)
 	void AddRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Push(Path); }
+	UFUNCTION(BlueprintCallable)
 	void RemoveRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Remove(Path); }
+
+	// Map
+	/*UFUNCTION(BlueprintCallable)
+	static void AddOrbit(FString OrbitingBodyName, AOrbit* Orbit)
+	{
+		OrbitMap.Add(OrbitingBodyName, Orbit);
+	}
+	UFUNCTION(BlueprintCallable)
+	static AOrbit* GetOrbit(FString OrbitingBodyName)
+	{
+		AOrbit** OrbitPtr = OrbitMap.Find(OrbitingBodyName);
+		if(OrbitPtr)
+		{
+			return *OrbitPtr;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+	*/
 	
 protected:
 	// References to other Actors
@@ -53,6 +68,8 @@ protected:
 	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<AOrbit*> Orbits; // Array of all the Orbits in the simulation
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TMap<FString, AOrbit*> OrbitMap; // Map to associate OrbitingBody with its Orbit */
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<ARetrogradePath*> RetrogradePaths; // Array of all the Orbits in the simulation

@@ -23,27 +23,20 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void SetSemimajorAxis(const double a) {
-		SemimajorAxis = a; 
-		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
-	}
-	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void SetSemiminorAxis(const double b) {
-		SemiminorAxis = b; 
-		SemiminorAxisArrow->ArrowLength = SemiminorAxis;
-	}
+	void SetAxes(const double a, const double b);
+	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void SetClosedLoop(const bool Closed) { isClosedLoop = Closed; }
 
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void Update();
+	void Draw();
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void PositionAscendingNodeMarker(double Angle);
+	void PositionAscendingNodeMarker(double Angle, double Distance);
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void RotateSpline(const double Angle/*, const FVector StartVector*/);
+	void RotateSpline(const double Angle);
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,6 +50,26 @@ protected:
 	void UpdateSplineMesh();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void UpdateEllipse();
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	FVector PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum);
+
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	FVector GetCenter();
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	void UpdateArrows();
+	UFUNCTION(BlueprintCallable, Category = "Spline")
+	FVector GetPeriapsisVector();
+
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetSemiMajorAxis(const double a) {
+		SemiMajorAxis = a; 
+		SemiMajorAxisArrow->ArrowLength = SemiMajorAxis;
+	}
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetSemiMinorAxis(const double b) {
+		SemiMinorAxis = b; 
+		SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
+	}
 public:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spline")
@@ -83,17 +96,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	int NumberOfPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	double SemimajorAxis;
+	double SemiMajorAxis;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	double SemiminorAxis;
+	double SemiMinorAxis;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	bool isClosedLoop = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	UArrowComponent* SemimajorAxisArrow;
+	TObjectPtr<UArrowComponent> SemiMajorAxisArrow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	UArrowComponent* SemiminorAxisArrow;
+	TObjectPtr<UArrowComponent> SemiMinorAxisArrow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UArrowComponent> SemiLatusRectumArrow;
 	
 
 	

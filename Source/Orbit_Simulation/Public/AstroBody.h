@@ -42,7 +42,8 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
-	void UpdateSpotLight(AActor* Source);
+	UFUNCTION(BlueprintCallable)
+	void OrientSpotLight(AActor* Source);
 	
 public:	
 	// Called every frame
@@ -103,6 +104,6 @@ public:
 	UNiagaraComponent* TrailComponent;
 
 	// Reference to Orbit
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	AOrbit* Orbit;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	AOrbit* Orbit;*/
 };

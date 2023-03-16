@@ -3,7 +3,7 @@
 
 #include "RetrogradePath.h"
 #include "AstroBody.h"
-#include "Sim.h"
+#include "System.h"
 #include "ToolBuilderUtil.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -24,10 +24,10 @@ SplineMeshCount(0)
 
 	// Get reference to Sim
 	TArray<AActor*> SimArray;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASim::StaticClass(), SimArray);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASystem::StaticClass(), SimArray);
 	if (SimArray.Num() > 0)
 	{
-		Sim = Cast<ASim>(SimArray[0]);
+		Sim = Cast<ASystem>(SimArray[0]);
 	}
 
 	// Create Scene Root Component

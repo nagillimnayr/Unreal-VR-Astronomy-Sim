@@ -1,21 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AstroBody.h"
-#include "Sim.h"
+#include "System.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "../CalculateOrbitalElements/OrbitalElements.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
 mass(0.0),
 VelocityVector(FVector::ZeroVector),
 AccelerationVector(FVector::ZeroVector),
-Size(1.0),
-Orbit(nullptr)
+Size(1.0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -125,16 +125,21 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	
 	// Disable Collision
 	SetActorEnableCollision(false);
+
+
+	AccelerationArrow->SetRelativeRotation(FRotator::ZeroRotator);
+
+	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, 90.0));
+	VelocityArrow->SetRelativeRotation(Rotation);
+
 }
 
-void AAstroBody::UpdateSpotLight(AActor* Source)
+void AAstroBody::OrientSpotLight(AActor* Source)
 {
 	FVector Direction = GetActorLocation() - Source->GetActorLocation(); // Get Direction Vector to Target
 	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator(); // Get Rotator from Direction Vector
 	SpotLightBoom->SetWorldRotation(Rotation); // Set new rotation
 
-	// Aim SpotLight
-	//UpdateSpotLight();
 }
 
 void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
@@ -142,13 +147,13 @@ void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 	FVector OtherPos = OtherBody->GetActorLocation();
 	FVector ThisPos = GetActorLocation();
 	FVector Difference = OtherPos - ThisPos;
-	double DistanceSquared = (Difference * ASim::DISTANCE_MULTIPLIER).SquaredLength(); // Multiply by DISTANCE_MULTIPLIER
+	double DistanceSquared = (Difference * Sim::DISTANCE_MULT).SquaredLength(); // Multiply by DISTANCE_MULTIPLIER
 	//FVector Direction = Difference.GetSafeNormal(1.0); // Normalized Direction Vector pointing from this Body to the other Body
 	FVector Direction = Difference;
 	Direction.Normalize(); // Normalized Direction Vector pointing from this Body to the other Body
 	
 	// Calculate gravitational force
-	double Force = (ASim::GRAVITATIONAL_CONSTANT * OtherBody->mass * ASim::SOLAR_MASS) / DistanceSquared;
+	double Force = (Sim::GRAVITATIONAL_CONSTANT * OtherBody->mass * Sim::SOLAR_MASS) / DistanceSquared;
 	AccelerationVector = Direction * Force;
 
 	AccelerationMagnitude = Force;
@@ -159,8 +164,8 @@ void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
 
 void AAstroBody::UpdateVelocity(const double DeltaTime)
 {
-	VelocityVector += AccelerationVector * (DeltaTime * ASim::SECONDS_IN_DAY);
-	OrbitalSpeed = VelocityVector.Length() / ASim::KM_TO_M;
+	VelocityVector += AccelerationVector * (DeltaTime * Sim::SECONDS_IN_DAY);
+	OrbitalSpeed = VelocityVector.Length() / Sim::KM_TO_M;
 	
 	UpdateVelocityArrow();
 	//VelocityArrow->ArrowLength = FMath::Max(0.1, OrbitalSpeed);
@@ -172,7 +177,7 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 
 	// Update Position based on Velocity
 	// Divide by DISTANCE_MULTIPLIER so the result will be in in-editor units
-	Position += VelocityVector * (DeltaTime * ASim::SECONDS_IN_DAY  / ASim::DISTANCE_MULTIPLIER);
+	Position += VelocityVector * (DeltaTime * Sim::SECONDS_IN_DAY  / Sim::DISTANCE_MULT);
 	bool check = SetActorLocation(Position);
 	if (!check)
 	{

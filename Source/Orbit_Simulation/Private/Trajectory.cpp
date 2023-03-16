@@ -2,21 +2,25 @@
 
 
 #include "Trajectory.h"
+
+#include "AstroBody.h"
 #include "MeshAttributes.h"
+#include "Orbit.h"
 #include "StaticMeshAttributes.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Orbit_Simulation/CalculateOrbitalElements/OrbitalElements.h"
 
 // Sets default values
 ATrajectory::ATrajectory() :
 ForwardAxis(ESplineMeshAxis::Z),
-NumberOfPoints(32),
-SemimajorAxis(1000.0),
-SemiminorAxis(1000.0),
+NumberOfPoints(48),
+SemiMajorAxis(1000.0),
+SemiMinorAxis(1000.0),
 MeshScale(FVector2D(0.05, 0.05))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
+	
 	// Create Scene Root Component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
@@ -51,35 +55,45 @@ MeshScale(FVector2D(0.05, 0.05))
 	}
 
 	// Initialize Arrows
-	SemimajorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-major Axis"));
-	if (SemimajorAxisArrow)
+	SemiMajorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-major Axis"));
+	if (SemiMajorAxisArrow->IsValidLowLevel())
 	{
-		SemimajorAxisArrow->SetupAttachment(SceneRoot);
-		SemimajorAxisArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
-		SemimajorAxisArrow->SetArrowColor(FLinearColor::Red);
-		SemimajorAxisArrow->ArrowSize = 1.0;
-		SemimajorAxisArrow->ArrowLength = SemimajorAxis;
-		SemimajorAxisArrow->bUseInEditorScaling = false;
-		SemimajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-		SemimajorAxisArrow->SetVisibility(true);
-		SemimajorAxisArrow->SetHiddenInGame(true);
+		SemiMajorAxisArrow->SetupAttachment(SceneRoot);
+		SemiMajorAxisArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
+		SemiMajorAxisArrow->SetArrowColor(FLinearColor::Red);
+		SemiMajorAxisArrow->ArrowSize = 1.0;
+		SemiMajorAxisArrow->ArrowLength = SemiMajorAxis;
+		SemiMajorAxisArrow->bUseInEditorScaling = false;
+		SemiMajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+		SemiMajorAxisArrow->SetVisibility(true);
+		SemiMajorAxisArrow->SetHiddenInGame(true);
 	}
-	SemiminorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-minor Axis"));
-	if (SemiminorAxisArrow)
+	SemiMinorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-minor Axis"));
+	if (SemiMinorAxisArrow->IsValidLowLevel())
 	{
-		SemiminorAxisArrow->SetupAttachment(SceneRoot);
-		SemiminorAxisArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
-		SemiminorAxisArrow->SetArrowColor(FLinearColor::Blue);
-		SemiminorAxisArrow->ArrowSize = 1.0;
-		SemiminorAxisArrow->ArrowLength = SemiminorAxis;
-		SemiminorAxisArrow->bUseInEditorScaling = false;
+		SemiMinorAxisArrow->SetupAttachment(SceneRoot);
+		SemiMinorAxisArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
+		SemiMinorAxisArrow->SetArrowColor(FLinearColor::Blue);
+		SemiMinorAxisArrow->ArrowSize = 1.0;
+		SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
+		SemiMinorAxisArrow->bUseInEditorScaling = false;
 		FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
-		SemiminorAxisArrow->SetRelativeRotation(Rotation);
-		SemiminorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-		SemiminorAxisArrow->SetVisibility(false);
-		SemiminorAxisArrow->SetHiddenInGame(true);
+		SemiMinorAxisArrow->SetRelativeRotation(Rotation);
+		SemiMinorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+		SemiMinorAxisArrow->SetVisibility(true);
+		SemiMinorAxisArrow->SetHiddenInGame(true);
 	}
 	
+	SemiLatusRectumArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi Latus Rectum"));
+	SemiLatusRectumArrow->SetupAttachment(SceneRoot);
+	SemiLatusRectumArrow->SetArrowColor(FLinearColor::Green);
+	SemiLatusRectumArrow->ArrowSize = 1.0;
+	SemiLatusRectumArrow->bUseInEditorScaling = false;
+	FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
+	SemiLatusRectumArrow->SetRelativeRotation(Rotation);
+	SemiLatusRectumArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+	SemiLatusRectumArrow->SetVisibility(true);
+	SemiLatusRectumArrow->SetHiddenInGame(true);
 	
 	
 	SplineComponent->ClearSplinePoints();
@@ -106,41 +120,55 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 	//SplineComponent->ClearSplinePoints();
 	InitializeSpline();
 	InitializeSplineMesh();
-	Update();
-	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
-	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
+	Draw();
+	SemiMajorAxisArrow->ArrowLength = SemiMajorAxis;
+	SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
 
+	SetActorRelativeLocation(FVector::ZeroVector);
+	
 	// Disable Collision
 	SetActorEnableCollision(false);
+
+	UpdateArrows();
 }
 
-void ATrajectory::Update()
+void ATrajectory::SetAxes(const double a, const double b)
+{
+	SetSemiMajorAxis( FMath::Max(a, b)); 
+	SetSemiMinorAxis(FMath::Min(a, b)); 
+
+	UpdateArrows();
+}
+
+void ATrajectory::Draw()
 {
 	UpdateEllipse();
 	UpdateSplineMesh();
-	SemimajorAxisArrow->ArrowLength = SemimajorAxis;
-	SemiminorAxisArrow->ArrowLength = SemiminorAxis;
+	UpdateArrows();
 }
 
-void ATrajectory::PositionAscendingNodeMarker(double Angle)
+void ATrajectory::PositionAscendingNodeMarker(double Angle, double Distance)
 {
 	if(!SplineComponent) return;
 	
-	const double Fraction = (360.0  - Angle) / 360.0;
+	FVector ReferenceAxis = GetActorForwardVector(); 
+	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(Angle, GetActorUpVector());
+	
 
-	const double Distance = Fraction * SplineComponent->GetSplineLength();
+	/*const double Distance = Fraction * SplineComponent->GetSplineLength();
 	//const FVector Position = SplineComponent->GetLocationAtTime(TimeFraction, ESplineCoordinateSpace::Local, false);
-	const FVector Position = SplineComponent->GetWorldLocationAtDistanceAlongSpline(Distance);
+	const FVector Position = SplineComponent->GetWorldLocationAtDistanceAlongSpline(Distance);*/
 
+	//double Distance = Orbit->GetRadiusAtTrueAnomaly(Angle);
+	FVector Position = RotatedVector * Distance;
 	AscendingNodeMarker->SetWorldLocation(Position);
 	// Draw debug line
 	//DrawDebugLine(GetWorld(), GetActorLocation(), Position, FColor::Red, true, -1, 0, 10.0f);
 
-	// Arrow
-	FRotator Rotation = FRotationMatrix::MakeFromX(Position).Rotator();
 }
 
-void ATrajectory::RotateSpline(const double Angle/*, const FVector StartVector*/)
+
+void ATrajectory::RotateSpline(const double Angle)
 {
 	//FVector Forward = FVector::XAxisVector;
 	SplineComponent->SetRelativeRotation(FRotator::ZeroRotator); // Reset Rotation
@@ -151,36 +179,34 @@ void ATrajectory::RotateSpline(const double Angle/*, const FVector StartVector*/
 	//SplineComponent->SetRelativeRotation(Rotation);
 	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, Angle)); // Get Rotator from Vector
 	SplineComponent->AddLocalRotation(Rotation);
+	
 }
 
 // Called when the game starts or when spawned
 void ATrajectory::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	/*FString str = TEXT("Number of Spline Points: ");
-	str.AppendInt(SplineComponent->GetNumberOfSplinePoints());
-	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, str);
-	
-	str = TEXT("Number of Spline Meshes: ");
-	str.AppendInt(SplineMeshes.Num());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, str);*/
-	
 }
 
 void ATrajectory::InitializeSpline()
 {
-	if(SplineComponent->GetNumberOfSplinePoints() > 0) {return;}
-	FVector Center = GetActorLocation();
-	double angle = 2 * PI / NumberOfPoints;
+	if(SplineComponent->GetNumberOfSplinePoints() > 0)
+	{
+		SplineComponent->ClearSplinePoints();
+	}
+
+	const double Eccentricity = Eccentricity::CalculateFromAxes(SemiMajorAxis, SemiMinorAxis);
+	//const double SemiLatusRectum = SemiLatusRectum::CalculateSemiLatusRectum(SemiMajorAxis, Eccentricity);
+	const double LinearEccentricity = LinearEccentricity::CalculateFromEccentricity(SemiMajorAxis, Eccentricity);
+	const double Angle = (2 * PI) / NumberOfPoints;
 
 	// Parametric equation of an ellipse
 	for (int i = 0; i < NumberOfPoints; i++)
 	{
-		double X = SemimajorAxis * cos(i * angle);
-		double Y = SemiminorAxis * sin(i * angle);
-		FVector Position = FVector(X, Y, Center.Z);
+		double X = SemiMajorAxis * cos(i * Angle);
+		double Y = -(SemiMinorAxis * sin(i * Angle)); // Negative so that it will go counter-clockwise around the Z-axis
+		FVector Position(X - LinearEccentricity, Y, 0.0);
+		//FVector Position = PolarCoordinates(Angle * i, Eccentricity, SemiLatusRectum);
 		SplineComponent->AddSplinePoint(Position, ESplineCoordinateSpace::Local, false);
 	}
 	
@@ -190,20 +216,71 @@ void ATrajectory::InitializeSpline()
 
 void ATrajectory::UpdateEllipse()
 {
-	FVector Center = GetActorLocation();
-	double angle = 2 * PI / NumberOfPoints;
+	const double Eccentricity = Eccentricity::CalculateFromAxes(SemiMajorAxis, SemiMinorAxis);
+	//const double SemiLatusRectum = SemiLatusRectum::CalculateSemiLatusRectum(SemiMajorAxis, Eccentricity);
+	const double LinearEccentricity = LinearEccentricity::CalculateFromEccentricity(SemiMajorAxis, Eccentricity);
+	const double Angle = (2 * PI) / SplineComponent->GetNumberOfSplinePoints();
 
 	// Parametric equation of an ellipse
-	for (int i = 0; i < NumberOfPoints; i++)
+	for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
 	{
-		double X = SemimajorAxis * cos(i * angle);
-		double Y = SemiminorAxis * sin(i * angle);
-		FVector Position = FVector(X, Y, Center.Z);
+		double X = SemiMajorAxis * cos(i * Angle);
+		double Y = -(SemiMinorAxis * sin(i * Angle)); // Negative so that it will go counter-clockwise around the Z-axis
+		FVector Position(X - LinearEccentricity, Y, 0.0);
+		//FVector Position = PolarCoordinates(Angle * i, Eccentricity, SemiLatusRectum);
 		SplineComponent->SetLocationAtSplinePoint(i, Position, ESplineCoordinateSpace::Local, false);
 	}
 	
 	SplineComponent->SetClosedLoop(isClosedLoop);
 	SplineComponent->UpdateSpline(); // Update Spline
+}
+
+FVector ATrajectory::PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum)
+{
+	// Returns the Polar Coordinates of a point on an ellipse at the given angle (Relative to the focus at the origin)
+
+	// Get Polar Coordinates, convert to cartesian coordinates, then construct a Vector from the X and Y coordinates
+	double Radius = OrbitalRadius::CalculateRadiusAtTrueAnomaly(Angle, Eccentricity, SemiLatusRectum);
+	const double X = Radius * FMath::Cos(Angle);
+	const double Y = -(Radius * FMath::Sin(Angle)); // Negative so that it will go counter-clockwise around the Z-axis
+	return FVector(X, Y, 0.0);
+}
+
+FVector ATrajectory::GetCenter()
+{
+	// Get the position of the Periapsis from the first Spline Point 
+	FVector Periapsis = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
+	// Get the length of the radius at Periapsis
+	double PeriapsisRadius = Periapsis.Length();
+	// Get the LinearEccentricity
+	double LinearEccentricity = SemiMajorAxis - PeriapsisRadius;
+
+	// Get the Direction Vector by negating the Forward Vector
+	FVector Direction = -GetActorForwardVector();
+	// Get the center of the Ellipse
+	FVector Center = GetActorLocation() + (Direction * LinearEccentricity);
+	
+	return Center;
+}
+
+void ATrajectory::UpdateArrows()
+{
+	// Set Positions of the Arrows to be the center of the Ellipse
+	const double Eccentricity = Eccentricity::CalculateFromAxes(SemiMajorAxis, SemiMinorAxis);
+	const double LinearEccentricity = LinearEccentricity::CalculateFromEccentricity(SemiMajorAxis, Eccentricity);
+	FVector Position = FVector(-LinearEccentricity, 0.0, 0.0);
+	SemiMajorAxisArrow->SetRelativeLocation(Position);
+	SemiMinorAxisArrow->SetRelativeLocation(Position);
+
+	const double SemiLatusRectum = SemiLatusRectum::CalculateSemiLatusRectum(SemiMajorAxis, Eccentricity);
+	SemiLatusRectumArrow->ArrowLength = SemiLatusRectum;
+	SemiMajorAxisArrow->ArrowLength = SemiMajorAxis;
+	SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
+}
+
+FVector ATrajectory::GetPeriapsisVector()
+{
+	return SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
 }
 
 void ATrajectory::InitializeSplineMesh()
@@ -259,7 +336,7 @@ void ATrajectory::InitializeSplineMesh()
 
 void ATrajectory::UpdateSplineMesh()
 {
-	for (int index = 0; index < NumberOfPoints; index++)
+	for (int index = 0; index < SplineComponent->GetNumberOfSplinePoints(); index++)
 	{
 		const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(index, ESplineCoordinateSpace::Local);
 		const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(index, ESplineCoordinateSpace::Local);
