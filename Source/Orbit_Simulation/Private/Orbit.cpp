@@ -2,12 +2,16 @@
 
 
 #include "Orbit.h"
+
 #include "AstroBody.h"
 #include "System.h"
 #include "Trajectory.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Components/ArrowComponent.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
+#include "Camera/CameraComponent.h"
+#include "Components/SpotLightComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Orbit_Simulation/CalculateOrbitalElements/Motion.h"
 
 // Sets default values
 AOrbit::AOrbit() :
@@ -16,36 +20,32 @@ SemiMajorAxis(1000.0),
 SemiMinorAxis(1000.0),
 Inclination(0.0),
 Eccentricity(0.0),
+TrueAnomaly(0.0),
+EccentricAnomaly(0.0),
+MeanAnomaly(0.0),
+MeanAngularMotion(0.0),
 Trajectory(nullptr)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
 	SetRootComponent(SceneRoot);
+
+	// Create Trajectory
+	//Trajectory = CreateDefaultSubobject<ATrajectory>(FName(GetFName().ToString() + FString("_Trajectory")));
 	
-	//Trajectory = CreateDefaultSubObject<ATrajectory>(TEXT("Trajectory")); // Create Trajectory SubObject
+	// Initialize Camera
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
+	Camera->SetupAttachment(CameraBoom);
 	
-	// Initialize SpringArm
-	// The SpringArm is used with the Trajectory to ensure that the Semi-major axis always passes through the
-	// Central Body when the Trajectory is rotated, since the center of the Orbit is not necessarily at the same
-	// position as the Central Body.
-	/*SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(SceneRoot);*/
+	// Initialize Spotlight
+	Spotlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Spotlight"));
+	SpotlightBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spotlight Boom"));
+	Spotlight->SetupAttachment(SpotlightBoom);
 
 	// Initialize Arrows
-	/*SemiLatusRectumArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi Latus Rectum"));
-	SemiLatusRectumArrow->SetupAttachment(SceneRoot);
-	SemiLatusRectumArrow->SetArrowColor(FLinearColor::Green);
-	SemiLatusRectumArrow->ArrowSize = 1.0;
-	SemiLatusRectumArrow->bUseInEditorScaling = false;
-	FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
-	SemiLatusRectumArrow->SetRelativeRotation(Rotation);
-	SemiLatusRectumArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-	SemiLatusRectumArrow->SetVisibility(true);
-	SemiLatusRectumArrow->SetHiddenInGame(true);*/
-	
-	
 	AscendingNodeArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Ascending Node Arrow"));
 	AscendingNodeArrow->SetupAttachment(SceneRoot);
 	AscendingNodeArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
@@ -55,6 +55,26 @@ Trajectory(nullptr)
 	AscendingNodeArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	AscendingNodeArrow->SetVisibility(true);
 	AscendingNodeArrow->SetHiddenInGame(true);
+	
+	TrueAnomalyArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("True Anomaly Arrow"));
+	TrueAnomalyArrow->SetupAttachment(SceneRoot);
+	TrueAnomalyArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
+	TrueAnomalyArrow->SetArrowColor(FColor::White);
+	TrueAnomalyArrow->ArrowSize = 1.0;
+	TrueAnomalyArrow->bUseInEditorScaling = false;
+	TrueAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+	TrueAnomalyArrow->SetVisibility(true);
+	TrueAnomalyArrow->SetHiddenInGame(true);
+	
+	MeanAnomalyArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Mean Anomaly Arrow"));
+	MeanAnomalyArrow->SetupAttachment(SceneRoot);
+	MeanAnomalyArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
+	MeanAnomalyArrow->SetArrowColor(FColor::Emerald);
+	MeanAnomalyArrow->ArrowSize = 1.0;
+	MeanAnomalyArrow->bUseInEditorScaling = false;
+	MeanAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+	MeanAnomalyArrow->SetVisibility(true);
+	MeanAnomalyArrow->SetHiddenInGame(true);
 	
 } // End of Constructor
 
@@ -66,27 +86,13 @@ void AOrbit::BeginPlay()
 	// If either body is invalid, destroy Orbit and return
 	if ((!IsValid(CentralBody) || !IsValid(OrbitingBody))) { Destroy(); }
 	
-	/*else
-	{
-		/*InitializeOrbitingBody();
-		UpdateOrbitalDistance();
-		CalculateOrbit();#1#
-
-		
-		//InitializeTrajectory();
-		//CalculateTrajectory();
-		//DrawTrajectory();
-	}*/
-
-	/*if (IsValid(CentralBody))
-		CalculatePeriod(SemiMajorAxis, CentralBody->GetMassOfBody());*/
 }
 
 void AOrbit::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	
-	FlushPersistentDebugLines(GetWorld());
+	//FlushPersistentDebugLines(GetWorld());
 
 	// Clamp the Eccentricity within the range [0, 1)
 	Eccentricity = FMath::Clamp(Eccentricity, 0.0, 1.0);
@@ -95,8 +101,9 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	if ((!IsValid(CentralBody) || !IsValid(OrbitingBody))) { return; }
 
 	// Attach Orbit to the CentralBody
-	AttachToActor(CentralBody,
+	/*AttachToActor(CentralBody,
 		FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
+		*/
 	SetActorRelativeLocation(FVector::ZeroVector); // Reset Position
 	SetActorRelativeRotation(FRotator::ZeroRotator); // Reset Rotation
 	
@@ -106,7 +113,12 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	if(IsValid(Trajectory))
 	{
 		//Trajectory->AttachToComponent(SpringArm, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
-		Trajectory->AttachToComponent(SceneRoot, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
+		Trajectory->AttachToActor(this,
+			FAttachmentTransformRules(
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::KeepWorld,
+				false));
 		Trajectory->SetActorRelativeLocation(FVector::ZeroVector); // Reset Position
 		Trajectory->SetActorRelativeRotation(FRotator::ZeroRotator); // Reset Rotation
 		//SemiLatusRectumArrow->AttachToComponent(Trajectory->GetRootComponent(),  FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, false));
@@ -116,8 +128,29 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
 		OrbitingBody->SetActorRelativeLocation(Trajectory->GetActorForwardVector() * PeriapsisRadius); // Position OrbitingBody at the Periapsis
 
+		// Attach Anomaly Arrows to Trajectory
+		TrueAnomalyArrow->AttachToComponent(Trajectory->GetRootComponent(),
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
+		MeanAnomalyArrow->AttachToComponent(Trajectory->GetRootComponent(),
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
+		/*// position EccentricAnomalyArrow at the center of the ellipse
+		EccentricAnomalyArrow->SetRelativeLocation(FVector(-LinearEccentricity, 0.0, 0.0));*/
+		
+		
 		DrawTrajectory();
 		OrientOrbit();
+
+		// Setup Spotlight
+		Spotlight->AttenuationRadius = 400.0 * OrbitingBody->GetSize();
+		SpotlightBoom->TargetArmLength = 400.0 * OrbitingBody->GetSize();
+		Spotlight->SetCastShadows(false);
+		Spotlight->SetCastDeepShadow(false);
+		Spotlight->SetCastRaytracedShadow(false);
+		Spotlight->SetCastVolumetricShadow(false);
+
+		// Set Colors
+		if(Trajectory) Trajectory->SetColor(Color);
+		OrbitingBody->SetColor(Color);
 	}
 	else
 	{
@@ -125,22 +158,58 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 		OrbitingBody->AttachToActor(this,
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
 		OrbitingBody->SetActorRelativeLocation(GetActorForwardVector() * PeriapsisRadius); // Position OrbitingBody at the Periapsis
-	}	
+	}
+
+	// Attach Camera to Orbiting Body
+	CameraBoom->AttachToComponent(OrbitingBody->GetRootComponent(), 
+			FAttachmentTransformRules(
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::KeepWorld,
+				false));
+	CameraBoom->TargetArmLength = 400.0 * OrbitingBody->GetSize();
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
+
+	// Attach Spotlight to OrbitingBody
+	SpotlightBoom->AttachToComponent(OrbitingBody->GetRootComponent(),
+			FAttachmentTransformRules(
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::KeepWorld,
+				false));
+	SpotlightBoom->TargetArmLength = 400.0 * OrbitingBody->GetSize();
+	OrientSpotlight();
+	
 	InitializeOrbitingBody();
 	
 	// Aim acceleration arrow
 	OrbitingBody->AimAccelerationArrow(CentralBody);
-	FlushPersistentDebugLines(GetWorld());
 }
 
 
 void AOrbit::UpdateOrbitingBody(const float DeltaTime)
 {
-	OrbitingBody->CalculateAcceleration(CentralBody);
-	OrbitingBody->UpdateVelocity(DeltaTime);
+	// If either body is invalid, destroy Orbit and return
+	if (!IsValid(CentralBody) || !IsValid(OrbitingBody)) { Destroy(); return;}
+
+	// Update Orbiting Body
+	//OrbitingBody->CalculateAcceleration(CentralBody);
+	const FVector Acceleration = Motion::CalculateAcceleration(OrbitingBody, CentralBody);
+	const FVector Velocity = Acceleration * DeltaTime;
+	
+	OrbitingBody->SetAcceleration(Acceleration);
+	OrbitingBody->UpdateVelocity(Velocity);
 	OrbitingBody->UpdatePosition(DeltaTime);
 
+	OrbitalSpeed = Acceleration.Length();
 	UpdateOrbitalDistance();
+	
+	// Orient Spotlight
+	OrientSpotlight();
+	
+	// Rotate TrueAnomalyArrow
+	MeanAnomaly += MeanAngularMotion * DeltaTime;
+	SetTrueAnomalyArrow();
 }
 
 void AOrbit::UpdateOrbitalDistance()
@@ -155,9 +224,8 @@ void AOrbit::Tick(float DeltaTime)
 
 	// If either body is invalid, destroy Orbit and return
 	if (!IsValid(CentralBody) || !IsValid(OrbitingBody)) { Destroy(); return;}
+
 	
-	// Update SpotLight
-	OrbitingBody->OrientSpotLight(CentralBody);
 }
 
 
@@ -171,7 +239,7 @@ void AOrbit::InitializeOrbitingBody()
 	
 	// Scalar multiply Initial Orbital Speed with Orbiting Body's Right Vector so that Velocity is Orthogonal
 	// to the Direction Vector, and Tangent to the ellipse of the orbit
-	FVector Velocity = OrbitingBody->GetActorRightVector() * InitialOrbitalSpeed * Sim::KM_TO_M;
+	FVector Velocity = OrbitingBody->GetActorRightVector() * MaxOrbitalSpeed * Unit::KM_TO_M;
 	OrbitingBody->InitializeVelocity(Velocity); // Set Orbiting Body's Velocity
 
 	// Initialize arrows
@@ -179,7 +247,7 @@ void AOrbit::InitializeOrbitingBody()
 	OrbitingBody->UpdateVelocityArrow();
 
 	// Orient Spotlight
-	OrbitingBody->OrientSpotLight(CentralBody);
+	OrientSpotlight();
 }
 
 void AOrbit::OrientOrbitingBodyTowardsCenter()
@@ -197,20 +265,10 @@ void AOrbit::OrientOrbitingBodyTowardsCenter()
 	OrbitingBody->AimAccelerationArrow(CentralBody);
 }
 
-
-void AOrbit::OrientPeriapsisVector()
-{
-	// Calculate the direction vector of the periapsis
-	const FVector ReferenceAxis = AscendingNodeVector;
-	// The Up vector of the Orbit object should be orthogonal to the Orbital Plane
-	PeriapsisVector = ReferenceAxis.RotateAngleAxis(-ArgumentOfPeriapsis, GetActorUpVector()); // Rotate vector around the Up Vector
-	PeriapsisVector.Normalize();
-}
-
 void AOrbit::CalculateOrbit()
 {
 	const double CentralMass = CentralBody->GetMassOfBody();
-	SpecificOrbitalEnergy = SpecificOrbitalEnergy::CalculateSpecificOrbitalEnergy(InitialOrbitalSpeed, CentralMass, PeriapsisRadius);
+	SpecificOrbitalEnergy = SpecificOrbitalEnergy::CalculateSpecificOrbitalEnergy(MaxOrbitalSpeed, CentralMass, PeriapsisRadius);
 	SemiMajorAxis = SemiMajorAxis::CalculateFromSpecificOrbitalEnergy(CentralMass, SpecificOrbitalEnergy);
 	OrbitalPeriod = OrbitalPeriod::CalculatePeriod(SemiMajorAxis, CentralMass);
 	ApoapsisRadius = Apoapsis::RadiusFromPeriapsis(SemiMajorAxis, PeriapsisRadius);
@@ -221,7 +279,11 @@ void AOrbit::CalculateOrbit()
 	SemiLatusRectum = SemiLatusRectum::CalculateSemiLatusRectum(SemiMajorAxis, Eccentricity);
 	//SemiLatusRectumArrow->ArrowLength = SemiLatusRectum;
 	SemiMinorAxis = SemiMinorAxis::CalculateFromSemiLatusRectum(SemiMajorAxis, SemiLatusRectum);
-	
+
+
+	EccentricAnomaly = EccentricAnomaly::CalculateFromTrueAnomaly(TrueAnomaly, Eccentricity);
+	SetTrueAnomalyArrow();
+	MeanAngularMotion = (360.0 / OrbitalPeriod);
 }
 
 void AOrbit::CalculateOrbitFromEccentricity()
@@ -240,10 +302,8 @@ void AOrbit::CalculateOrbitFromEccentricity()
 	LinearEccentricity = LinearEccentricity::CalculateFromEccentricity(SemiMajorAxis, Eccentricity);
 
 	// Set Orbital Speed at Periapsis
-	InitialOrbitalSpeed = OrbitalVelocity::CalculateAtPeriapsis(Eccentricity, SemiMajorAxis, CentralMass);
+	MaxOrbitalSpeed = OrbitalVelocity::CalculateAtPeriapsis(Eccentricity, SemiMajorAxis, CentralMass);
 	
-	//SpringArm->TargetArmLength = LinearEccentricity; // Set arm length to be equal to the linear eccentricity
-	//SpringArm->TargetArmLength = 0.0;
 	
 	//SemiLatusRectumArrow->ArrowLength = SemiLatusRectum;
 
@@ -262,40 +322,16 @@ void AOrbit::OrientOrbit()
 	OrientInclination();
 	OrientArgumentOfPeriapsis();
 
+
 }
 
 void AOrbit::OrientAscendingNode()
 {
-	// The Ascending Node lies in the reference plane
-	
-	// Get Forward Vector of Central Body (X-Axis)
-	const FVector ReferenceAxis = CentralBody->GetActorForwardVector(); 
-	// Rotate Vector by the Longitude of the Ascending Node around the Z-Axis
-	AscendingNodeVector = ReferenceAxis.RotateAngleAxis(-LongitudeOfAscendingNode, CentralBody->GetActorUpVector()); 
-	
-	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
-	//FRotator Rotation = FRotator::MakeFromEuler(RotatedVector);
-	//Trajectory->SetActorRotation(Rotation);
-
-	/*Rotation = FRotationMatrix::MakeFromX(AscendingNodeVector).Rotator();
-	Trajectory->SetAscendingNodeArrowRotation(Rotation);*/
-
-	// Rotate the Orbit around its local Z-Axis
-	//FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, -LongitudeOfAscendingNode));
-	//AddActorLocalRotation(Rotation);
-	//SetActorRelativeRotation(Rotation);
-	
-	//FRotator Rotation = FRotationMatrix::MakeFromX(AscendingNodeVector).Rotator(); // Get Rotator from Vector
-	//FRotator Rotation = FRotator::MakeFromEuler(AscendingNodeVector);
-	//Trajectory->SetActorRotation(Rotation);
-
-	
-	const double Distance = OrbitalRadius::CalculateRadiusAtTrueAnomaly(ArgumentOfPeriapsis, Eccentricity, SemiLatusRectum);
-	Trajectory->PositionAscendingNodeMarker(ArgumentOfPeriapsis, Distance);
+	const double Distance = OrbitalRadius::CalculateAtTrueAnomaly(FMath::DegreesToRadians(ArgumentOfPeriapsis), SemiMajorAxis, Eccentricity);
+	AscendingNodeArrow->ArrowLength = Distance;
 	
 	// Orient Arrow
 	AscendingNodeArrow->SetRelativeRotation(FRotator::ZeroRotator);
-	AscendingNodeArrow->ArrowLength = Distance;
 }
 
 void AOrbit::OrientArgumentOfPeriapsis()
@@ -306,33 +342,30 @@ void AOrbit::OrientArgumentOfPeriapsis()
 
 void AOrbit::OrientInclination()
 {
-	// Rotate Trajectory using the Ascending Node Vector as the axis to rotate around
-	//FVector ReferenceAxis = AscendingNodeVector;
-	//FVector Forward = GetActorForwardVector();
-	//FVector RotatedVector = Forward.RotateAngleAxis(Inclination, ReferenceAxis);
-
-	//FRotator Rotation = FRotator::MakeFromEuler(RotatedVector); // Get Rotator from Vector
-	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
-
-	//FRotator OrientAscendingNode = FRotationMatrix::MakeFromX(AscendingNodeVector).Rotator();
-	
-	//Trajectory->AddActorLocalRotation(Rotation);
-
-
-	/*FVector Forward = FVector::XAxisVector;
-	FVector Up = FVector::YAxisVector;
-	FVector RotatedVector = Up.RotateAngleAxis(Inclination, Forward);*/
-	//FRotator Rotation = FRotator::MakeFromEuler(FVector(Inclination, 0.0, -LongitudeOfAscendingNode)); // Get Rotator from Vector
-	//SpringArm->SetWorldRotation(Rotation);
-
 	// The inclination is rotated around the axis of the Ascending Node, so long as the Orbit's forward vector is
 	// pointing towards the Ascending Node, we can simply rotate the orbit around its local X-axis
-	FRotator Rotation = FRotator::MakeFromEuler(FVector(Inclination, 0.0, -LongitudeOfAscendingNode)); // Get Rotator from Vector
-	//AddActorLocalRotation(Rotation);
+	FRotator Rotation = FRotator::MakeFromEuler(FVector(Inclination, 0.0, -LongitudeOfAscendingNode)); // Get Rotator from Vecto
 	SetActorRelativeRotation(Rotation);
+}
 
-	//SpringArm->SetRelativeRotation(FRotator::ZeroRotator); // Set SpringArm rotation to keep it consistent with the Orbit object
-	//Trajectory->SetActorRelativeRotation(FRotator::ZeroRotator); // Set Trajectory rotation to keep it consistent with the Orbit object
+void AOrbit::SetTrueAnomalyArrow()
+{
+	// Rotate TrueAnomalyArrow
+	const FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -TrueAnomaly);
+	TrueAnomalyArrow->SetRelativeRotation(Rotation);
+	TrueAnomalyArrow->ArrowLength = OrbitalRadius::CalculateAtTrueAnomaly(FMath::DegreesToRadians(TrueAnomaly), SemiMajorAxis, Eccentricity);
+	TrueAnomalyArrow->SetVisibility(false);
+	TrueAnomalyArrow->SetVisibility(true);
+}
+
+void AOrbit::SetMeanAnomalyArrow()
+{
+	// Rotate MeanAnomalyArrow
+	const FRotator Rotation = FRotator::MakeFromEuler(FVector::ZAxisVector * -MeanAnomaly);
+	MeanAnomalyArrow->SetRelativeRotation(Rotation);
+	MeanAnomalyArrow->ArrowLength = OrbitalRadius::CalculateAtTrueAnomaly(FMath::DegreesToRadians(MeanAnomaly), SemiMajorAxis, Eccentricity);
+	MeanAnomalyArrow->SetVisibility(false);
+	MeanAnomalyArrow->SetVisibility(true);
 }
 
 void AOrbit::DrawTrajectory()
@@ -351,13 +384,19 @@ void AOrbit::DrawTrajectory()
 	}
 
 	// Set axes of Trajectory object
-	//Trajectory->SetActorLocation(EllipticalCenter);
 	Trajectory->SetAxes(SemiMajorAxis, SemiMinorAxis);
 
 	// Draw Trajectory
 	Trajectory->Draw();
-
 }
+
+void AOrbit::OrientSpotlight()
+{
+	const FVector Direction = CentralBody->GetActorLocation() - OrbitingBody->GetActorLocation(); // Get Direction Vector to CentralBody
+	const FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator(); // Get Rotator from Direction Vector
+	SpotlightBoom->SetWorldRotation(Rotation); // Set new rotation
+}
+
 
 void AOrbit::PostInitProperties()
 {
@@ -378,5 +417,26 @@ void AOrbit::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 	{
 		CalculateOrbitFromEccentricity();
 	}*/
+	if(PropertyName == TEXT("TrueAnomaly"))
+	{
+		// Adjust angle to be within range [0, 360) degrees
+		TrueAnomaly = AdjustAngle(TrueAnomaly);
+		SetTrueAnomalyArrow();
+	}
+	else if(PropertyName == TEXT("ArgumentOfPeriapsis"))
+	{
+		// Adjust angle to be within range [0, 360) degrees
+		ArgumentOfPeriapsis = AdjustAngle(ArgumentOfPeriapsis);
+	}
+	else if(PropertyName == TEXT("Inclination"))
+	{
+		// Adjust angle to be within range [0, 360) degrees
+		Inclination = AdjustAngle(Inclination);
+	}
+	else if(PropertyName == TEXT("LongitudeOfAscendingNode"))
+	{
+		// Adjust angle to be within range [0, 360) degrees
+		LongitudeOfAscendingNode = AdjustAngle(LongitudeOfAscendingNode);
+	}
 }
 #endif

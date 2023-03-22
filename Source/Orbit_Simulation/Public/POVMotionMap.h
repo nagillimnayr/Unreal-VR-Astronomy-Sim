@@ -9,6 +9,8 @@
 class USphereComponent;
 class AAstroBody;
 class ASplineTrace;
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class ORBIT_SIMULATION_API APOVMotionMap : public AActor
@@ -48,18 +50,29 @@ protected:
 
 	// Sphere from which to calculate the intersections of the line drawn between the two bodies
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USphereComponent> Sphere; // Every point vector on the sphere will have a magnitude equal to the radius
+	TObjectPtr<USphereComponent> CollisionSphere; // Every point vector on the sphere will have a magnitude equal to the radius
 
 	// Collision / Line Trace
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	TEnumAsByte<ECollisionChannel> TraceChannel = ECC_PhysicsBody;
 	
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<ASplineTrace> SplineTrace;*/
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	UMaterialInterface* DefaultMaterial;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<ASplineTrace> SplineTrace;
+	UStaticMeshComponent* ProjectedBody;
+
+
+	// Trail
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* TrailSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* TrailComponent;
 	
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UStaticMeshComponent> ProjectedBody;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UMaterialInterface> DefaultMaterial;
 };

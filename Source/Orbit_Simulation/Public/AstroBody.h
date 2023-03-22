@@ -14,7 +14,7 @@ class UNiagaraComponent;
 class UArrowComponent;
 
 UCLASS()
-class ORBIT_SIMULATION_API AAstroBody : public APawn
+class ORBIT_SIMULATION_API AAstroBody : public AActor
 {
 	GENERATED_BODY()
 	
@@ -22,29 +22,27 @@ public:
 	// Sets default values for this actor's properties
 	AAstroBody();
 
+	/*UFUNCTION(BlueprintCallable, Category = "Motion")
+	virtual void CalculateAcceleration(AAstroBody* OtherBody);*/
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void CalculateAcceleration(AAstroBody* OtherBody);
+	void SetAcceleration(const FVector NewAcceleration);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdateVelocity(const double DeltaTime);
+	void UpdateVelocity(const FVector NewVelocity);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdatePosition(const double DeltaTime);
+	void UpdatePosition(const double DeltaTime);
 	
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void UpdateVelocityArrow();
+	void UpdateVelocityArrow();
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void UpdateAccelerationArrow();
+	void UpdateAccelerationArrow();
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void AimAccelerationArrow(AActor* Target);
+	void AimAccelerationArrow(const AActor* const Target);
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void OrientSpotLight(AActor* Source);
-	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,43 +51,44 @@ public:
 
 	// Getters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	const FVector& GetVelocityVector() const {return VelocityVector;};
+	const FVector& GetAccelerationVector() const {return AccelerationVector;}
+	UFUNCTION(BlueprintCallable, Category = "Motion")
+	const FVector& GetVelocityVector() const {return VelocityVector;}
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetMassOfBody() const {return mass;};
+	double GetMassOfBody() const {return Mass;}
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetSize() const {return Size;}
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity; this->OrbitalSpeed = Velocity.Length();}
+	void InitializeVelocity(FVector& InitVelocity) { VelocityVector = InitVelocity; OrbitalSpeed = InitVelocity.Length();}
+	UFUNCTION(BlueprintCallable, Category = "Color")
+	void SetColor(const FLinearColor NewColor);
 
 	
 protected:
 	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double mass;
+	double Mass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Motion")
 	FVector VelocityVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	FVector AccelerationVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalSpeed; // Scalar magnitude of Velocity Vector
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	double AccelerationMagnitude; // Scalar
+	double AccelerationMagnitude; // Scalar magnitude of Acceleration Vector
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	double Size;
-
+	double Size; // Size of the body. (1.0 = Size of Earth)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double SiderealRotationPeriod; // The period in days for the body to make one full 360 degree revolution about its polar axis
 public:
 	// Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* SceneRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* StaticSphereMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpotLightComponent> SpotLight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpringArmComponent> SpotLightBoom;
+	UStaticMeshComponent* SphereMesh;
 	
 	// Arrows
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -103,7 +102,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* TrailComponent;
 
-	// Reference to Orbit
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	AOrbit* Orbit;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
 };

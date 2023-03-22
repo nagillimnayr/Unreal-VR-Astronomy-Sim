@@ -12,25 +12,25 @@
 
 // Sets default values
 AAstroBody::AAstroBody() :
-mass(0.0),
+Mass(0.0),
 VelocityVector(FVector::ZeroVector),
 AccelerationVector(FVector::ZeroVector),
 Size(1.0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
-	StaticSphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
-	StaticSphereMesh->SetupAttachment(SceneRoot);
+	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
+	SphereMesh->SetupAttachment(SceneRoot);
+		SphereMesh->CastShadow = false; // Disable shadows
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
 	if (SphereMeshAsset.Succeeded())
 	{
-		StaticSphereMesh->SetStaticMesh(SphereMeshAsset.Object);
-		StaticSphereMesh->SetRelativeLocation(FVector::ZeroVector);
-		StaticSphereMesh->CastShadow = false; // Disable shadows
+		SphereMesh->SetStaticMesh(SphereMeshAsset.Object);
+		SphereMesh->SetRelativeLocation(FVector::ZeroVector);
 	}
 	//StaticSphereMesh->SetWorldScale3D(FVector(Radius, Radius, Radius)); // Set size of Sphere
 
@@ -64,17 +64,11 @@ Size(1.0)
 		VelocityArrow->bUseInEditorScaling = false;
 	}
 
-	// Initialize SpotLight
-	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
-	SpotLightBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpotLightBoom"));
-	SpotLightBoom->SetupAttachment(RootComponent); // Attach boom to root
-	SpotLight->SetupAttachment(SpotLightBoom); // Attach SpotLight to boom
-
-
 	// Disable collision
 	SetActorEnableCollision(false);
-	StaticSphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
+
 
 // Called when the game starts or when spawned
 void AAstroBody::BeginPlay()
@@ -84,18 +78,19 @@ void AAstroBody::BeginPlay()
 	// Initialize Niagara System/ Component
 	if (TrailSystem)
 	{
-		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, StaticSphereMesh, NAME_None,
+		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, SphereMesh, NAME_None,
 			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,
 			false);
 		TrailComponent->SetVisibility(true);
 		TrailComponent->SetHiddenInGame(false);
+		TrailComponent->SetColorParameter(TEXT("Color"), Color);
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error initializing Niagara System"));
 	}
 	
-	StaticSphereMesh->CastShadow = false; // Disable shadows
+	SphereMesh->CastShadow = false; // Disable shadows
 	AccelerationArrow->SetHiddenInGame(true);
 	VelocityArrow->SetHiddenInGame(true);
 }
@@ -104,7 +99,7 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SetActorScale3D(FVector(1.0, 1.0, 1.0));
-	StaticSphereMesh->SetWorldScale3D(FVector(Size, Size, Size)); // Set size of Sphere
+	SphereMesh->SetWorldScale3D(FVector(Size, Size, Size)); // Set size of Sphere
 	
 	
 	/*AccelerationArrow->AttachToComponent(SceneRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -115,13 +110,7 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	VelocityArrow->SetRelativeLocation(FVector::ZeroVector);
 	VelocityArrow->ArrowLength = 75 + (25 * Radius);*/
 	
-	StaticSphereMesh->CastShadow = false; // Disable shadows
-
-	// Set the Attenuation Radius of the SpotLight to be relative to the boom's arm length and the body's size
-	SpotLightBoom->TargetArmLength = 300 * Size;
-	double SpotlightRadius = SpotLightBoom->TargetArmLength + (50.0 * Size);
-	SpotLight->SetAttenuationRadius(SpotlightRadius);
-	SpotLight->SetOuterConeAngle(15.0);
+	SphereMesh->CastShadow = false; // Disable shadows
 	
 	// Disable Collision
 	SetActorEnableCollision(false);
@@ -132,41 +121,42 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, 90.0));
 	VelocityArrow->SetRelativeRotation(Rotation);
 
-}
-
-void AAstroBody::OrientSpotLight(AActor* Source)
-{
-	FVector Direction = GetActorLocation() - Source->GetActorLocation(); // Get Direction Vector to Target
-	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator(); // Get Rotator from Direction Vector
-	SpotLightBoom->SetWorldRotation(Rotation); // Set new rotation
+	// Set Color
 
 }
 
-void AAstroBody::CalculateAcceleration(AAstroBody* OtherBody)
+
+/*void AAstroBody::CalculateAcceleration(const AAstroBody* const OtherBody)
 {
-	FVector OtherPos = OtherBody->GetActorLocation();
+	const FVector OtherPos = OtherBody->GetActorLocation();
 	FVector ThisPos = GetActorLocation();
 	FVector Difference = OtherPos - ThisPos;
-	double DistanceSquared = (Difference * Sim::DISTANCE_MULT).SquaredLength(); // Multiply by DISTANCE_MULTIPLIER
+	double DistanceSquared = (Difference * Unit::DISTANCE_MULT).SquaredLength(); // Multiply by DISTANCE_MULTIPLIER
 	//FVector Direction = Difference.GetSafeNormal(1.0); // Normalized Direction Vector pointing from this Body to the other Body
 	FVector Direction = Difference;
 	Direction.Normalize(); // Normalized Direction Vector pointing from this Body to the other Body
 	
 	// Calculate gravitational force
-	double Force = (Sim::GRAVITATIONAL_CONSTANT * OtherBody->mass * Sim::SOLAR_MASS) / DistanceSquared;
+	double Force = (Unit::GRAVITATIONAL_CONSTANT * OtherBody->mass * Unit::SOLAR_MASS) / DistanceSquared;
 	AccelerationVector = Direction * Force;
 
 	AccelerationMagnitude = Force;
 	
 	UpdateAccelerationArrow();
 	//AccelerationArrow->ArrowLength = FMath::Max(0.1, AccelerationMagnitude);
+}*/
+
+void AAstroBody::SetAcceleration(const FVector NewAcceleration)
+{
+	AccelerationVector = NewAcceleration;
+	AccelerationMagnitude = AccelerationVector.Length();
+	UpdateAccelerationArrow();
 }
 
-void AAstroBody::UpdateVelocity(const double DeltaTime)
+void AAstroBody::UpdateVelocity(const FVector NewVelocity)
 {
-	VelocityVector += AccelerationVector * (DeltaTime * Sim::SECONDS_IN_DAY);
-	OrbitalSpeed = VelocityVector.Length() / Sim::KM_TO_M;
-	
+	VelocityVector = NewVelocity;
+	OrbitalSpeed = VelocityVector.Length();
 	UpdateVelocityArrow();
 	//VelocityArrow->ArrowLength = FMath::Max(0.1, OrbitalSpeed);
 }
@@ -177,9 +167,9 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 
 	// Update Position based on Velocity
 	// Divide by DISTANCE_MULTIPLIER so the result will be in in-editor units
-	Position += VelocityVector * (DeltaTime * Sim::SECONDS_IN_DAY  / Sim::DISTANCE_MULT);
-	bool check = SetActorLocation(Position);
-	if (!check)
+	Position += VelocityVector * (DeltaTime * Unit::SECONDS_IN_DAY  / Unit::DISTANCE_MULT);
+	const bool bCheck = SetActorLocation(Position);
+	if (!bCheck)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Updating Position"));
 	}
@@ -188,27 +178,34 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 void AAstroBody::UpdateVelocityArrow()
 {
 	if(!VelocityArrow) {return;}
-	FRotator Rotation = FRotationMatrix::MakeFromX(VelocityVector).Rotator();
+	const FRotator Rotation = FRotationMatrix::MakeFromX(VelocityVector).Rotator();
 	VelocityArrow->SetWorldRotation(Rotation);
 }
 
 void AAstroBody::UpdateAccelerationArrow()
 {
 	if(!AccelerationArrow) { return; }
-	FRotator Rotation = FRotationMatrix::MakeFromX(AccelerationVector).Rotator();
+	const FRotator Rotation = FRotationMatrix::MakeFromX(AccelerationVector).Rotator();
 	AccelerationArrow->SetWorldRotation(Rotation);
 }
 
-void AAstroBody::AimAccelerationArrow(AActor* Target)
+void AAstroBody::AimAccelerationArrow(const AActor* const Target)
 {
-	FVector Direction = Target->GetActorLocation() - GetActorLocation();
-	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	const FVector Direction = Target->GetActorLocation() - GetActorLocation();
+	const FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	AccelerationArrow->SetWorldRotation(Rotation);
 	
 }
 
+void AAstroBody::SetColor(const FLinearColor NewColor)
+{
+	Color = NewColor;
+	if(TrailComponent)
+		TrailComponent->SetColorParameter(TEXT("Color"), Color);
+}
+
 // Called every frame
-void AAstroBody::Tick(float DeltaTime)
+void AAstroBody::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

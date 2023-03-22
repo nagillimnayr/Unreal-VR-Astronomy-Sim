@@ -6,14 +6,16 @@
 #include "AstroBody.h"
 #include "MeshAttributes.h"
 #include "Orbit.h"
+#include "OrbitalPlaneComponent.h"
 #include "StaticMeshAttributes.h"
+#include "Engine/ObjectLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Orbit_Simulation/CalculateOrbitalElements/OrbitalElements.h"
 
 // Sets default values
 ATrajectory::ATrajectory() :
 ForwardAxis(ESplineMeshAxis::Z),
-NumberOfPoints(48),
+NumberOfPoints(36),
 SemiMajorAxis(1000.0),
 SemiMinorAxis(1000.0),
 MeshScale(FVector2D(0.05, 0.05))
@@ -24,6 +26,8 @@ MeshScale(FVector2D(0.05, 0.05))
 	// Create Scene Root Component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
+
+	Color = FLinearColor::White;
 
 	// Create Spline Component
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
@@ -45,15 +49,13 @@ MeshScale(FVector2D(0.05, 0.05))
 		Mesh = CylinderMeshAsset.Object;
 	}
 	
-
-	// Initialize Material
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat1(TEXT("/ControlRig/Controls/ControlRigGizmoMaterial"));
-	if (Mat1.Succeeded())
+	// Load base material
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/Trajectory_MI.Trajectory_MI'"));
+	if (Mat.Succeeded())
 	{
-		DefaultMaterial = Mat1.Object;
-		AlternateMaterial = Mat1.Object;
+		BaseMaterial = Mat.Object;
 	}
-
+	
 	// Initialize Arrows
 	SemiMajorAxisArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Semi-major Axis"));
 	if (SemiMajorAxisArrow->IsValidLowLevel())
@@ -99,17 +101,24 @@ MeshScale(FVector2D(0.05, 0.05))
 	SplineComponent->ClearSplinePoints();
 	SplineMeshes.Empty();
 
-	// Initialize Ascending Node Marker
-	AscendingNodeMarker = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ascending Node Marker"));
-	AscendingNodeMarker->SetupAttachment(SceneRoot);
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MarkerMeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Orbit_Sim/Meshes/RotationHandleIndicator.RotationHandleIndicator'"));
-	
-	if (MarkerMeshAsset.Succeeded())
-	{
-		AscendingNodeMarker->SetStaticMesh(MarkerMeshAsset.Object);
-		AscendingNodeMarker->SetRelativeLocation(FVector::ZeroVector);
-		AscendingNodeMarker->CastShadow = false; // Disable shadows
-	}
+//	// Initialize Ascending Node Marker
+//	AscendingNodeMarker = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ascending Node Marker"));
+//	AscendingNodeMarker->SetupAttachment(SceneRoot);
+//	static ConstructorHelpers::FObjectFinder<UStaticMesh> MarkerMeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Orbit_Sim/Meshes/RotationHandleIndicator.RotationHandleIndicator'"));
+//	
+//	if (MarkerMeshAsset.Succeeded())
+//	{
+//		AscendingNodeMarker->SetStaticMesh(MarkerMeshAsset.Object);
+//		AscendingNodeMarker->SetRelativeLocation(FVector::ZeroVector);
+//		AscendingNodeMarker->CastShadow = false; // Disable shadows
+//	}
+
+	OrbitalPlane = CreateDefaultSubobject<UOrbitalPlaneComponent>(TEXT("Orbital Plane"));
+	OrbitalPlane->SetupAttachment(SceneRoot);
+	OrbitalPlane->SetAxes(SemiMajorAxis, SemiMinorAxis);
+	//OrbitalPlane->Initialize();
+
+
 } // End of Constructor
 
 void ATrajectory::OnConstruction(const FTransform& Transform)
@@ -130,6 +139,14 @@ void ATrajectory::OnConstruction(const FTransform& Transform)
 	SetActorEnableCollision(false);
 
 	UpdateArrows();
+
+	// Initialize Material
+	if(BaseMaterial && !MaterialInstance)
+	{
+			// Create Dynamic Material Instance
+			MaterialInstance = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+	}
+	if(MaterialInstance) MaterialInstance->SetVectorParameterValue(TEXT("Color"), Color);
 }
 
 void ATrajectory::SetAxes(const double a, const double b)
@@ -147,39 +164,10 @@ void ATrajectory::Draw()
 	UpdateArrows();
 }
 
-void ATrajectory::PositionAscendingNodeMarker(double Angle, double Distance)
+void ATrajectory::SetColor(const FLinearColor NewColor)
 {
-	if(!SplineComponent) return;
-	
-	FVector ReferenceAxis = GetActorForwardVector(); 
-	FVector RotatedVector = ReferenceAxis.RotateAngleAxis(Angle, GetActorUpVector());
-	
-
-	/*const double Distance = Fraction * SplineComponent->GetSplineLength();
-	//const FVector Position = SplineComponent->GetLocationAtTime(TimeFraction, ESplineCoordinateSpace::Local, false);
-	const FVector Position = SplineComponent->GetWorldLocationAtDistanceAlongSpline(Distance);*/
-
-	//double Distance = Orbit->GetRadiusAtTrueAnomaly(Angle);
-	FVector Position = RotatedVector * Distance;
-	AscendingNodeMarker->SetWorldLocation(Position);
-	// Draw debug line
-	//DrawDebugLine(GetWorld(), GetActorLocation(), Position, FColor::Red, true, -1, 0, 10.0f);
-
-}
-
-
-void ATrajectory::RotateSpline(const double Angle)
-{
-	//FVector Forward = FVector::XAxisVector;
-	SplineComponent->SetRelativeRotation(FRotator::ZeroRotator); // Reset Rotation
-	
-	//FVector RotatedVector = Forward.RotateAngleAxis(Angle, GetActorUpVector());
-	//FRotator Rotation = FRotationMatrix::MakeFromX(RotatedVector).Rotator(); // Get Rotator from Vector
-
-	//SplineComponent->SetRelativeRotation(Rotation);
-	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, Angle)); // Get Rotator from Vector
-	SplineComponent->AddLocalRotation(Rotation);
-	
+	this->Color = Color;
+	if(MaterialInstance) MaterialInstance->SetVectorParameterValue(TEXT("Color"), Color);
 }
 
 // Called when the game starts or when spawned
@@ -235,7 +223,7 @@ void ATrajectory::UpdateEllipse()
 	SplineComponent->UpdateSpline(); // Update Spline
 }
 
-FVector ATrajectory::PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum)
+/*FVector ATrajectory::PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum)
 {
 	// Returns the Polar Coordinates of a point on an ellipse at the given angle (Relative to the focus at the origin)
 
@@ -244,7 +232,7 @@ FVector ATrajectory::PolarCoordinates(const double Angle, const double Eccentric
 	const double X = Radius * FMath::Cos(Angle);
 	const double Y = -(Radius * FMath::Sin(Angle)); // Negative so that it will go counter-clockwise around the Z-axis
 	return FVector(X, Y, 0.0);
-}
+}*/
 
 FVector ATrajectory::GetCenter()
 {
@@ -314,15 +302,7 @@ void ATrajectory::InitializeSplineMesh()
 		SplineMeshComponent->SetEndScale(MeshScale);
 
 		SplineMeshComponent->SetForwardAxis(ForwardAxis);
-		if (SplineSegment % 2 == 0)
-		{
-			if (DefaultMaterial) SplineMeshComponent->SetMaterial(0, DefaultMaterial);
-		}
-		else
-		{
-			if (AlternateMaterial) SplineMeshComponent->SetMaterial(0, AlternateMaterial);
-			else SplineMeshComponent->SetMaterial(0, DefaultMaterial);
-		}
+		if (MaterialInstance) SplineMeshComponent->SetMaterial(0, MaterialInstance);
 		
 		SplineMeshComponent->SetCastShadow(false); // Disable Shadows
 		SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);

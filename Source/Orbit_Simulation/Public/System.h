@@ -8,10 +8,12 @@
 
 class AAstroBody;
 class AOrbit;
-class ARetrogradePath;
+class ARelativeMotionMap;
+class UCameraComponent;
+class USpringArmComponent;
 
 UCLASS()
-class ORBIT_SIMULATION_API ASystem : public AActor
+class ORBIT_SIMULATION_API ASystem : public APawn
 {
 	// This class represents a gravitationally bound system
 	// (i.e. a planetary system, stellar system, etc) 
@@ -22,73 +24,32 @@ public:
 	ASystem();
 
 protected:
+	virtual void Initialize(); 
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-
-	// Fixed Time Step
-	static const double FIXED_TIMESTEP;
+	virtual void UpdateOrbits(double DeltaTime);
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-	UFUNCTION(BlueprintCallable)
-	void AddRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Push(Path); }
-	UFUNCTION(BlueprintCallable)
-	void RemoveRetrogradePath(ARetrogradePath* Path) { RetrogradePaths.Remove(Path); }
-
-	// Map
-	/*UFUNCTION(BlueprintCallable)
-	static void AddOrbit(FString OrbitingBodyName, AOrbit* Orbit)
-	{
-		OrbitMap.Add(OrbitingBodyName, Orbit);
-	}
-	UFUNCTION(BlueprintCallable)
-	static AOrbit* GetOrbit(FString OrbitingBodyName)
-	{
-		AOrbit** OrbitPtr = OrbitMap.Find(OrbitingBodyName);
-		if(OrbitPtr)
-		{
-			return *OrbitPtr;
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-	*/
-	
 protected:
 	// References to other Actors
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<AAstroBody*> Bodies; // Array of all the bodies in the simulation
+	TArray<AOrbit*> Orbits; // Array of all the Orbits in the system
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<AOrbit*> Orbits; // Array of all the Orbits in the simulation
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TMap<FString, AOrbit*> OrbitMap; // Map to associate OrbitingBody with its Orbit */
+	TObjectPtr<AAstroBody> PrimaryBody;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	TArray<ARetrogradePath*> RetrogradePaths; // Array of all the Orbits in the simulation
+	// Scene Root
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USceneComponent> SceneRoot;
 	
-
-public:
-	// Time
+	// Camera
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int TimeScale;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	double Timer;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	double Days = 0.0;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int Years = 0;
-	
-	double Remainder;
+	TObjectPtr<USpringArmComponent> CameraBoom;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> Camera;
 };
 
 
