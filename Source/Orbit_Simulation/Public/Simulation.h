@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/LevelScriptActor.h"
 #include "GameFramework/Actor.h"
+#include "Orbit_Simulation/CalculateOrbitalElements/OrbitalElements.h"
 #include "Simulation.generated.h"
 
 class ASystem;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API ASimulation : public AActor
 {
 	GENERATED_BODY()
@@ -23,7 +24,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
-	
+
+	void FindSystems();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -38,6 +40,7 @@ public:
 	double GetYears() { return Years; }
 	
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ASystem*> Systems; //Array of references to all of the systems in the simulation
 	
 	// Time
@@ -55,5 +58,7 @@ protected:
 public:
 	static const int STEPS_PER_SECOND;
 	static const double FIXED_TIMESTEP;
+
 };
+
 

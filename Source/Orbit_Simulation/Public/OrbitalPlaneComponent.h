@@ -7,10 +7,12 @@
 
 
 #include "ProceduralMeshComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "OrbitalPlaneComponent.generated.h"
 
-UCLASS()
-class ORBIT_SIMULATION_API UOrbitalPlaneComponent : public UPrimitiveComponent
+class UMaterialInstanceConstant;
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class ORBIT_SIMULATION_API UOrbitalPlaneComponent : public USceneComponent
 {
 	GENERATED_BODY()
 	
@@ -46,15 +48,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UProceduralMeshComponent* Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* Material;
+	UMaterialInterface* BaseMaterial;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* OrbitMaterial;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInterface* GridMaterial;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInstanceDynamic* GridMaterialInstance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	double GridSize;
+	UMaterialInstanceDynamic* MaterialInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NumberOfSides;
@@ -64,9 +60,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double SemiMinorAxis;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetGridSize(const double Size);
+	UFUNCTION(BlueprintCallable, Category="Material")
+	void SetColor(const FLinearColor NewColor);
+	UFUNCTION(BlueprintCallable, Category="Material")
+	void InitializeMaterial();
 	
 	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

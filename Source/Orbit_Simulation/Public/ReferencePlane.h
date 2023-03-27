@@ -27,6 +27,4 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UOrbitalPlaneComponent> ReferencePlane;
 };

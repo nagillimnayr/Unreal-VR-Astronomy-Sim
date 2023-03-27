@@ -8,17 +8,18 @@
 
 // Sets default values
 UOrbitalPlaneComponent::UOrbitalPlaneComponent() :
-GridSize(10.0),
-NumberOfSides(36),
+NumberOfSides(64),
 SemiMajorAxis(100.0),
-SemiMinorAxis(100.0)
+SemiMinorAxis(100.0),
+Color(FLinearColor::White)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = false;
-
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// Initialize Procedural Mesh
 	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(this);
 	Mesh->CastShadow = false;
 
 	// Initialize Materials
@@ -26,15 +27,15 @@ SemiMinorAxis(100.0)
 	ConstructorHelpers::FObjectFinder<UMaterialInterface> OrbitMatAsset(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/OrbitalPlane_MI.OrbitalPlane_MI'"));
 	if(OrbitMatAsset.Succeeded())
 	{
-		OrbitMaterial = OrbitMatAsset.Object;
+		BaseMaterial = OrbitMatAsset.Object;
 		
 	}
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> GridMatAsset(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/Grid_Opacity_MI.Grid_Opacity_MI'"));
+	/*ConstructorHelpers::FObjectFinder<UMaterialInterface> GridMatAsset(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/Grid_Opacity_MI.Grid_Opacity_MI'"));
 	if(GridMatAsset.Succeeded())
 	{
 		GridMaterial = GridMatAsset.Object;
-	}
-	Material = OrbitMaterial;
+	}*/
+	
 }
 
 // Called when the game starts or when spawned
@@ -42,8 +43,6 @@ void UOrbitalPlaneComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(Material)
-		Mesh->SetMaterial(0, Material);
 	
 }
 
@@ -64,23 +63,17 @@ void UOrbitalPlaneComponent::PostLoad()
 
 void UOrbitalPlaneComponent::Initialize()
 {
-	if(GridMaterial && !GridMaterialInstance)
-	{ 
-		GridMaterialInstance = CreateDynamicMaterialInstance(0, GridMaterial);
-		SetGridSize(GridSize);
-	}
 	CreateEllipse();
-	if(Material)
-		Mesh->SetMaterial(0, Material);
-
-	Mesh->AttachToComponent(this,
+	/*Mesh->AttachToComponent(this,
 		FAttachmentTransformRules(
 			EAttachmentRule::SnapToTarget,
 			EAttachmentRule::SnapToTarget,
 			EAttachmentRule::SnapToTarget,
 			false
 		)
-	);
+	);*/
+
+	InitializeMaterial();
 }
 
 void UOrbitalPlaneComponent::SetAxes(double a, double b)
@@ -165,20 +158,28 @@ void UOrbitalPlaneComponent::CreateEllipse()
 	
 	Mesh->CastShadow = false;
 	
-	if(Material)
-	{
-		Mesh->SetMaterial(0, Material);
-	}
 }
 
 
-void UOrbitalPlaneComponent::SetGridSize(const double Size)
+
+void UOrbitalPlaneComponent::SetColor(const FLinearColor NewColor)
 {
-	GridSize = Size;
-	if(GridMaterialInstance)
+	Color = NewColor;
+	InitializeMaterial();
+}
+
+void UOrbitalPlaneComponent::InitializeMaterial()
+{
+	// Initialize Material
+	if(IsValid(BaseMaterial) && !IsValid(MaterialInstance))
+	{ 
+		// Create Dynamic Material Instance
+		MaterialInstance = UMaterialInstanceDynamic::Create(BaseMaterial, nullptr, FName("Orbital Plane Dyn_Mat_Inst"));
+	}
+	if(IsValid(MaterialInstance))
 	{
-		// Set Grid Size in Material Instance Parameter
-		GridMaterialInstance->SetScalarParameterValue(FName("Grid Size"), GridSize);
+		MaterialInstance->SetVectorParameterValue(FName("Color"), Color);
+		Mesh->SetMaterial(0, MaterialInstance);
 	}
 }
 
@@ -195,9 +196,11 @@ void UOrbitalPlaneComponent::PostEditChangeProperty(FPropertyChangedEvent& Prope
 
 	Initialize();
 	const FName Name = PropertyChangedEvent.GetPropertyName();
-	if(Name == "GridSize")
+	if(Name == "BaseMaterial")
 	{
-		SetGridSize(GridSize);
+		// If Base Material changed, reset Material Instance
+		MaterialInstance = nullptr;
+		InitializeMaterial();
 	}
 }
 

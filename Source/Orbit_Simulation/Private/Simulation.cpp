@@ -11,7 +11,8 @@ const int ASimulation::STEPS_PER_SECOND = 60;
 const double ASimulation::FIXED_TIMESTEP = 1.0 / ASimulation::STEPS_PER_SECOND;
 
 // Sets default values
-ASimulation::ASimulation()
+ASimulation::ASimulation() :
+TimeScale(10)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,26 +25,8 @@ void ASimulation::Initialize()
 	
 	SetActorLocation(FVector::ZeroVector);
 	
+	FindSystems();
 	Timer = 0.0; // Reset Timer
-	Systems.Empty(); // Clear array
-	
-	TArray<AActor*> Actors;
-	// Find all ASystem actors
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASystem::StaticClass(),  Actors);
-	
-	// Copy references into Systems array
-	for (AActor* Actor : Actors)
-	{
-		if (!Actor) continue;
-		// Cast to ASystem
-		ASystem* System = Cast<ASystem, AActor>(Actor);
-		if(!System) continue;
-
-		// Don't add element if already in array
-		if (Systems.Contains(System)) continue;
-		
-		Systems.Add(System); // Add to array
-	}
 
 	for(ASystem* System : Systems)
 	{
@@ -65,6 +48,29 @@ void ASimulation::BeginPlay()
 	Initialize();
 }
 
+void ASimulation::FindSystems()
+{
+	//Systems.Empty(); // Clear array
+	
+	TArray<AActor*> Actors;
+	// Find all ASystem actors
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASystem::StaticClass(),  Actors);
+	
+	// Copy references into Systems array
+	for (AActor* Actor : Actors)
+	{
+		if (!Actor) continue;
+		// Cast to ASystem
+		ASystem* System = Cast<ASystem, AActor>(Actor);
+		if(!System) continue;
+
+		// Don't add element if already in array
+		if (Systems.Contains(System)) continue;
+		
+		Systems.Add(System); // Add to array
+	}
+}
+
 void ASimulation::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
@@ -82,7 +88,7 @@ void ASimulation::Tick(float DeltaTime)
 	//Timer += DeltaTime * TimeScale; // Update timer
 	Timer += DeltaTime; // Update timer
 
-	Days += DeltaTime * TimeScale;
+	Days += DeltaTime*  TimeScale;
 	/*if(Days >= 365.25)
 	{
 		//UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause Game after one year

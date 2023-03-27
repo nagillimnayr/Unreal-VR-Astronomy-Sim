@@ -22,7 +22,7 @@ namespace Unit
 
 // Astronomical Bodies
 // https://nssdc.gsfc.nasa.gov/planetary/planetfact.html
-namespace Sun
+/*namespace Sun
 {
 	constexpr double Mass = 1988500.0; // x10^24 kg
 	constexpr double Radius = 695700.0; // km
@@ -31,7 +31,7 @@ namespace Sun
 }
 namespace Mercury
 {
-	constexpr double Mass = 0.33010; // x10^24 kg
+	constexpr double Mass = 0.33010e24; // x10^24 kg
 	constexpr double Radius = 2439.7; // km
 	constexpr double GM = 0.022032; // x10^6 km^3/s^2
 	
@@ -45,7 +45,7 @@ namespace Mercury
 
 	constexpr double Inclination = 7.004; // Degrees
 	constexpr double Eccentricity = 0.2056; 
-	constexpr double SiderealRotation = 1407.6; // hrs/ revolution
+	constexpr double SiderealRotation = 0.2056; // hrs/ revolution
 	constexpr double Period = 87.969; // Days (Sidereal Period)
 	
 	constexpr double LongitudeOfAscendingNode = 48.33167; // Degrees
@@ -126,7 +126,7 @@ namespace Jupiter
 	constexpr double Radius = ; // km
 	constexpr double GM = ; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = 7784.79; // x10^5 km / 10^8 m*/
+	constexpr double SemimajorAxis = 7784.79; // x10^5 km / 10^8 m#1#
 
 	constexpr double PeriapsisRadius = 7405.95; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 13.72; // km/s
@@ -140,7 +140,7 @@ namespace Jupiter
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = 14.75385; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 14.75385; // Degrees#1#
 }
 
 namespace Saturn
@@ -149,7 +149,7 @@ namespace Saturn
 	constexpr double Radius = ; // km
 	constexpr double GM = ; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m*/
+	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m#1#
 
 	constexpr double PeriapsisRadius = 13575.54; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 10.18; // km/s
@@ -163,7 +163,7 @@ namespace Saturn
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = 92.43194; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 92.43194; // Degrees#1#
 }
 
 namespace Uranus
@@ -172,7 +172,7 @@ namespace Uranus
 	constexpr double Radius = ; // km
 	constexpr double GM = ; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m*/
+	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m#1#
 
 	constexpr double PeriapsisRadius = 27326.96; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 7.11; // km/s
@@ -186,7 +186,7 @@ namespace Uranus
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = 170.96424; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 170.96424; // Degrees#1#
 }
 
 namespace Neptune
@@ -195,7 +195,7 @@ namespace Neptune
 	constexpr double Radius = ; // km
 	constexpr double GM = ; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m*/
+	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m#1#
 
 	constexpr double PeriapsisRadius = 44710.50; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 5.50; // km/s
@@ -209,7 +209,7 @@ namespace Neptune
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = 44.97135; // Degrees*/
+	constexpr double LongitudeOfPeriapsis = 44.97135; // Degrees#1#
 }
 
 namespace Pluto
@@ -218,7 +218,7 @@ namespace Pluto
 	constexpr double Radius = ; // km
 	constexpr double GM = ; // x10^6 km^3/s^2
 	
-	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m*/
+	constexpr double SemimajorAxis = ; // x10^5 km / 10^8 m#1#
 
 	constexpr double PeriapsisRadius = 44349.87; // x10^5 km / 10^8 m
 	constexpr double MaxOrbitalVelocity = 6.10; // km/s
@@ -232,5 +232,5 @@ namespace Pluto
 	constexpr double Period = ; // Days (Sidereal Period)
 
 	constexpr double LongitudeOfAscendingNode = ; // Degrees
-	constexpr double LongitudeOfPeriapsis = ; // Degrees*/
-}
+	constexpr double LongitudeOfPeriapsis = ; // Degrees#1#
+}*/

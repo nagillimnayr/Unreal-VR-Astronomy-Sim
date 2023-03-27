@@ -16,7 +16,8 @@ public class Orbit_Simulation : ModuleRules
 			"InputCore", 
 			"UMG",  
 			"Niagara",
-			"ProceduralMeshComponent"
+			"ProceduralMeshComponent",
+			"Json", "JsonUtilities"
 		});
 
 

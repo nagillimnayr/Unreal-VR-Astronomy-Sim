@@ -12,7 +12,7 @@ class ARelativeMotionMap;
 class UCameraComponent;
 class USpringArmComponent;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, meta=(ShortToolTip="This class represents a gravitationally bound system (i.e. a planetary system, stellar system, etc)"))
 class ORBIT_SIMULATION_API ASystem : public APawn
 {
 	// This class represents a gravitationally bound system
@@ -29,8 +29,13 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
 
-public:	
+	void FindOrbits();
+
+public:
+	UFUNCTION(BlueprintCallable, Category="Orbit")
 	virtual void UpdateOrbits(double DeltaTime);
+
+	void AddOrbit(AOrbit* Orbit);
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
@@ -46,10 +51,10 @@ protected:
 	TObjectPtr<USceneComponent> SceneRoot;
 	
 	// Camera
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> Camera;*/
 };
 
 

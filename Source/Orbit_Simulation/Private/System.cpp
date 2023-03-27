@@ -6,10 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "AstroBody.h"
 #include "Orbit.h"
-#include "RelativeMotionMap.h"
-#include "../CalculateOrbitalElements/OrbitalElements.h"
+//#include "RelativeMotionMap.h"
+//#include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values
@@ -23,35 +22,19 @@ ASystem::ASystem()
 	SetRootComponent(SceneRoot);
 	
 	// Initialize Camera
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	/*Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	Camera->SetupAttachment(CameraBoom);
-	CameraBoom->SetupAttachment(SceneRoot);
+	CameraBoom->SetupAttachment(SceneRoot);*/
 	
 }
 
 void ASystem::Initialize()
 {
-	Orbits.Empty(); // Clear Array
-	
-	for(AActor* Actor : Children)
-	{
-		if(!IsValid(Actor)) continue;
-
-		// Attempt to cast the AActor to an AOrbit
-		AOrbit* Orbit = Cast<AOrbit, AActor>(Actor);
-		if(!IsValid(Orbit)) continue;
-		if(Orbits.Contains(Orbit)) continue; // If Orbit is already in the array, skip
-		Orbits.Push(Orbit); // Add Orbit actor to the array
-	}
-
-	// Sort based on distance of Periapsis
-	Orbits.Sort([](const AOrbit& Orbit1, const AOrbit& Orbit2)
-	{
-		return Orbit1 < Orbit2;
-	});
 	
 	if(!IsValid(PrimaryBody)) return;
+	
+	FindOrbits();
 
 	// Attach Primary Body to the System Actor
 	PrimaryBody->AttachToActor(this, 
@@ -62,21 +45,47 @@ void ASystem::Initialize()
 				false));
 	
 	// Attach Camera to Primary Body
-	CameraBoom->AttachToComponent(PrimaryBody->GetRootComponent(), 
+	/*CameraBoom->AttachToComponent(PrimaryBody->GetRootComponent(), 
 			FAttachmentTransformRules(
 				EAttachmentRule::SnapToTarget,
 				EAttachmentRule::SnapToTarget,
 				EAttachmentRule::KeepWorld,
-				false));
-	CameraBoom->TargetArmLength = 400.0 * PrimaryBody->GetSize();
-	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
+				false));*/
+	/*CameraBoom->TargetArmLength = 400.0 * PrimaryBody->GetSize();
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));*/
 }
 
 // Called when the game starts or when spawned
 void ASystem::BeginPlay()
 {
 	Super::BeginPlay();
-	Initialize();
+	FindOrbits();
+}
+
+void ASystem::FindOrbits()
+{
+	TArray<AActor*> FoundActors;
+	
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  FoundActors);
+	
+	//Orbits.Empty(); // Clear Array
+
+	for(AActor* Actor : FoundActors)
+	{
+		if(!IsValid(Actor)) continue;
+
+		// Attempt to cast the AActor to an AOrbit
+		AOrbit* Orbit = Cast<AOrbit>(Actor);
+		if(!IsValid(Orbit)) continue;
+		if(Orbits.Contains(Orbit)) continue; // If Orbit is already in the array, skip
+		Orbits.Push(Orbit); // Add Orbit actor to the array
+	}
+
+	// Sort based on distance of Periapsis
+	Orbits.Sort([](const AOrbit& Orbit1, const AOrbit& Orbit2)
+	{
+		return Orbit1 < Orbit2;
+	});
 }
 
 void ASystem::OnConstruction(const FTransform& Transform)
@@ -95,12 +104,24 @@ void ASystem::UpdateOrbits(double DeltaTime)
 			Orbits.Remove(Orbit);
 			continue;
 		}
-
+		
 		Orbit->UpdateOrbitingBody(DeltaTime);
 	}
 }
 
-
+void ASystem::AddOrbit(AOrbit* Orbit)
+{
+	if(!IsValid(Orbit)) return;
+	if(Orbits.Contains(Orbit)) return; // If Orbit is already in the array, skip
+	
+	Orbits.Push(Orbit); // Add Orbit actor to the array
+	
+	// Sort Orbits based on distance of Periapsis
+	Orbits.Sort([](const AOrbit& Orbit1, const AOrbit& Orbit2)
+	{
+		return Orbit1 < Orbit2;
+	});
+}
 
 
 #if WITH_EDITOR

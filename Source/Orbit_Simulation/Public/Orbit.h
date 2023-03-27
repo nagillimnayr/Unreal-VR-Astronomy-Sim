@@ -3,20 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SplineComponent.h"
-#include "Components/SplineMeshComponent.h"
-#include "GameFramework/Actor.h"
+//#include "GameFramework/Actor.h"
 
 #include "Orbit.generated.h"
 
 class AAstroBody;
 class ATrajectory;
+class UOrbitalPlaneComponent;
 class UArrowComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class USpotLightComponent;
+class UJsonParser;
+enum EOrbitPreset;
+class UEllipseMeshComponent;
+class UOrbitalPathComponent;
 
-UCLASS()
+UCLASS(Blueprintable, HideCategories=(Physics, Advanced, Activation, Collision))
 class ORBIT_SIMULATION_API AOrbit : public APawn
 {
 	GENERATED_BODY()
@@ -28,8 +31,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+	UFUNCTION(BlueprintCallable, Category = "Init")
+	virtual void Initialize();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostLoad() override;
 	
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitalDistance();
@@ -47,7 +52,7 @@ public:
 
 	// Getters
 	AAstroBody* GetCentralBody() const { return CentralBody; } 
-	AAstroBody* GetOrbitingBody() const { return OrbitingBody; } 
+	AAstroBody* GetOrbitingBody() const { return OrbitingBody; }
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> CentralBody;
@@ -58,10 +63,10 @@ protected:
 	TObjectPtr<USceneComponent> SceneRoot;
 
 	// Camera
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> Camera;*/
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double MaxOrbitalSpeed; // Orbital Speed at Periapsis
@@ -84,17 +89,22 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
 	double OrbitalPeriod;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
+	double Eccentricity;
+	// Angular
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double Inclination;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
+	double LongitudeOfPeriapsis;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double LongitudeOfAscendingNode;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double ArgumentOfPeriapsis;
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
-	double Eccentricity;
+	
 	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double OrbitalSpeed;
-	
+
+	// Anomalies
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double TrueAnomaly;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
@@ -126,10 +136,21 @@ protected:
 	TObjectPtr<UArrowComponent> TrueAnomalyArrow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
 	TObjectPtr<UArrowComponent> MeanAnomalyArrow;
+
+	// File reader
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UJsonParser> JsonParser;
 	
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TEnumAsByte<EOrbitPreset> Preset;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	ATrajectory* Trajectory;
+	TObjectPtr<UOrbitalPathComponent> OrbitalPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UEllipseMeshComponent> OrbitalPlane;
+	
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void LoadPreset();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateOrbit();
@@ -153,8 +174,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void DrawTrajectory();
 	
-	UFUNCTION(BlueprintCallable)
-	void OrientSpotlight();
 	
 	// Compute Keplerian Elements from Orbital State Vectors
 	/*UFUNCTION(BlueprintCallable, Category = "Orbit")
@@ -176,13 +195,13 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Astro")
 	FLinearColor Color; // Color associated with the Orbit, for setting the color of the Trajectory, Trail effect, etc
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpotLightComponent> Spotlight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpringArmComponent> SpotlightBoom;
 
+/*#if WITH_EDITORONLY_DATA
+	void OnObjectSelected(UObject* Object);
+	bool SelectedInEditor = false;
+#endif*/
 };

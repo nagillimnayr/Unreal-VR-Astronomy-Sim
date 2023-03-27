@@ -12,7 +12,7 @@ class ASplineTrace;
 class UNiagaraSystem;
 class UNiagaraComponent;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API APOVMotionMap : public AActor
 {
 	GENERATED_BODY()

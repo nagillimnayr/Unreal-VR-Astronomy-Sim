@@ -11,7 +11,7 @@
 class AAstroBody;
 class ASimulation;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API ARelativeMotionMap : public AActor
 {
 	GENERATED_BODY()

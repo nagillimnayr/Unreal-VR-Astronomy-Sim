@@ -1,21 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AstroBody.h"
-#include "System.h"
+
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-#include "Components/SpotLightComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AAstroBody::AAstroBody() :
 Mass(0.0),
 VelocityVector(FVector::ZeroVector),
 AccelerationVector(FVector::ZeroVector),
-Size(1.0)
+MeanRadius(1.0),
+Color(FLinearColor::White)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -67,6 +68,14 @@ Size(1.0)
 	// Disable collision
 	SetActorEnableCollision(false);
 	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	// Initialize Camera
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
+	CameraBoom->SetupAttachment(SceneRoot);
+	Camera->SetupAttachment(CameraBoom);
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
+	CameraBoom->bDoCollisionTest = false;
 }
 
 
@@ -83,11 +92,15 @@ void AAstroBody::BeginPlay()
 			false);
 		TrailComponent->SetVisibility(true);
 		TrailComponent->SetHiddenInGame(false);
-		TrailComponent->SetColorParameter(TEXT("Color"), Color);
+		TrailComponent->SetNiagaraVariableLinearColor(FString("User.DynamicColor"), Color);
+		GLog->Log("> Setting Trail color...");
+		const double DynamicLifetime = 10.0 / (VelocityVector.Length() * Unit::KM_TO_M / Unit::DISTANCE_MULT);
+		TrailComponent->SetNiagaraVariableFloat(FString("User.DynamicLifetime"), DynamicLifetime);
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error initializing Niagara System"));
+		GLog->Log("> Error initializing Niagara System!");
 	}
 	
 	SphereMesh->CastShadow = false; // Disable shadows
@@ -98,9 +111,26 @@ void AAstroBody::BeginPlay()
 void AAstroBody::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	SetActorScale3D(FVector(1.0, 1.0, 1.0));
-	SphereMesh->SetWorldScale3D(FVector(Size, Size, Size)); // Set size of Sphere
 	
+	Initialize();
+
+}
+
+void AAstroBody::Initialize()
+{
+	// Set sphere scale
+	/*SphereMesh->SetRelativeScale3D(FVector(1.0));
+	//SetActorScale3D(FVector(MeanRadius / (Unit::DISTANCE_MULT * 100.0))); // Set size of Body
+	SetActorScale3D(FVector(MeanRadius)); // Set size of Body*/
+	SetActorRelativeScale3D(FVector(1.0));
+	SphereMesh->SetWorldScale3D(FVector(MeanRadius)); // Set size of sphere
+	
+	// Disable shadows
+	SphereMesh->CastShadow = false;
+	
+	// Disable Collision
+	SetActorEnableCollision(false);
+	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	/*AccelerationArrow->AttachToComponent(SceneRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	AccelerationArrow->SetRelativeLocation(FVector::ZeroVector);
@@ -110,23 +140,24 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	VelocityArrow->SetRelativeLocation(FVector::ZeroVector);
 	VelocityArrow->ArrowLength = 75 + (25 * Radius);*/
 	
-	SphereMesh->CastShadow = false; // Disable shadows
-	
-	// Disable Collision
-	SetActorEnableCollision(false);
-
-
+	// Acceleration Arrow
 	AccelerationArrow->SetRelativeRotation(FRotator::ZeroRotator);
+	AccelerationArrow->SetVisibility(false);
+	AccelerationArrow->SetVisibility(true);
 
-	FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 0.0, 90.0));
-	VelocityArrow->SetRelativeRotation(Rotation);
+	// Velocity Arrow
+	VelocityArrow->SetRelativeRotation(FRotator::MakeFromEuler(GetActorRightVector()));
+	VelocityArrow->SetVisibility(false);
+	VelocityArrow->SetVisibility(true);
 
-	// Set Color
-
+	// Camera
+	CameraBoom->TargetArmLength = 400.0 * MeanRadius;
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 180.0)));
 }
 
 
-/*void AAstroBody::CalculateAcceleration(const AAstroBody* const OtherBody)
+/*
+void AAstroBody::CalculateAcceleration(const AAstroBody* const OtherBody)
 {
 	const FVector OtherPos = OtherBody->GetActorLocation();
 	FVector ThisPos = GetActorLocation();
@@ -137,7 +168,7 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 	Direction.Normalize(); // Normalized Direction Vector pointing from this Body to the other Body
 	
 	// Calculate gravitational force
-	double Force = (Unit::GRAVITATIONAL_CONSTANT * OtherBody->mass * Unit::SOLAR_MASS) / DistanceSquared;
+	double Force = (Unit::GRAVITATIONAL_CONSTANT * OtherBody->GetMassOfBody() * Unit::SOLAR_MASS) / DistanceSquared;
 	AccelerationVector = Direction * Force;
 
 	AccelerationMagnitude = Force;
@@ -167,10 +198,12 @@ void AAstroBody::UpdatePosition(const double DeltaTime)
 
 	// Update Position based on Velocity
 	// Divide by DISTANCE_MULTIPLIER so the result will be in in-editor units
-	Position += VelocityVector * (DeltaTime * Unit::SECONDS_IN_DAY  / Unit::DISTANCE_MULT);
+	Position += VelocityVector * (DeltaTime * Unit::SECONDS_IN_DAY / Unit::DISTANCE_MULT);
 	const bool bCheck = SetActorLocation(Position);
+	
 	if (!bCheck)
 	{
+		GLog->Log("> Error Updating Body!!!");
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Updating Position"));
 	}
 }
@@ -180,6 +213,8 @@ void AAstroBody::UpdateVelocityArrow()
 	if(!VelocityArrow) {return;}
 	const FRotator Rotation = FRotationMatrix::MakeFromX(VelocityVector).Rotator();
 	VelocityArrow->SetWorldRotation(Rotation);
+	VelocityArrow->SetVisibility(false);
+	VelocityArrow->SetVisibility(true);
 }
 
 void AAstroBody::UpdateAccelerationArrow()
@@ -187,6 +222,8 @@ void AAstroBody::UpdateAccelerationArrow()
 	if(!AccelerationArrow) { return; }
 	const FRotator Rotation = FRotationMatrix::MakeFromX(AccelerationVector).Rotator();
 	AccelerationArrow->SetWorldRotation(Rotation);
+	AccelerationArrow->SetVisibility(false);
+	AccelerationArrow->SetVisibility(true);
 }
 
 void AAstroBody::AimAccelerationArrow(const AActor* const Target)
@@ -194,14 +231,18 @@ void AAstroBody::AimAccelerationArrow(const AActor* const Target)
 	const FVector Direction = Target->GetActorLocation() - GetActorLocation();
 	const FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	AccelerationArrow->SetWorldRotation(Rotation);
+	AccelerationArrow->SetVisibility(false);
+	AccelerationArrow->SetVisibility(true);
 	
 }
 
 void AAstroBody::SetColor(const FLinearColor NewColor)
 {
 	Color = NewColor;
-	if(TrailComponent)
-		TrailComponent->SetColorParameter(TEXT("Color"), Color);
+	if(IsValid(TrailComponent))
+	{
+		TrailComponent->SetNiagaraVariableLinearColor(FString("System.DynamicColor"), Color);
+	}
 }
 
 // Called every frame

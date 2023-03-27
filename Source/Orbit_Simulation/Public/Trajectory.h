@@ -12,8 +12,9 @@
 class UOrbitalPlaneComponent;
 class AAstroBody;
 class USpringArmComponent;
+class UEllipseMeshComponent;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API ATrajectory : public AActor
 {
 	GENERATED_BODY()
@@ -22,13 +23,13 @@ public:
 	// Sets default values for this actor's properties
 	ATrajectory();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void Initialize();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetAxes(const double a, const double b);
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void SetClosedLoop(const bool Closed) { isClosedLoop = Closed; }
-
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void Draw();
@@ -48,9 +49,6 @@ protected:
 	void UpdateSplineMesh();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void UpdateEllipse();
-	
-	/*UFUNCTION(BlueprintCallable, Category = "Spline")
-	FVector PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum);*/
 
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	FVector GetCenter();
@@ -58,7 +56,7 @@ protected:
 	void UpdateArrows();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	FVector GetPeriapsisVector();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetSemiMajorAxis(const double a) {
 		SemiMajorAxis = a; 
@@ -78,9 +76,9 @@ protected:
 	USceneComponent* SceneRoot;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	USplineComponent* SplineComponent;
+	TObjectPtr<USplineComponent> SplineComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	UStaticMesh* Mesh;
+	TObjectPtr<UStaticMesh> Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
@@ -117,7 +115,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor Color;
-	
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UStaticMeshComponent> AscendingNodeMarker;*/
+
+public:
+	void InitializeMaterial();
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };

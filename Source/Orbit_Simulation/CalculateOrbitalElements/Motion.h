@@ -4,7 +4,7 @@
 
 namespace Motion
 {
-	inline FVector CalculateAcceleration(const AAstroBody* const OrbitingBody, const AAstroBody* const CentralBody)
+	inline FVector CalculateAcceleration(const AAstroBody* OrbitingBody, const AAstroBody* CentralBody)
 	{
 		// If either body is invalid, throw an exception
 		if (!OrbitingBody ) { throw std::exception("> Error: OrbitingBody is NULL"); }
