@@ -8,7 +8,12 @@
 #include "Orbit.h"
 //#include "RelativeMotionMap.h"
 //#include "../CalculateOrbitalElements/OrbitalElements.h"
+#include "SimPlayerController.h"
+#include "W_MainHUD.h"
+#include "W_OutlinerItem.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Orbit_Simulation/SimGameMode.h"
 
 
 // Sets default values
@@ -22,10 +27,10 @@ ASystem::ASystem()
 	SetRootComponent(SceneRoot);
 	
 	// Initialize Camera
-	/*Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	Camera->SetupAttachment(CameraBoom);
-	CameraBoom->SetupAttachment(SceneRoot);*/
+	CameraBoom->SetupAttachment(SceneRoot);
 	
 }
 
@@ -51,8 +56,8 @@ void ASystem::Initialize()
 				EAttachmentRule::SnapToTarget,
 				EAttachmentRule::KeepWorld,
 				false));*/
-	/*CameraBoom->TargetArmLength = 400.0 * PrimaryBody->GetSize();
-	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));*/
+	CameraBoom->TargetArmLength = 400.0 * PrimaryBody->GetMeanRadius();
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +65,37 @@ void ASystem::BeginPlay()
 {
 	Super::BeginPlay();
 	FindOrbits();
+
+	// Add reference to self to Player Controller
+	if(ASimPlayerController* SimController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		SimController->SetSystem(this);
+	}
+
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+	ASimGameMode* SimGameMode = Cast<ASimGameMode>(GameMode);
+
+	check(IsValid(SimGameMode));
+
+	UW_MainHUD* HUD = SimGameMode->GetMainHUD();
+	
+	// Create Outliner Entry Widgets for each Orbit
+	for(AOrbit* Orbit : Orbits)
+	{
+		if(!IsValid(Orbit))
+		{
+			Orbits.Remove(Orbit);
+			continue;
+		}
+
+		AAstroBody* Body = Orbit->GetOrbitingBody();
+		check(Body);
+		Body->CreateIcon();
+		
+		// The HUD will pass orbit on to the outliner, which will construct the widget
+		HUD->AddItemToOutliner(Orbit);
+	}
+	
 }
 
 void ASystem::FindOrbits()

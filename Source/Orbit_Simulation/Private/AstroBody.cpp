@@ -6,9 +6,18 @@
 #include "Components/ArrowComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "ObservationPoint.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
+#include "BaseGizmos/ScalableSphereGizmo.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Components/SphereComponent.h"
+#include "Observer.h"
+//#include "TextureRenderTarget2D.h";
+
+// Define collision channel for selection
+#define COLLISION_SELECTION_CHANNEL ECC_GameTraceChannel1
 
 // Sets default values
 AAstroBody::AAstroBody() :
@@ -21,19 +30,52 @@ Color(FLinearColor::White)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	// Initialize Scene Root
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
+
+	// Initialize Sphere Mesh
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMesh"));
 	SphereMesh->SetupAttachment(SceneRoot);
-		SphereMesh->CastShadow = false; // Disable shadows
+	SphereMesh->CastShadow = false; // Disable shadows
+	// Initialize Outline Mesh
+	OutlineMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OutlineMesh"));
+	OutlineMesh->SetupAttachment(SphereMesh);
+	OutlineMesh->CastShadow = false; // Disable shadows
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Orbit_Sim/Meshes/Equirectangular_Sphere.Equirectangular_Sphere'"));
 	if (SphereMeshAsset.Succeeded())
 	{
 		SphereMesh->SetStaticMesh(SphereMeshAsset.Object);
 		SphereMesh->SetRelativeLocation(FVector::ZeroVector);
+		OutlineMesh->SetStaticMesh(SphereMeshAsset.Object);
+		OutlineMesh->SetRelativeLocation(FVector::ZeroVector);
 	}
 	//StaticSphereMesh->SetWorldScale3D(FVector(Radius, Radius, Radius)); // Set size of Sphere
+	// Set Materials
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OutlineMat(TEXT("//Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/MI_Extrude_Outline.MI_Extrude_Outline'"));
+	if(OutlineMat.Succeeded())
+	{
+		// Create Dynamic Material Instance for Outline material
+		/*UMaterialInstanceDynamic* OutlineMatDyn = UMaterialInstanceDynamic::Create(OutlineMat.Object, nullptr, FName("Dynamic Outline Material"));
+		OutlineMesh->SetMaterial(0, OutlineMatDyn);*/
+		
+		// Create Outline material
+		OutlineMesh->SetMaterial(0, OutlineMat.Object);
+	}
+	OutlineMesh->SetVisibility(false);
+
+	
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> IconMatAsset(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Orbit_Sim/Materials/Misc_Materials/MI_Icon.MI_Icon'"));
+	if(IconMatAsset.Succeeded())
+	{
+		IconMaterialBase = IconMatAsset.Object;
+	}
+
+	// Initialize Collision Sphere
+	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
+	CollisionSphere->SetSphereRadius(102);
+	CollisionSphere->SetupAttachment(SphereMesh);
 
 	// Initialize arrows
 	AccelerationArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Acceleration-Arrow"));
@@ -65,9 +107,12 @@ Color(FLinearColor::White)
 		VelocityArrow->bUseInEditorScaling = false;
 	}
 
-	// Disable collision
-	SetActorEnableCollision(false);
+	// Set collision
+	SetActorEnableCollision(true);
 	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//SphereMesh->SetCollisionObjectType(COLLISION_SELECTION_CHANNEL);
+	//SphereMesh->SetCollisionResponseToChannel(COLLISION_SELECTION_CHANNEL, ECollisionResponse::ECR_Block);
+	
 	
 	// Initialize Camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -76,6 +121,31 @@ Color(FLinearColor::White)
 	Camera->SetupAttachment(CameraBoom);
 	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
 	CameraBoom->bDoCollisionTest = false;
+
+	// Initialize SceneCaptureComponent
+	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Scene Capture Component"));
+	SceneCaptureComponent->SetupAttachment(Camera);
+	// Use Show Only list
+	SceneCaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+	SceneCaptureComponent->FOVAngle = 30.0;
+	// Render Target
+	IconRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("Icon Render Target"));
+	
+
+	
+	// Initialize GeoCoordinateArm
+	GeoCoordinateArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Geo-Coordinate Arm"));
+	GeoCoordinateArm->SetupAttachment(SceneRoot);
+	GeoCoordinateArm->bDoCollisionTest = false;
+	GeoCoordinateArm->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, 0.0, 180.0)));
+	
+	HorizonSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Horizon Sphere"));
+	HorizonSphere->SetupAttachment(GeoCoordinateArm);
+	HorizonSphere->InitSphereRadius(10.0);
+	//DrawSphere = CreateDefaultSubobject<UDrawSphereComponent>(TEXT("Draw Sphere"));
+	//DrawSphere->SetupAttachment(GeoCoordinateArm);
+	//SphereGizmo = CreateDefaultSubobject<UScalableSphereGizmo>(TEXT("Gizmo Sphere"));
+	//SphereGizmo->SetupAttachment(GeoCoordinateArm);
 }
 
 
@@ -83,6 +153,10 @@ Color(FLinearColor::White)
 void AAstroBody::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateIcon();
+	SetActorEnableCollision(true);
+	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	
 	// Initialize Niagara System/ Component
 	if (TrailSystem)
@@ -124,13 +198,35 @@ void AAstroBody::Initialize()
 	SetActorScale3D(FVector(MeanRadius)); // Set size of Body*/
 	SetActorRelativeScale3D(FVector(1.0));
 	SphereMesh->SetWorldScale3D(FVector(MeanRadius)); // Set size of sphere
+	OutlineMesh->SetWorldScale3D(FVector(MeanRadius)); // Set size of sphere
+
+	// SceneCaptureComponent
+	SceneCaptureComponent->ShowOnlyActors.Empty();
+	SceneCaptureComponent->ClearShowOnlyComponents(); // Clear ShowOnlyComponents List
+	SceneCaptureComponent->ShowOnlyComponent(SphereMesh); // Add SphereMesh to ShowOnlyComponents List
+	SceneCaptureComponent->bCaptureEveryFrame = false; // Dont capture every frame
+	SceneCaptureComponent->bCaptureOnMovement = false; // Dont capture on movement
+
+	// Initialize Icon Render Target
+	IconRenderTarget->InitCustomFormat(256, 256, EPixelFormat::PF_FloatRGBA, false);
+	IconRenderTarget->bAutoGenerateMips = true;
+	IconRenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
+	SceneCaptureComponent->TextureTarget = IconRenderTarget;
+
+	CreateIcon();
+	
+	//SceneCaptureComponent->TextureTarget = RenderTarget;
 	
 	// Disable shadows
 	SphereMesh->CastShadow = false;
 	
-	// Disable Collision
-	SetActorEnableCollision(false);
+	// Enable Collision
+	SetActorEnableCollision(true);
 	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	CollisionSphere->SetCollisionObjectType(COLLISION_SELECTION_CHANNEL);
+	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	CollisionSphere->SetCollisionResponseToChannel(COLLISION_SELECTION_CHANNEL, ECollisionResponse::ECR_Block);
 	
 	/*AccelerationArrow->AttachToComponent(SceneRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	AccelerationArrow->SetRelativeLocation(FVector::ZeroVector);
@@ -153,6 +249,9 @@ void AAstroBody::Initialize()
 	// Camera
 	CameraBoom->TargetArmLength = 400.0 * MeanRadius;
 	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 180.0)));
+
+	// GeoCoordinateArm
+	GeoCoordinateArm->TargetArmLength = MeanRadius * 100.0;
 }
 
 
@@ -236,6 +335,13 @@ void AAstroBody::AimAccelerationArrow(const AActor* const Target)
 	
 }
 
+void AAstroBody::PostLoad()
+{
+	Super::PostLoad();
+
+
+}
+
 void AAstroBody::SetColor(const FLinearColor NewColor)
 {
 	Color = NewColor;
@@ -243,6 +349,91 @@ void AAstroBody::SetColor(const FLinearColor NewColor)
 	{
 		TrailComponent->SetNiagaraVariableLinearColor(FString("System.DynamicColor"), Color);
 	}
+	/*if(!IsValid(OutlineMesh))
+	{
+		GLog->Log("> Error!: OutlineMesh is invalid!");
+		return;
+	}
+	UMaterialInterface* OutlineMat = OutlineMesh->GetMaterial(0);
+	if(!IsValid(OutlineMat))
+	{
+		GLog->Log("> Error!: OutlineMat is invalid!");
+		return;
+	}
+	UMaterialInstanceDynamic* OutlineMatDyn = Cast<UMaterialInstanceDynamic>(OutlineMat);
+	if(IsValid(OutlineMatDyn))
+	{
+		// Set Outline Color
+		OutlineMatDyn->SetVectorParameterValue(FName("Color"), Color);
+	}*/
+}
+
+UTextureRenderTarget2D* AAstroBody::GetIconRenderTarget()
+{
+	// Return the RenderTarget
+	return IconRenderTarget;
+}
+
+UMaterialInstanceDynamic* AAstroBody::GetIconMaterial()
+{
+	if(!IsValid(IconMaterialInstance))
+	{
+		CreateIcon();
+	}
+	return IconMaterialInstance;
+}
+
+void AAstroBody::CreateIcon()
+{
+	if(!IsValid(IconRenderTarget))
+	{
+		GLog->Log(">Error! Icon Render Target is invalid!");
+		GEngine->AddOnScreenDebugMessage(91, 5.0, FColor::Yellow, TEXT(">Error! Icon Render Target is invalid!"));
+	}
+	// Capture the scene
+	SceneCaptureComponent->CaptureScene();
+	if(!IsValid(IconMaterialBase)) {return;}
+	if(!IsValid(IconMaterialInstance))
+	{
+		IconMaterialInstance = UMaterialInstanceDynamic::Create(IconMaterialBase, nullptr);
+		IconMaterialInstance->SetTextureParameterValue(FName("Texture"), IconRenderTarget);
+	}
+}
+
+void AAstroBody::GoToSurface(AObservationPoint* ObservationPoint)
+{
+	ObservationPoint->AttachToComponent(GeoCoordinateArm, FAttachmentTransformRules(
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::KeepRelative,
+		false
+	));
+}
+
+void AAstroBody::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	//Initialize();
+}
+
+void AAstroBody::PositionGeoCoords(const double Latitude, const double Longitude)
+{
+	
+}
+
+void AAstroBody::Select()
+{
+	OutlineMesh->SetVisibility(true);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0, FColor::Yellow, FString("Selecting: " + GetActorLabel()));
+
+}
+
+void AAstroBody::Deselect()
+{
+	OutlineMesh->SetVisibility(false);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0, FColor::Yellow, FString("Deselecting: " + GetActorLabel()));
+
 }
 
 // Called every frame

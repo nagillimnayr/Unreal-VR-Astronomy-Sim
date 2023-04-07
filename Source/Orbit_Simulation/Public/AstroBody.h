@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SelectableInterface.h"
 #include "GameFramework/Actor.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "AstroBody.generated.h"
 
+class AObservationPoint;
+class UScalableSphereGizmo;
 class USpringArmComponent;
 class USpotLightComponent;
 class AOrbit;
@@ -14,9 +17,12 @@ class UNiagaraSystem;
 class UNiagaraComponent;
 class UArrowComponent;
 class UCameraComponent;
+class USphereComponent;
+class USceneCaptureComponent2D;
+class UTextureRenderTarget2D;
 
 UCLASS(Blueprintable, BlueprintType)
-class ORBIT_SIMULATION_API AAstroBody : public AActor
+class ORBIT_SIMULATION_API AAstroBody : public APawn, public ISelectableInterface
 {
 	GENERATED_BODY()
 	
@@ -41,9 +47,11 @@ public:
 	void AimAccelerationArrow(const AActor* const Target);
 	
 protected:
+	virtual void PostLoad() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Initialization")
@@ -61,7 +69,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
 	double GetMassOfBody() const {return Mass;}
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetSize() const {return MeanRadius;}
+	double GetMeanRadius() const {return MeanRadius;}
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	USpringArmComponent* GetCameraBoom() { return CameraBoom; }
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	UCameraComponent* GetCamera() { return Camera; }
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
@@ -77,10 +90,31 @@ public:
 		//SetActorScale3D(FVector(MeanRadius / (Unit::DISTANCE_MULT * 100.0))); // Set size of Sphere
 		SetActorRelativeScale3D(FVector(1.0));
 		SphereMesh->SetWorldScale3D(FVector(MeanRadius));
+		OutlineMesh->SetWorldScale3D(FVector(MeanRadius));
 	}
 	UFUNCTION(BlueprintCallable, Category = "Color")
 	void SetColor(const FLinearColor NewColor);
 
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetOrbit(AOrbit* NewOrbit) { Orbit = NewOrbit;}
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	AOrbit* GetOrbit() {return Orbit;}
+
+	UFUNCTION(BlueprintCallable, Category = "GeoCoord")
+	void PositionGeoCoords(const double Latitude, const double Longitude);
+	
+	UFUNCTION(BlueprintCallable, Category = "Icon")
+	UTextureRenderTarget2D* GetIconRenderTarget();
+	UFUNCTION(BlueprintCallable, Category = "Icon")
+	UMaterialInstanceDynamic* GetIconMaterial();
+
+	UFUNCTION(BlueprintCallable, CallInEditor,Category = "Icon")
+	void CreateIcon();
+
+	UFUNCTION(BlueprintCallable)
+	void GoToSurface(AObservationPoint* ObservationPoint);
+protected:
+	virtual void PostInitializeComponents() override;
 	
 protected:
 	// Attributes
@@ -99,12 +133,16 @@ protected:
 	double MeanRadius; // Mean Radius of the body. (1.0 = Mean Radius of Earth)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double SiderealRotationPeriod; // The period in days for the body to make one full 360 degree revolution about its polar axis
-public:
+
 	// Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* SceneRoot;
+	TObjectPtr<USceneComponent> SceneRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* SphereMesh;
+	TObjectPtr<UStaticMeshComponent> SphereMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> OutlineMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> CollisionSphere;
 	
 	// Arrows
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -126,4 +164,31 @@ public:
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCameraComponent> Camera;
+	// Scene Capture Component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
+	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
+	// Icon
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
+	TObjectPtr<UTextureRenderTarget2D> IconRenderTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
+	UMaterialInterface* IconMaterialBase;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
+	UMaterialInstanceDynamic* IconMaterialInstance;
+	
+
+	// Reference to Orbit
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<AOrbit> Orbit;
+	
+	// Used to position Spherical Coordinates (Latitude and Longitude)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> GeoCoordinateArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> HorizonSphere;
+	
+	
+	
+	// Implement SelectableInterface
+	virtual void Select() override;
+	virtual void Deselect() override;
 };

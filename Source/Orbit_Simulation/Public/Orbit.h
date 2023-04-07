@@ -29,6 +29,7 @@ public:
 	AOrbit();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintCallable, Category = "Init")
@@ -53,6 +54,10 @@ public:
 	// Getters
 	AAstroBody* GetCentralBody() const { return CentralBody; } 
 	AAstroBody* GetOrbitingBody() const { return OrbitingBody; }
+
+	double GetOrbitalSpeed() const { return OrbitalSpeed; }
+	double GetOrbitalPeriod() const { return OrbitalPeriod; }
+	double GetOrbitalDistance() const { return OrbitalRadius; }
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> CentralBody;
@@ -199,7 +204,7 @@ public:
 	FLinearColor Color; // Color associated with the Orbit, for setting the color of the Trajectory, Trail effect, etc
 
 protected:
-
+	
 /*#if WITH_EDITORONLY_DATA
 	void OnObjectSelected(UObject* Object);
 	bool SelectedInEditor = false;

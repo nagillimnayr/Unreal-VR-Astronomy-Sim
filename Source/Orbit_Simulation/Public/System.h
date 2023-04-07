@@ -38,7 +38,11 @@ public:
 	void AddOrbit(AOrbit* Orbit);
 	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
+UFUNCTION(BlueprintCallable)
+	AAstroBody* GetPrimaryBody() {return PrimaryBody;}
+UFUNCTION(BlueprintCallable)
+	TArray<AOrbit*>& GetOrbits() {return Orbits;}
+	
 protected:
 	// References to other Actors
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
@@ -51,10 +55,10 @@ protected:
 	TObjectPtr<USceneComponent> SceneRoot;
 	
 	// Camera
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UCameraComponent> Camera;*/
+	TObjectPtr<UCameraComponent> Camera;
 };
 
 

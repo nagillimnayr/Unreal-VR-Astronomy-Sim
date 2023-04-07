@@ -3,11 +3,16 @@
 
 #include "Observer.h"
 
+#include "Camera/CameraComponent.h"
+
+
 // Sets default values
 AObserver::AObserver()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 
 }
 
@@ -29,6 +34,8 @@ void AObserver::Tick(float DeltaTime)
 void AObserver::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	
 
 }
 

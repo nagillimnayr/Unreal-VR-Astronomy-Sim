@@ -16,6 +16,7 @@
 #include "Dom/JsonObject.h"
 #include "OrbitalPathComponent.h"
 #include "Selection.h"
+#include "SimPlayerController.h"
 
 // Sets default values
 AOrbit::AOrbit() :
@@ -63,7 +64,7 @@ Color(FLinearColor::White)
 	AscendingNodeArrow->ArrowSize = 1.0;
 	AscendingNodeArrow->bUseInEditorScaling = false;
 	AscendingNodeArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-	AscendingNodeArrow->SetVisibility(true);
+	AscendingNodeArrow->SetVisibility(false);
 	AscendingNodeArrow->SetHiddenInGame(true);
 	
 	TrueAnomalyArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("True Anomaly Arrow"));
@@ -73,7 +74,7 @@ Color(FLinearColor::White)
 	TrueAnomalyArrow->ArrowSize = 1.0;
 	TrueAnomalyArrow->bUseInEditorScaling = false;
 	TrueAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-	TrueAnomalyArrow->SetVisibility(true);
+	TrueAnomalyArrow->SetVisibility(false);
 	TrueAnomalyArrow->SetHiddenInGame(true);
 	
 	MeanAnomalyArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Mean Anomaly Arrow"));
@@ -83,13 +84,19 @@ Color(FLinearColor::White)
 	MeanAnomalyArrow->ArrowSize = 1.0;
 	MeanAnomalyArrow->bUseInEditorScaling = false;
 	MeanAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
-	MeanAnomalyArrow->SetVisibility(true);
+	MeanAnomalyArrow->SetVisibility(false);
 	MeanAnomalyArrow->SetHiddenInGame(true);
 
 	// Json File Reader
 	JsonParser = CreateDefaultSubobject<UJsonParser>(FName("Json File Reader"));
 	
 } // End of Constructor
+
+void AOrbit::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	//Initialize();
+}
 
 // Called when the game starts or when spawned
 void AOrbit::BeginPlay()
@@ -106,6 +113,11 @@ void AOrbit::BeginPlay()
 void AOrbit::Initialize()
 {
 	OrbitalPath->SetMeshVisibility(true);
+
+	if(IsValid(OrbitingBody))
+	{
+		OrbitingBody->SetOrbit(this);
+	}
 	
 	// Load preset
 	if(Preset != None) { LoadPreset(); }

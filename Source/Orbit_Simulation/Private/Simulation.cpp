@@ -2,6 +2,8 @@
 
 
 #include "Simulation.h"
+
+#include "SimPlayerController.h"
 #include "System.h"
 #include "Kismet/GameplayStatics.h"
 #include "Orbit_Simulation/CalculateOrbitalElements/AstroConstants.h"
@@ -44,7 +46,11 @@ void ASimulation::Initialize()
 void ASimulation::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	if(ASimPlayerController* SimController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		SimController->SetSimulation(this);
+	}
 	Initialize();
 }
 

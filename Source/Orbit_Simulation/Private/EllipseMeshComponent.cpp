@@ -3,6 +3,8 @@
 
 #include "EllipseMeshComponent.h"
 
+
+
 UEllipseMeshComponent::UEllipseMeshComponent(const FObjectInitializer& ObjectInitializer) : UProceduralMeshComponent(ObjectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = false;

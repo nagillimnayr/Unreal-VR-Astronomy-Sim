@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ObservationPoint.generated.h"
 
+
 UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API AObservationPoint : public AActor
 {
@@ -23,4 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UStaticMesh> SurfaceMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> Surface;
 };

@@ -12,7 +12,9 @@ namespace Unit
 	constexpr double SM = 1.989;
 
 	constexpr double MASS_MULT = 1e24;
-	constexpr double DISTANCE_MULT = 1e8;
+	//constexpr double DISTANCE_MULT = 1e8; 1 in-editor unit = 10^8m
+	constexpr double DISTANCE_MULT = 1e7;
+	
 	// Unit Conversion Multipliers
 	constexpr double SECONDS_IN_DAY = 86400.0; // 1 second in simulation = 1 day
 	constexpr double KM_TO_M = 1000.0;

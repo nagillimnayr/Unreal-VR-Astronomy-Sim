@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Observer.generated.h"
 
+class UCameraComponent;
+
 UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API AObserver : public ACharacter
 {
@@ -26,4 +28,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	// Camera
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> Camera;
+	
 };
