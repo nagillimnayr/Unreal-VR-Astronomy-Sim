@@ -8,7 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "SplineTrace.generated.h"
 
-class ASystem;
+class ASimulation;
+
 UCLASS()
 class ORBIT_SIMULATION_API ASplineTrace : public AActor
 {
@@ -45,7 +46,7 @@ public:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sim")
-	ASystem* Sim;
+	ASimulation* Sim;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	double Duration; // How long the path will be traced for (in Days)
@@ -75,7 +76,7 @@ protected:
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	TObjectPtr<UMaterialInterface> DefaultMaterial;
+	UMaterialInterface* DefaultMaterial;
 
 	// Counters
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Count")

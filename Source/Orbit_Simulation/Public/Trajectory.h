@@ -9,10 +9,12 @@
 #include "GameFramework/Actor.h"
 #include "Trajectory.generated.h"
 
+class UOrbitalPlaneComponent;
 class AAstroBody;
 class USpringArmComponent;
+class UEllipseMeshComponent;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ORBIT_SIMULATION_API ATrajectory : public AActor
 {
 	GENERATED_BODY()
@@ -21,22 +23,19 @@ public:
 	// Sets default values for this actor's properties
 	ATrajectory();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void Initialize();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetAxes(const double a, const double b);
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void SetClosedLoop(const bool Closed) { isClosedLoop = Closed; }
-
 	
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void Draw();
 	
-	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void PositionAscendingNodeMarker(double Angle, double Distance);
-	
-	UFUNCTION(BlueprintCallable, Category = "Spline")
-	void RotateSpline(const double Angle);
+	UFUNCTION(BlueprintCallable, Category = "Color")
+	void SetColor(const FLinearColor NewColor);
 
 protected:
 	// Called when the game starts or when spawned
@@ -50,8 +49,6 @@ protected:
 	void UpdateSplineMesh();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	void UpdateEllipse();
-	UFUNCTION(BlueprintCallable, Category = "Spline")
-	FVector PolarCoordinates(const double Angle, const double Eccentricity, const double SemiLatusRectum);
 
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	FVector GetCenter();
@@ -59,7 +56,7 @@ protected:
 	void UpdateArrows();
 	UFUNCTION(BlueprintCallable, Category = "Spline")
 	FVector GetPeriapsisVector();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetSemiMajorAxis(const double a) {
 		SemiMajorAxis = a; 
@@ -70,7 +67,7 @@ protected:
 		SemiMinorAxis = b; 
 		SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
 	}
-public:	
+protected:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spline")
 	TArray<USplineMeshComponent*> SplineMeshes; // Array of Spline Meshes
@@ -79,18 +76,17 @@ public:
 	USceneComponent* SceneRoot;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	USplineComponent* SplineComponent;
+	TObjectPtr<USplineComponent> SplineComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	UStaticMesh* Mesh;
+	TObjectPtr<UStaticMesh> Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	UMaterialInterface* DefaultMaterial;
-	
+	UMaterialInterface* BaseMaterial;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	UMaterialInterface* AlternateMaterial;
+	UMaterialInstanceDynamic* MaterialInstance;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
@@ -110,12 +106,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	TObjectPtr<UArrowComponent> SemiLatusRectumArrow;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UOrbitalPlaneComponent> OrbitalPlane;
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	FVector2D MeshScale;
 
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UStaticMeshComponent> AscendingNodeMarker;
+	FLinearColor Color;
+
+public:
+	void InitializeMaterial();
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };

@@ -3,7 +3,7 @@
 
 #include "SplineTrace.h"
 
-#include "System.h"
+#include "Simulation.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -19,17 +19,18 @@ SplineMeshCount(0)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Get reference to Sim
-	TArray<AActor*> SimArray;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASystem::StaticClass(), SimArray);
-	if (SimArray.Num() > 0)
-	{
-		Sim = Cast<ASystem>(SimArray[0]);
-	}
-	
 	// Create Scene Root Component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_Root"));
 	SetRootComponent(SceneRoot);
+
+	// Get reference to Simulation
+	TArray<AActor*> SimArray;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASimulation::StaticClass(), SimArray);
+	if(SimArray.Num() > 0)
+	{
+		Sim = Cast<ASimulation>(SimArray[0]);
+	}
+	
 
 	// Create Spline Component
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
@@ -52,12 +53,12 @@ SplineMeshCount(0)
 		Mesh = CylinderMeshAsset.Object;
 	}
 	
-	/*// Initialize Material
+	// Initialize Material
 	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat(TEXT("/Engine/VREditor/UI/KeyDiskMaterial.KeyDiskMaterial"));
 	if (Mat.Succeeded())
 	{
 		DefaultMaterial = Mat.Object;
-	}*/
+	}
 
 	// Clear Spline
 	SplineComponent->ClearSplinePoints();
@@ -249,7 +250,7 @@ void ASplineTrace::Update(const FVector& Position)
 {
 	double DeltaTime = GetWorld()->GetDeltaSeconds();
 	if(!Sim) return;
-	double Delta = DeltaTime * Sim->TimeScale;
+	double Delta = DeltaTime * Sim->GetTimeScale();
 	// Update timers
 	Timer += Delta;
 	TimeSinceLastUpdate += Delta;

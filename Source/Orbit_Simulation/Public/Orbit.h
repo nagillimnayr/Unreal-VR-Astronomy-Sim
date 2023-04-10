@@ -3,19 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SplineComponent.h"
-#include "Components/SplineMeshComponent.h"
-#include "GameFramework/Actor.h"
+//#include "GameFramework/Actor.h"
 
 #include "Orbit.generated.h"
 
 class AAstroBody;
 class ATrajectory;
-class USpringArmComponent;
+class UOrbitalPlaneComponent;
 class UArrowComponent;
+class UCameraComponent;
+class USpringArmComponent;
+class USpotLightComponent;
+class UJsonParser;
+enum EOrbitPreset;
+class UEllipseMeshComponent;
+class UOrbitalPathComponent;
 
-UCLASS()
-class ORBIT_SIMULATION_API AOrbit : public AActor
+UCLASS(Blueprintable, HideCategories=(Physics, Advanced, Activation, Collision))
+class ORBIT_SIMULATION_API AOrbit : public APawn
 {
 	GENERATED_BODY()
 	
@@ -24,17 +29,14 @@ public:
 	AOrbit();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+	UFUNCTION(BlueprintCallable, Category = "Init")
+	virtual void Initialize();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostLoad() override;
 	
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION(BlueprintCallable, Category = "Astro")
-	void UpdateOrbitingBody(float DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitalDistance();
 
@@ -42,27 +44,46 @@ public:
 	void InitializeOrbitingBody();
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void OrientOrbitingBodyTowardsCenter();
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	void UpdateOrbitingBody(float DeltaTime);
 
+	// Getters
+	AAstroBody* GetCentralBody() const { return CentralBody; } 
+	AAstroBody* GetOrbitingBody() const { return OrbitingBody; }
 
+	double GetOrbitalSpeed() const { return OrbitalSpeed; }
+	double GetOrbitalPeriod() const { return OrbitalPeriod; }
+	double GetOrbitalDistance() const { return OrbitalRadius; }
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> CentralBody;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> OrbitingBody;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* SceneRoot;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USceneComponent> SceneRoot;
+
+	// Camera
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpringArmComponent> SpringArm;*/
+	TObjectPtr<USpringArmComponent> CameraBoom;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> Camera;*/
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	double InitialOrbitalSpeed;
+	double MaxOrbitalSpeed; // Orbital Speed at Periapsis
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double MinOrbitalSpeed; // Orbital Speed at Apoapsis
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Orbit")
-	double PeriapsisRadius;
+	double PeriapsisRadius; // Closest point to the focus of attraction
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
-	double ApoapsisRadius;
+	double ApoapsisRadius; // Furthest point from the focus of attraction
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
-	double OrbitalRadius;
+	double OrbitalRadius; // Distance between the current position of the Orbiting Body and the Central Body
 
 protected:
 	// Orbital Elements
@@ -73,15 +94,30 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient, Category = "Orbit")
 	double OrbitalPeriod;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
+	double Eccentricity;
+	// Angular
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double Inclination;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
+	double LongitudeOfPeriapsis;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double LongitudeOfAscendingNode;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double ArgumentOfPeriapsis;
+	
+	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
-	double Eccentricity;
+	double OrbitalSpeed;
+
+	// Anomalies
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Orbit")
 	double TrueAnomaly;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double EccentricAnomaly;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double MeanAnomaly;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
+	double MeanAngularMotion; // Angle rotated per second
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
 	double SemiLatusRectum;
@@ -93,30 +129,33 @@ protected:
 	double LinearEccentricity;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector PeriapsisVector;
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	//FVector ApoapsisVector;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector AscendingNodeVector;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
 	FVector EccentricityVector;
 	
-
-	/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	TObjectPtr<UArrowComponent> SemiLatusRectumArrow;*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double AxialTilt; // Angle in degrees between the direction of the Orbiting Body's positive pole and the normal of the orbital plane, A.K.A Obliquity
+	
+	// Arrows
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
 	TObjectPtr<UArrowComponent> AscendingNodeArrow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
+	TObjectPtr<UArrowComponent> TrueAnomalyArrow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
+	TObjectPtr<UArrowComponent> MeanAnomalyArrow;
+
+	// File reader
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UJsonParser> JsonParser;
 	
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Orbit")
-	FVector EllipticalCenter; // Center of Ellipse, for positioning the Trajectory object*/
-	
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TEnumAsByte<EOrbitPreset> Preset;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	ATrajectory* Trajectory;
+	TObjectPtr<UOrbitalPathComponent> OrbitalPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UEllipseMeshComponent> OrbitalPlane;
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
-	void OrientPeriapsisVector();
+	void LoadPreset();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void CalculateOrbit();
@@ -133,7 +172,13 @@ protected:
 	void OrientInclination();
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetTrueAnomalyArrow();
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetMeanAnomalyArrow();
+	
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void DrawTrajectory();
+	
 	
 	// Compute Keplerian Elements from Orbital State Vectors
 	/*UFUNCTION(BlueprintCallable, Category = "Orbit")
@@ -141,6 +186,27 @@ protected:
 	
 	
 public:
+
+	bool operator<(const AOrbit& OtherOrbit) const
+	{
+		return PeriapsisRadius < OtherOrbit.PeriapsisRadius;
+	}
+	bool operator>(const AOrbit& OtherOrbit) const
+	{
+		return PeriapsisRadius > OtherOrbit.PeriapsisRadius;
+	}
+	
 	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Astro")
+	FLinearColor Color; // Color associated with the Orbit, for setting the color of the Trajectory, Trail effect, etc
+
+protected:
+	
+/*#if WITH_EDITORONLY_DATA
+	void OnObjectSelected(UObject* Object);
+	bool SelectedInEditor = false;
+#endif*/
 };

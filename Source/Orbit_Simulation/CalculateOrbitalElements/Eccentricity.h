@@ -17,7 +17,7 @@ namespace Eccentricity
 
 	inline double CalculateFromSpecificAngularMomentum(const double SpecificOrbitalEnergy, const double CentralMass, const FVector SpecificAngularMomentum)
 	{
-		const double Eccentricity = FMath::Sqrt((1.0 + (2.0 * SpecificOrbitalEnergy * std::pow(SpecificAngularMomentum.Length(), 2.0))) / FMath::Pow(Sim::GRAVITATIONAL_CONSTANT * CentralMass, 2));
+		const double Eccentricity = FMath::Sqrt((1.0 + (2.0 * SpecificOrbitalEnergy * std::pow(SpecificAngularMomentum.Length(), 2.0))) / FMath::Pow(Unit::GRAVITATIONAL_CONSTANT * CentralMass, 2));
 		return Eccentricity;
 	}
 

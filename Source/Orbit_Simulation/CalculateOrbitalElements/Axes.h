@@ -19,14 +19,14 @@ namespace SemiMajorAxis
 	
 	inline double CalculateFromSpecificOrbitalEnergy(const double CentralMass, const double SpecificOrbitalEnergy)
 	{
-		double SemiMajorAxis = -(Sim::GRAVITATIONAL_CONSTANT * (CentralMass * Sim::SOLAR_MASS) / (2.0 * SpecificOrbitalEnergy));
-		SemiMajorAxis /= Sim::DISTANCE_MULT; // Get value in in-editor units
+		double SemiMajorAxis = -(Unit::GRAVITATIONAL_CONSTANT * (CentralMass * Unit::SOLAR_MASS) / (2.0 * SpecificOrbitalEnergy));
+		SemiMajorAxis /= Unit::DISTANCE_MULT; // Get value in in-editor units
 		return SemiMajorAxis;
 	}
 	inline double CalculateFromPeriod(const double Period, const double CentralMass)
 	{
-		double const SemiMajorAxis = FMath::Pow( (Sim::GRAVITATIONAL_CONSTANT * CentralMass  * Sim::SOLAR_MASS * FMath::Pow(Period * Sim::SECONDS_IN_DAY, 2.0) /
-											   4.0 * std::pow(Sim::Pi, 2.0)), 1.0 / 3.0);
+		double const SemiMajorAxis = FMath::Pow( (Unit::GRAVITATIONAL_CONSTANT * CentralMass  * Unit::SOLAR_MASS * FMath::Pow(Period * Unit::SECONDS_IN_DAY, 2.0) /
+											   4.0 * std::pow(Unit::Pi, 2.0)), 1.0 / 3.0);
 
 		return SemiMajorAxis;
 	}

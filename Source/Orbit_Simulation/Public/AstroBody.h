@@ -3,18 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SelectableInterface.h"
 #include "GameFramework/Actor.h"
+#include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "AstroBody.generated.h"
 
+class AObservationPoint;
+class UScalableSphereGizmo;
 class USpringArmComponent;
 class USpotLightComponent;
 class AOrbit;
 class UNiagaraSystem;
 class UNiagaraComponent;
 class UArrowComponent;
+class UCameraComponent;
+class USphereComponent;
+class USceneCaptureComponent2D;
+class UTextureRenderTarget2D;
 
-UCLASS()
-class ORBIT_SIMULATION_API AAstroBody : public APawn
+UCLASS(Blueprintable, BlueprintType)
+class ORBIT_SIMULATION_API AAstroBody : public APawn, public ISelectableInterface
 {
 	GENERATED_BODY()
 	
@@ -22,30 +30,32 @@ public:
 	// Sets default values for this actor's properties
 	AAstroBody();
 
+	/*UFUNCTION(BlueprintCallable, Category = "Motion")
+	virtual void CalculateAcceleration(const AAstroBody* OtherBody);*/
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void CalculateAcceleration(AAstroBody* OtherBody);
+	void SetAcceleration(const FVector NewAcceleration);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdateVelocity(const double DeltaTime);
+	void UpdateVelocity(const FVector NewVelocity);
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	virtual void UpdatePosition(const double DeltaTime);
+	void UpdatePosition(const double DeltaTime);
 	
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void UpdateVelocityArrow();
+	void UpdateVelocityArrow();
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void UpdateAccelerationArrow();
+	void UpdateAccelerationArrow();
 	UFUNCTION(BlueprintCallable, Category = "Arrow")
-	virtual void AimAccelerationArrow(AActor* Target);
+	void AimAccelerationArrow(const AActor* const Target);
+	
 protected:
+	virtual void PostLoad() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+
 public:
-	UFUNCTION(BlueprintCallable)
-	void OrientSpotLight(AActor* Source);
-	
-public:	
+	UFUNCTION(BlueprintCallable, Category="Initialization")
+	virtual void Initialize();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitProperties() override;
@@ -53,43 +63,86 @@ public:
 
 	// Getters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	const FVector& GetVelocityVector() const {return VelocityVector;};
+	const FVector& GetAccelerationVector() const {return AccelerationVector;}
+	UFUNCTION(BlueprintCallable, Category = "Motion")
+	const FVector& GetVelocityVector() const {return VelocityVector;}
+	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
+	double GetMassOfBody() const {return Mass;}
 	UFUNCTION(BlueprintCallable, Category = "Astro")
-	double GetMassOfBody() const {return mass;};
+	double GetMeanRadius() const {return MeanRadius;}
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	USpringArmComponent* GetCameraBoom() { return CameraBoom; }
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	UCameraComponent* GetCamera() { return Camera; }
 	
 	// Setters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
-	void InitializeVelocity(FVector& Velocity) {this->VelocityVector = Velocity; this->OrbitalSpeed = Velocity.Length();}
+	void InitializeVelocity(const FVector& InitVelocity) { VelocityVector = InitVelocity; OrbitalSpeed = InitVelocity.Length();}
+	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
+	void SetMass(const double NewMass) { Mass = NewMass; }
+	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
+	void SetMeanRadius(const double NewMeanRadius)
+	{
+		MeanRadius = NewMeanRadius;
+		//SphereMesh->SetRelativeScale3D(FVector(1.0));
+		//SetActorScale3D(FVector(MeanRadius)); // Set size of Body
+		//SetActorScale3D(FVector(MeanRadius / (Unit::DISTANCE_MULT * 100.0))); // Set size of Sphere
+		SetActorRelativeScale3D(FVector(1.0));
+		SphereMesh->SetWorldScale3D(FVector(MeanRadius));
+		OutlineMesh->SetWorldScale3D(FVector(MeanRadius));
+	}
+	UFUNCTION(BlueprintCallable, Category = "Color")
+	void SetColor(const FLinearColor NewColor);
 
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	void SetOrbit(AOrbit* NewOrbit) { Orbit = NewOrbit;}
+	UFUNCTION(BlueprintCallable, Category = "Orbit")
+	AOrbit* GetOrbit() {return Orbit;}
+
+	UFUNCTION(BlueprintCallable, Category = "GeoCoord")
+	void PositionGeoCoords(const double Latitude, const double Longitude);
+	
+	UFUNCTION(BlueprintCallable, Category = "Icon")
+	UTextureRenderTarget2D* GetIconRenderTarget();
+	UFUNCTION(BlueprintCallable, Category = "Icon")
+	UMaterialInstanceDynamic* GetIconMaterial();
+
+	UFUNCTION(BlueprintCallable, CallInEditor,Category = "Icon")
+	void CreateIcon();
+
+	UFUNCTION(BlueprintCallable)
+	void GoToSurface(AObservationPoint* ObservationPoint);
+protected:
+	virtual void PostInitializeComponents() override;
 	
 protected:
 	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
-	double mass;
+	double Mass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Motion")
 	FVector VelocityVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	FVector AccelerationVector;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
 	double OrbitalSpeed; // Scalar magnitude of Velocity Vector
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Motion")
-	double AccelerationMagnitude; // Scalar
+	double AccelerationMagnitude; // Scalar magnitude of Acceleration Vector
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
-	double Size;
+	double MeanRadius; // Mean Radius of the body. (1.0 = Mean Radius of Earth)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double SiderealRotationPeriod; // The period in days for the body to make one full 360 degree revolution about its polar axis
 
-public:
 	// Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* SceneRoot;
+	TObjectPtr<USceneComponent> SceneRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* StaticSphereMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpotLightComponent> SpotLight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USpringArmComponent> SpotLightBoom;
+	TObjectPtr<UStaticMeshComponent> SphereMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UStaticMeshComponent> OutlineMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> CollisionSphere;
 	
 	// Arrows
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -103,7 +156,39 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* TrailComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor Color;
+
+	// Camera
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> CameraBoom;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> Camera;
+	// Scene Capture Component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
+	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
+	// Icon
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
+	TObjectPtr<UTextureRenderTarget2D> IconRenderTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
+	UMaterialInterface* IconMaterialBase;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
+	UMaterialInstanceDynamic* IconMaterialInstance;
+	
+
 	// Reference to Orbit
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	AOrbit* Orbit;*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<AOrbit> Orbit;
+	
+	// Used to position Spherical Coordinates (Latitude and Longitude)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> GeoCoordinateArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> HorizonSphere;
+	
+	
+	
+	// Implement SelectableInterface
+	virtual void Select() override;
+	virtual void Deselect() override;
 };

@@ -5,6 +5,10 @@
 
 #include "AstroBody.h"
 #include "SplineTrace.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "Components/SphereComponent.h"
 
 // Sets default values
@@ -18,14 +22,14 @@ APOVMotionMap::APOVMotionMap()
 	SetRootComponent(SceneRoot);
 	
 	// Initialize collision sphere
-	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	Sphere->SetCollisionResponseToChannel(TraceChannel, ECollisionResponse::ECR_Block);
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // Enable Collision
-	Sphere->InitSphereRadius(4000.0);
-	Sphere->SetupAttachment(SceneRoot);
+	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	CollisionSphere->SetCollisionResponseToChannel(TraceChannel, ECollisionResponse::ECR_Block);
+	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // Enable Collision
+	CollisionSphere->InitSphereRadius(4000.0);
+	CollisionSphere->SetupAttachment(SceneRoot);
 
 	// Initialize Spline Trace
-	SplineTrace = CreateDefaultSubobject<ASplineTrace>(TEXT("SplineTrace"));
+	//SplineTrace = CreateDefaultSubobject<ASplineTrace>(TEXT("SplineTrace"));
 	
 	// Initialize Static Mesh
 	ProjectedBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projected Body"));
@@ -35,6 +39,7 @@ APOVMotionMap::APOVMotionMap()
 		ProjectedBody->SetStaticMesh(MeshAsset.Object);
 		ProjectedBody->CastShadow = false; // Disable shadows
 	}
+
 	
 }
 
@@ -53,10 +58,10 @@ void APOVMotionMap::OnConstruction(const FTransform& Transform)
 		ProjectedBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
-	if(SplineTrace->IsValidLowLevel())
+	/*if(SplineTrace->IsValidLowLevel())
 	{
 		SplineTrace->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	}
+	}*/
 	
 }
 
@@ -66,6 +71,21 @@ void APOVMotionMap::BeginPlay()
 	Super::BeginPlay();
 	
 	SetSphereRadius();
+
+	// Initialize Niagara System/ Component
+	if (TrailSystem)
+	{
+		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, ProjectedBody, NAME_None,
+			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,
+			false);
+		/*TrailComponent->SetVisibility(true);
+		TrailComponent->SetHiddenInGame(false);*/
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error initializing Niagara System"));
+	}
+
 }
 
 // Called every frame
@@ -73,10 +93,10 @@ void APOVMotionMap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(!ReferenceBody->IsValidLowLevel() ||
-		!OtherBody->IsValidLowLevel() ||
-		!Sphere->IsValidLowLevel() ||
-		!SplineTrace->IsValidLowLevel())
+	if(!IsValid(ReferenceBody) ||
+		!IsValid(OtherBody) ||
+		!IsValid(CollisionSphere) /* ||
+		!SplineTrace->IsValidLowLevel()*/)
 	{return;}
 	
 	TraceMotion();
@@ -84,34 +104,34 @@ void APOVMotionMap::Tick(float DeltaTime)
 
 void APOVMotionMap::SetSphereRadius()
 {
-	if(!ReferenceBody->IsValidLowLevel() ||
-		!OtherBody->IsValidLowLevel() ||
-		!Sphere->IsValidLowLevel() ||
-		!SplineTrace->IsValidLowLevel())
+	if(!IsValid(ReferenceBody) ||
+		!IsValid(OtherBody) ||
+		!IsValid(CollisionSphere) /* ||
+		!SplineTrace->IsValidLowLevel()*/)
 	{return;}
 
 	const double Dist1 = FVector::Distance(ReferenceBody->GetActorLocation(), GetActorLocation());
 	const double Dist2 = FVector::Distance(OtherBody->GetActorLocation(), GetActorLocation());
 
 	// Set the sphere's radius to be twice the sum of the distances between each body and the center
-	Sphere->SetSphereRadius((Dist1 + Dist2) * 2);
+	CollisionSphere->SetSphereRadius((Dist1 + Dist2) * 2);
 }
 
 void APOVMotionMap::SetSphereRadius(const double Radius)
 {
-	if(!Sphere->IsValidLowLevel()) {return;}
+	if(!CollisionSphere->IsValidLowLevel()) {return;}
 
-	Sphere->SetSphereRadius(Radius);
+	CollisionSphere->SetSphereRadius(Radius);
 	
 }
 
 void APOVMotionMap::TraceMotion()
 {
-	if(!ReferenceBody->IsValidLowLevel() ||
-		!OtherBody->IsValidLowLevel() ||
-		!Sphere->IsValidLowLevel() ||
-		!SplineTrace->IsValidLowLevel())
-			{return;}
+	if(!IsValid(ReferenceBody) ||
+		!IsValid(OtherBody) ||
+		!IsValid(CollisionSphere) /* ||
+		!SplineTrace->IsValidLowLevel()*/)
+	{return;}
 
 	FHitResult HitResult;
 
@@ -121,7 +141,7 @@ void APOVMotionMap::TraceMotion()
 	
 	// Get start and end points of line trace
 	const FVector TraceStart = ReferenceBody->GetActorLocation();
-	const FVector TraceEnd = ReferenceBody->GetActorLocation() + (Direction * (Sphere->GetScaledSphereRadius() * 2));
+	const FVector TraceEnd = ReferenceBody->GetActorLocation() + (Direction * (CollisionSphere->GetScaledSphereRadius() * 2));
 	// Since both bodies are within the sphere, the distance between either of them and the surface of the sphere in any
 	// direction cannot be greater than the diameter of the sphere
 
@@ -142,12 +162,13 @@ void APOVMotionMap::TraceMotion()
 	MappedPoints.Add(HitResult.ImpactPoint);
 
 	// Add position of impact point to the Spline Trace
-	SplineTrace->Update(HitResult.ImpactPoint);
+	//SplineTrace->Update(HitResult.ImpactPoint);
 
 	// Set position of Projected Body to impact point
 	ProjectedBody->SetWorldLocation(HitResult.ImpactPoint);
 	// Draw debug line
 	DrawDebugLine(GetWorld(), TraceStart, HitResult.ImpactPoint, FColor::Blue, false, -1, 0, 10.0f);
+
 
 	
 	// Display debug message
