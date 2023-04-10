@@ -1,0 +1,21 @@
+
+// Instantiation
+
+Component* SomeComponent = CreateDefaultSubObject<Component>("Name"); // Use in Constructor
+
+Component* SomeComponent = NewObject<Component>(); // USe outside Constructor
+
+Actor* SomeActor = GetWorld()->SpawnActor<Actor>();
+
+
+// Rotation
+
+	// Get Rotator from Direction Vector
+	FRotator Rotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+// Debug
+
+    
+	// Draw debug line
+	FlushPersistentDebugLines(GetWorld());
+	DrawDebugLine(GetWorld(), Position1, Position2, FColor::Orange, false, -1, 0, 10.0f);
