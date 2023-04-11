@@ -4,31 +4,36 @@
 #include "W_OutlinerItem.h"
 #include "Orbit.h"
 #include "AstroBody.h"
+#include "SimPlayerController.h"
+#include "W_DetailsPanel.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Engine/TextureRenderTarget2D.h"
 
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UW_OutlinerItem::Init()
-{if(NameText)
 {
-	NameText->SetText(FText::FromString(FString("Name")));
-}
+	if(NameText)
+	{
+		NameText->SetText(FText::FromString(FString("Name")));
+	}
 	if(IsValid(Orbit))
 	{
-		AAstroBody* Body = Orbit->GetOrbitingBody();
+		Body = Orbit->GetOrbitingBody();
 		
 		if(!IsValid(Body) && NameText)
 		{
 			NameText->SetText(FText::FromString(Body->GetActorNameOrLabel()));
 		}
-		if(IsValid(Body) && NameText)
+		if(!Body) {return;}
+		if(IsValid(NameText))
 		{
 			NameText->SetText(FText::FromString(Body->GetActorNameOrLabel()));
 		}
-		if(IsValid(Body) && IconImage)
+		if(IsValid(IconImage))
 		{
 			UTextureRenderTarget2D* RenderTarget = Body->GetIconRenderTarget();
 			SetDisplayLabel("Outliner Entry: " + Body->GetActorNameOrLabel()); 
@@ -41,6 +46,11 @@ void UW_OutlinerItem::Init()
 				IconImage->SetBrushFromMaterial(Body->GetIconMaterial());
 				
 			}
+		}
+		if(ClickableContainer)
+		{
+			// Setup Button
+			ClickableContainer->OnClicked.AddUniqueDynamic(this, &UW_OutlinerItem::SelectEntry);
 		}
 	}
 }
@@ -70,4 +80,14 @@ void UW_OutlinerItem::NativeConstruct()
 	Super::NativeConstruct();
 
 	Init();
+}
+
+void UW_OutlinerItem::SelectEntry()
+{
+	// Get Player Controller
+	ASimPlayerController* SimPlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),  0));
+	check(SimPlayerController);
+	check(Orbit);
+	
+	SimPlayerController->Select(Orbit->GetOrbitingBody());
 }

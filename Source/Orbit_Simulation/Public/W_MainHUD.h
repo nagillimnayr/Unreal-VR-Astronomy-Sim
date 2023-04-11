@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "W_MainHUD.generated.h"
 
+class UW_DetailsPanel;
 class UCanvasPanel;
 class UW_Outliner;
 class UW_OutlinerItem;
@@ -22,6 +23,9 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
+	void Init();
+	
+	UFUNCTION(BlueprintCallable)
 	void AddItemToOutliner(AOrbit* Orbit);
 
 	
@@ -31,4 +35,7 @@ protected:
 	UCanvasPanel* Canvas;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UW_Outliner* Outliner;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UW_DetailsPanel* DetailsPanel;
 };

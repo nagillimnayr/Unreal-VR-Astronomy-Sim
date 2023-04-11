@@ -3,7 +3,9 @@
 
 #include "ObservationPoint.h"
 
+#include "SimPlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AObservationPoint::AObservationPoint()
@@ -11,6 +13,10 @@ AObservationPoint::AObservationPoint()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	// Initialize Scene Root
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	SetRootComponent(SceneRoot);
+	
 	Surface = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Surface"));
 	if(IsValid(SurfaceMesh))
 	{
@@ -24,6 +30,7 @@ AObservationPoint::AObservationPoint()
 			Surface->SetStaticMesh(SurfaceMeshAsset.Object);
 		}
 	}
+	Surface->SetupAttachment(SceneRoot);
 
 }
 
@@ -34,10 +41,27 @@ void AObservationPoint::BeginPlay()
 	
 }
 
+void AObservationPoint::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	if(ASimPlayerController* SimPlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		SimPlayerController->OnTransitionToSpaceDelegate.AddUniqueDynamic(this, &AObservationPoint::DestroySelf);
+	}
+	
+}
+
 // Called every frame
 void AObservationPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AObservationPoint::DestroySelf()
+{
+	UE_LOG(LogTemp, Warning, TEXT("> AObservationPoint: DestroySelf()"));
+	Destroy();
 }
 

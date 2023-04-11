@@ -20,7 +20,7 @@ public:
 	/** Remove the current menu widget and create a new one from the specified class, if provided. */
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
-
+	
 	// Getters
 	UFUNCTION(BlueprintCallable)
 	UW_MainHUD* GetMainHUD() {return MainHUD;}

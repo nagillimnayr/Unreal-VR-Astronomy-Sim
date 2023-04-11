@@ -14,6 +14,10 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/SphereComponent.h"
 #include "Observer.h"
+#include "SimPlayerController.h"
+#include "Components/BillboardComponent.h"
+#include "Components/MaterialBillboardComponent.h"
+#include "Kismet/GameplayStatics.h"
 //#include "TextureRenderTarget2D.h";
 
 // Define collision channel for selection
@@ -121,31 +125,40 @@ Color(FLinearColor::White)
 	Camera->SetupAttachment(CameraBoom);
 	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
 	CameraBoom->bDoCollisionTest = false;
+	CameraBoom->bUsePawnControlRotation = true;
 
 	// Initialize SceneCaptureComponent
 	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Scene Capture Component"));
-	SceneCaptureComponent->SetupAttachment(Camera);
 	// Use Show Only list
 	SceneCaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-	SceneCaptureComponent->FOVAngle = 30.0;
+	SceneCaptureComponent->FOVAngle = 45.0;
+	SceneCaptureArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Scene Capture Arm"));
+	SceneCaptureArm->SetupAttachment(SceneRoot);
+	SceneCaptureComponent->SetupAttachment(SceneCaptureArm);
+	SceneCaptureArm->bDoCollisionTest = false;
+	SceneCaptureArm->bUsePawnControlRotation = false;
+
 	// Render Target
-	IconRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("Icon Render Target"));
-	
+	//IconRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("Icon Render Target"));
+	//SceneCaptureComponent->TextureTarget = IconRenderTarget;
 
 	
 	// Initialize GeoCoordinateArm
 	GeoCoordinateArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Geo-Coordinate Arm"));
 	GeoCoordinateArm->SetupAttachment(SceneRoot);
 	GeoCoordinateArm->bDoCollisionTest = false;
-	GeoCoordinateArm->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, 0.0, 180.0)));
+	//GeoCoordinateArm->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, 0.0, 180.0)));
 	
 	HorizonSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Horizon Sphere"));
 	HorizonSphere->SetupAttachment(GeoCoordinateArm);
 	HorizonSphere->InitSphereRadius(10.0);
-	//DrawSphere = CreateDefaultSubobject<UDrawSphereComponent>(TEXT("Draw Sphere"));
-	//DrawSphere->SetupAttachment(GeoCoordinateArm);
-	//SphereGizmo = CreateDefaultSubobject<UScalableSphereGizmo>(TEXT("Gizmo Sphere"));
-	//SphereGizmo->SetupAttachment(GeoCoordinateArm);
+
+	// Billboard
+	BillboardComponent = CreateDefaultSubobject<UBillboardComponent>(TEXT("Billboard"));
+	BillboardComponent->SetupAttachment(SceneRoot);
+	BillboardMaterialComponent = CreateDefaultSubobject<UMaterialBillboardComponent>(TEXT("Billboard Material Component"));
+	BillboardMaterialComponent->SetupAttachment(SceneRoot);
+	
 }
 
 
@@ -157,6 +170,7 @@ void AAstroBody::BeginPlay()
 	SetActorEnableCollision(true);
 	SphereMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	HorizonSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	// Initialize Niagara System/ Component
 	if (TrailSystem)
@@ -168,8 +182,14 @@ void AAstroBody::BeginPlay()
 		TrailComponent->SetHiddenInGame(false);
 		TrailComponent->SetNiagaraVariableLinearColor(FString("User.DynamicColor"), Color);
 		GLog->Log("> Setting Trail color...");
-		const double DynamicLifetime = 10.0 / (VelocityVector.Length() * Unit::KM_TO_M / Unit::DISTANCE_MULT);
+
+		// Set Dynamic Lifetime
+		const double DynamicLifetime = 100.0 / (VelocityVector.Length() * Unit::KM_TO_M / Unit::DISTANCE_MULT);
 		TrailComponent->SetNiagaraVariableFloat(FString("User.DynamicLifetime"), DynamicLifetime);
+
+		// Set Dynamic Size
+		const double DynamicSize = MeanRadius;
+		TrailComponent->SetNiagaraVariableFloat(FString("User.DynamicSize"), DynamicSize);
 	}
 	else
 	{
@@ -180,6 +200,8 @@ void AAstroBody::BeginPlay()
 	SphereMesh->CastShadow = false; // Disable shadows
 	AccelerationArrow->SetHiddenInGame(true);
 	VelocityArrow->SetHiddenInGame(true);
+
+	
 }
 
 void AAstroBody::OnConstruction(const FTransform& Transform)
@@ -193,29 +215,13 @@ void AAstroBody::OnConstruction(const FTransform& Transform)
 void AAstroBody::Initialize()
 {
 	// Set sphere scale
-	/*SphereMesh->SetRelativeScale3D(FVector(1.0));
-	//SetActorScale3D(FVector(MeanRadius / (Unit::DISTANCE_MULT * 100.0))); // Set size of Body
-	SetActorScale3D(FVector(MeanRadius)); // Set size of Body*/
-	SetActorRelativeScale3D(FVector(1.0));
-	SphereMesh->SetWorldScale3D(FVector(MeanRadius)); // Set size of sphere
-	OutlineMesh->SetWorldScale3D(FVector(MeanRadius)); // Set size of sphere
+	SetMeanRadius(MeanRadius);
 
-	// SceneCaptureComponent
-	SceneCaptureComponent->ShowOnlyActors.Empty();
-	SceneCaptureComponent->ClearShowOnlyComponents(); // Clear ShowOnlyComponents List
-	SceneCaptureComponent->ShowOnlyComponent(SphereMesh); // Add SphereMesh to ShowOnlyComponents List
-	SceneCaptureComponent->bCaptureEveryFrame = false; // Dont capture every frame
-	SceneCaptureComponent->bCaptureOnMovement = false; // Dont capture on movement
-
-	// Initialize Icon Render Target
-	IconRenderTarget->InitCustomFormat(256, 256, EPixelFormat::PF_FloatRGBA, false);
-	IconRenderTarget->bAutoGenerateMips = true;
-	IconRenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
-	SceneCaptureComponent->TextureTarget = IconRenderTarget;
-
-	CreateIcon();
 	
-	//SceneCaptureComponent->TextureTarget = RenderTarget;
+	// Camera
+	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 180.0)));
+	CameraBoom->bUsePawnControlRotation = false;
+	
 	
 	// Disable shadows
 	SphereMesh->CastShadow = false;
@@ -227,6 +233,10 @@ void AAstroBody::Initialize()
 	CollisionSphere->SetCollisionObjectType(COLLISION_SELECTION_CHANNEL);
 	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	CollisionSphere->SetCollisionResponseToChannel(COLLISION_SELECTION_CHANNEL, ECollisionResponse::ECR_Block);
+	OutlineMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OutlineMesh->bHiddenInSceneCapture = true;
+	HorizonSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HorizonSphere->bHiddenInSceneCapture = true;
 	
 	/*AccelerationArrow->AttachToComponent(SceneRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	AccelerationArrow->SetRelativeLocation(FVector::ZeroVector);
@@ -240,18 +250,49 @@ void AAstroBody::Initialize()
 	AccelerationArrow->SetRelativeRotation(FRotator::ZeroRotator);
 	AccelerationArrow->SetVisibility(false);
 	AccelerationArrow->SetVisibility(true);
+	AccelerationArrow->bHiddenInSceneCapture = true;
 
 	// Velocity Arrow
 	VelocityArrow->SetRelativeRotation(FRotator::MakeFromEuler(GetActorRightVector()));
 	VelocityArrow->SetVisibility(false);
 	VelocityArrow->SetVisibility(true);
+	VelocityArrow->bHiddenInSceneCapture = true;
 
-	// Camera
-	CameraBoom->TargetArmLength = 400.0 * MeanRadius;
-	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 180.0)));
+	
+	// SceneCaptureComponent
+	SceneCaptureComponent->ShowOnlyActors.Empty();
+	SceneCaptureComponent->ClearShowOnlyComponents(); // Clear ShowOnlyComponents List
+	SceneCaptureComponent->ShowOnlyComponent(SphereMesh); // Add SphereMesh to ShowOnlyComponents List
+	SceneCaptureComponent->ShowOnlyActors.Add(this);
+	SceneCaptureComponent->bCaptureEveryFrame = false; // Dont capture every frame
+	SceneCaptureComponent->bCaptureOnMovement = false; // Dont capture on movement
+	SceneCaptureArm->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, 0.0, 180.0)));
 
-	// GeoCoordinateArm
-	GeoCoordinateArm->TargetArmLength = MeanRadius * 100.0;
+	// Initialize Icon Render Target
+	if(!IconRenderTarget)
+	{
+		IconRenderTarget = NewObject<UTextureRenderTarget2D>(this);
+	}
+	IconRenderTarget->InitCustomFormat(256, 256, EPixelFormat::PF_FloatRGBA, false);
+	IconRenderTarget->bAutoGenerateMips = true;
+	IconRenderTarget->CompressionSettings = TextureCompressionSettings::TC_Default;
+	SceneCaptureComponent->TextureTarget = IconRenderTarget;
+
+	if(ASimPlayerController* SimPlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		// Hide Outline when in Surface View
+		SimPlayerController->OnTransitionToSurfaceDelegate.AddUniqueDynamic(this, &AAstroBody::HideOutline);
+		SimPlayerController->OnTransitionToSurfaceDelegate.AddUniqueDynamic(this, &AAstroBody::SetParticleTrailInvisibile);
+		SimPlayerController->OnTransitionToSpaceDelegate.AddUniqueDynamic(this, &AAstroBody::ShowOutline);
+		SimPlayerController->OnTransitionToSpaceDelegate.AddUniqueDynamic(this, &AAstroBody::SetParticleTrailVisibile);
+	}
+
+	// Position GeoCoordArm
+	GeoCoordinateArm->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -90.0, 0.0)));
+
+	HorizonSphere->SetHiddenInGame(true);
+
+	CreateBillboardMaterialInstance();
 }
 
 
@@ -332,14 +373,29 @@ void AAstroBody::AimAccelerationArrow(const AActor* const Target)
 	AccelerationArrow->SetWorldRotation(Rotation);
 	AccelerationArrow->SetVisibility(false);
 	AccelerationArrow->SetVisibility(true);
-	
+
+	SceneCaptureArm->SetWorldRotation(Rotation); 
 }
 
-void AAstroBody::PostLoad()
+
+void AAstroBody::SetMeanRadius(const double NewMeanRadius)
 {
-	Super::PostLoad();
+	MeanRadius = NewMeanRadius;
+	SetActorRelativeScale3D(FVector(1.0));
 
+	double AdjustedScale = MeanRadius / (Unit::DISTANCE_MULT * 100.0);
+	SphereMesh->SetWorldScale3D(FVector(AdjustedScale)); // Set size of Sphere
+	OutlineMesh->SetWorldScale3D(FVector(AdjustedScale)); // Set size of Sphere
 
+	const double AdjustedRadius = (MeanRadius / Unit::DISTANCE_MULT); // AAdjust value to be in editor units
+	CameraBoom->TargetArmLength = AdjustedRadius * 3;
+	SceneCaptureArm->TargetArmLength = AdjustedRadius * 3;
+	
+	GeoCoordinateArm->TargetArmLength = AdjustedRadius;
+
+	// Update Billboard Sprite
+	//UpdateBillboardSpriteScreenSpace();
+	//UpdateBillboardSpriteAbsolute();
 }
 
 void AAstroBody::SetColor(const FLinearColor NewColor)
@@ -349,6 +405,16 @@ void AAstroBody::SetColor(const FLinearColor NewColor)
 	{
 		TrailComponent->SetNiagaraVariableLinearColor(FString("System.DynamicColor"), Color);
 	}
+
+	if(!BillboardMaterialInstance)
+	{
+		CreateBillboardMaterialInstance();
+	}
+	else
+	{
+		BillboardMaterialInstance->SetVectorParameterValue(TEXT("Color"), Color);
+	}
+	
 	/*if(!IsValid(OutlineMesh))
 	{
 		GLog->Log("> Error!: OutlineMesh is invalid!");
@@ -368,6 +434,63 @@ void AAstroBody::SetColor(const FLinearColor NewColor)
 	}*/
 }
 
+void AAstroBody::UpdateBillboardSpriteScreenSpace()
+{
+	// Billboard Material
+	double AspectRatio = 1.7777;
+	// Get Player Camera Manager
+	if(APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0))
+	{
+		// Get Aspect Ratio
+		AspectRatio = CameraManager->GetCameraCacheView().AspectRatio;
+	}
+	BillboardMaterialComponent->Elements.Empty();
+	// Adjust size of Sprite
+	double BaseSizeX = 0.001 * MeanRadius / Unit::EARTH_RADIUS;
+	//double BaseSizeX = 0.01 * AdjustedRadius / Unit::EARTH_RADIUS;
+	double BaseSizeY = BaseSizeX * AspectRatio;
+	
+	
+	
+	CreateBillboardMaterialInstance();
+	
+	// Set Material to Dynamic Instance
+	BillboardMaterialComponent->SetMaterial(0, BillboardMaterialInstance);
+
+	// Add sprite
+	BillboardMaterialComponent->AddElement(BillboardMaterialInstance, nullptr, true, BaseSizeX, BaseSizeY, nullptr);
+	//BillboardMaterialComponent->MinDrawDistance = MeanRadius * 5.0;
+	
+}
+void AAstroBody::UpdateBillboardSpriteAbsolute()
+{
+	/*// Billboard Material
+	double AspectRatio = 1.7777;
+	// Get Player Camera Manager
+	if(APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0))
+	{
+		// Get Aspect Ratio
+		AspectRatio = CameraManager->GetCameraCacheView().AspectRatio;
+	}*/
+	BillboardMaterialComponent->Elements.Empty();
+	// Adjust size of Sprite
+	//double BaseSizeX = 10 * MeanRadius / Unit::EARTH_RADIUS;
+	//double BaseSizeX = 0.01 * AdjustedRadius / Unit::EARTH_RADIUS;
+	double BaseSizeX = 100 * MeanRadius;
+	double BaseSizeY = BaseSizeX;
+	
+	
+	CreateBillboardMaterialInstance();
+	
+	// Set Material to Dynamic Instance
+	BillboardMaterialComponent->SetMaterial(0, BillboardMaterialInstance);
+
+	// Add sprite
+	BillboardMaterialComponent->AddElement(BillboardMaterialInstance, nullptr, false, BaseSizeX, BaseSizeY, nullptr);
+	//BillboardMaterialComponent->MinDrawDistance = MeanRadius * 5.0;
+	
+}
+
 UTextureRenderTarget2D* AAstroBody::GetIconRenderTarget()
 {
 	// Return the RenderTarget
@@ -378,6 +501,8 @@ UMaterialInstanceDynamic* AAstroBody::GetIconMaterial()
 {
 	if(!IsValid(IconMaterialInstance))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("> %s: GetIconMaterial()"), *GetActorLabel());
+		UE_LOG(LogTemp, Warning, TEXT("> %s: Icon Material Instance Invalid"), *GetActorLabel());
 		CreateIcon();
 	}
 	return IconMaterialInstance;
@@ -385,41 +510,109 @@ UMaterialInstanceDynamic* AAstroBody::GetIconMaterial()
 
 void AAstroBody::CreateIcon()
 {
+	UE_LOG(LogTemp, Warning, TEXT("> %s: CreateIcon()"), *GetActorLabel());
 	if(!IsValid(IconRenderTarget))
 	{
-		GLog->Log(">Error! Icon Render Target is invalid!");
+		UE_LOG(LogTemp, Warning, TEXT(">Error! Icon Render Target is invalid!"));
 		GEngine->AddOnScreenDebugMessage(91, 5.0, FColor::Yellow, TEXT(">Error! Icon Render Target is invalid!"));
 	}
 	// Capture the scene
 	SceneCaptureComponent->CaptureScene();
+	
+	// Create Material Instance Dynamic
 	if(!IsValid(IconMaterialBase)) {return;}
 	if(!IsValid(IconMaterialInstance))
 	{
 		IconMaterialInstance = UMaterialInstanceDynamic::Create(IconMaterialBase, nullptr);
-		IconMaterialInstance->SetTextureParameterValue(FName("Texture"), IconRenderTarget);
 	}
+	IconMaterialInstance->SetTextureParameterValue(FName("Texture"), IconRenderTarget);
 }
 
-void AAstroBody::GoToSurface(AObservationPoint* ObservationPoint)
+void AAstroBody::SetObservationPoint(AObservationPoint* ObservationPoint)
 {
-	ObservationPoint->AttachToComponent(GeoCoordinateArm, FAttachmentTransformRules(
+	ObservationPoint->AttachToComponent(HorizonSphere, FAttachmentTransformRules(
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::KeepRelative,
-		false
+		true
 	));
+
+	// Orient
+	const FRotator Rotation = FRotator::MakeFromEuler(FVector(0.0, 90.0, 0.0));
+	ObservationPoint->SetActorRelativeRotation(Rotation);
 }
 
-void AAstroBody::PostInitializeComponents()
+void AAstroBody::RemoveObservationPoint()
 {
-	Super::PostInitializeComponents();
+	TArray<TObjectPtr<USceneComponent>> AttachedObjects = GeoCoordinateArm->GetAttachChildren();
+	
+	for(TObjectPtr<USceneComponent> SceneComponent : AttachedObjects)
+	{
+		// Get Outer and Cast to Observation Point
+		AObservationPoint* ObservationPoint = Cast<AObservationPoint>(SceneComponent->GetOuter());
+		if(!ObservationPoint) continue; // If Cast failed, continue
 
-	//Initialize();
+		// Detach Scene Component From Arm
+		SceneComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		ObservationPoint->Destroy(); // Destroy the Observation Point
+	}
+}
+
+void AAstroBody::ActivateParticleEmitter()
+{
+	if(TrailComponent)
+	{
+		TrailComponent->Activate(true);
+	}
+}
+
+void AAstroBody::DeactivateParticleEmitter()
+{
+	if(TrailComponent)
+	{
+		TrailComponent->DeactivateImmediate();
+	}
+}
+
+void AAstroBody::SetParticleTrailVisibility(bool bVisible)
+{
+	if(TrailComponent)
+	{
+		TrailComponent->SetVisibility(bVisible);
+	}
+}
+
+void AAstroBody::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	CameraBoom->bUsePawnControlRotation = true;
+}
+
+void AAstroBody::UnPossessed()
+{
+	Super::UnPossessed();
+
+	CameraBoom->bUsePawnControlRotation = false;
 }
 
 void AAstroBody::PositionGeoCoords(const double Latitude, const double Longitude)
 {
 	
+}
+
+void AAstroBody::CreateBillboardMaterialInstance()
+{
+	if(BillboardMaterialBase && !BillboardMaterialInstance)
+	{
+		// Create Dynamic Material Instance
+		BillboardMaterialInstance = UMaterialInstanceDynamic::Create(BillboardMaterialBase, nullptr);
+	}
+	if(BillboardMaterialInstance)
+	{
+		// Set Color
+		BillboardMaterialInstance->SetVectorParameterValue(TEXT("Color"), Color);
+	}
 }
 
 void AAstroBody::Select()

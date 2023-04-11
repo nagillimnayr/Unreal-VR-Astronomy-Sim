@@ -6,15 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "W_DetailsPanel.generated.h"
 
-DECLARE_DELEGATE(FOnSurfaceButtonClickedDelegate)
+//DECLARE_DELEGATE(FOnSurfaceButtonClickedDelegate);
 
 class UVerticalBox;
 class AAstroBody;
-class UTextBlock;
 class UCommonTextBlock;
 class UCommonNumericTextBlock;
-class UBorder;
+class UCommonBorder;
 class UButton;
+class UCommonVisibilitySwitcher;
 /**
  * 
  */
@@ -27,36 +27,53 @@ public:
 	virtual void SynchronizeProperties() override;
 	virtual void NativeConstruct() override;
 
-protected:
+	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	void Init();
 
+	
+protected:
+	UFUNCTION(BlueprintCallable)
+	void UpdateSelected();
+	UFUNCTION(BlueprintCallable)
 	void SetUnselected();
-	void SetSelected(AAstroBody* Body);
+	UFUNCTION(BlueprintCallable)
+	void SetSelected(AActor* SelectedActor);
 
 	UFUNCTION(BlueprintCallable)
-	void OnSurfaceButtonClick();
+	void OnSurfaceButtonClicked();
+	UFUNCTION(BlueprintCallable)
+	void OnSpaceButtonClicked();
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
-	UBorder* Border;
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UCommonBorder* Border;
 
 	// Body data
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
-	UCommonTextBlock* BodyNameText;
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UCommonTextBlock* NameText;
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UCommonNumericTextBlock* MassValue;
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UCommonNumericTextBlock* MeanRadiusValue;
 
 	//Orbit data
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UVerticalBox* OrbitDetailsBox;
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UCommonNumericTextBlock* SpeedValue;
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UCommonNumericTextBlock* OrbitalDistanceValue;
 
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
-	UButton* SurfaceButton;
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UCommonVisibilitySwitcher* ButtonSwitcher; // For Switching between the two buttons when one of them is pressed
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UButton* SurfaceButton; // Button to switch to surface view
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UButton* SpaceButton; // Button to switch to space view
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UButton* TraceButton; // Button to enable Tracing apparent motion of another body
+
+	
 };

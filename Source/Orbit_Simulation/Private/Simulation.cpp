@@ -47,10 +47,10 @@ void ASimulation::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(ASimPlayerController* SimController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	/*if(ASimPlayerController* SimController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 	{
 		SimController->SetSimulation(this);
-	}
+	}*/
 	Initialize();
 }
 

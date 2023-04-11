@@ -112,8 +112,10 @@ void AOrbit::BeginPlay()
 
 void AOrbit::Initialize()
 {
-	OrbitalPath->SetMeshVisibility(true);
+	// Set Visibility of the Orbital Path
+	OrbitalPath->SetMeshVisibility(false);
 
+	// Set Orbiting Body's reference to Orbit
 	if(IsValid(OrbitingBody))
 	{
 		OrbitingBody->SetOrbit(this);
@@ -332,7 +334,8 @@ void AOrbit::LoadPreset()
 	OrbitingBody->SetMass(Mass);
 	
 	FieldName = "MeanRadius_M"; // Get Mean Radius as ratio to Earth's
-	const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) / 6371.0084e3 : 1.0;
+	//const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) / 6371.0084e3 : 1.0;
+	const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 1.0;
 	//const double MeanRadius = (JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 100000.0);
 	
 	OrbitingBody->SetMeanRadius(MeanRadius);
