@@ -9,29 +9,14 @@
 
 
 class AOrbit;
+class AAstroBody;
+class UButton;
 class UTextBlock;
 class UImage;
+
 /**
  * 
  */
-
-USTRUCT(BlueprintType)
-struct FOutlinerEntryData
-{
-	GENERATED_BODY()
-	
-	// String to set the name
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Outliner")
-	FString Label;
-	// Material to create the Icon
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Outliner")
-	UMaterialInterface* IconMaterial;
-	
-	// Ptr to reference Orbit
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Outliner")
-	AOrbit* OrbitReference;
-};
-
 
 UCLASS()
 class ORBIT_SIMULATION_API UW_OutlinerItem : public UUserWidget, public IUserObjectListEntry
@@ -44,13 +29,20 @@ public:
 	virtual void SynchronizeProperties() override;
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void SelectEntry();
+	
 	// Setters
 	void SetOrbit(AOrbit* NewOrbit) {Orbit = NewOrbit;}
+	void SetBody(AAstroBody* NewBody) {Body = NewBody;}
 
 	// Getters
 	AOrbit* GetOrbit() const {return Orbit;}
+	AAstroBody* GetBody() const {return Body;}
 protected:
 	
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UButton* ClickableContainer; // When clicked on, will select the AAstroBody associated with this widget
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UTextBlock* NameText;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
@@ -58,5 +50,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AOrbit> Orbit;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<AAstroBody> Body;
 	
 };

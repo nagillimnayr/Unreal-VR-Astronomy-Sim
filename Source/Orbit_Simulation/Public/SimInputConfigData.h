@@ -16,6 +16,7 @@ class ORBIT_SIMULATION_API USimInputConfigData : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	// SpaceView
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputAction* InputMouseClick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -24,4 +25,8 @@ public:
 	UInputAction* InputPitch;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputAction* InputZoom;
+
+	// SurfaceView
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UInputAction* InputFreeLook;
 };

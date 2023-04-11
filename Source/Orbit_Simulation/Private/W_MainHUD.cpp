@@ -7,15 +7,26 @@
 #include "W_OutlinerItem.h"
 #include "Components/CanvasPanel.h"
 #include "Orbit.h"
+#include "W_DetailsPanel.h"
 
 void UW_MainHUD::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
+	UE_LOG(LogTemp, Warning, TEXT("> MainHUD: SynchronizeProperties()"))
 }
 
 void UW_MainHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
+	UE_LOG(LogTemp, Warning, TEXT("> MainHUD: NativeConstruct()"))
+	Init(); // Initialize
+}
+
+void UW_MainHUD::Init()
+{
+	UE_LOG(LogTemp, Warning, TEXT("> MainHUD: Init()"))
+	check(DetailsPanel);
+
 }
 
 void UW_MainHUD::AddItemToOutliner(AOrbit* Orbit)

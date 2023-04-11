@@ -32,8 +32,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UFUNCTION(BlueprintCallable, Category = "Init")
-	virtual void Initialize();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostLoad() override;
 	
@@ -44,7 +42,11 @@ protected:
 	void InitializeOrbitingBody();
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void OrientOrbitingBodyTowardsCenter();
-public:	
+public:
+	
+	UFUNCTION(BlueprintCallable, Category = "Init")
+	virtual void Initialize();
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
@@ -54,6 +56,8 @@ public:
 	// Getters
 	AAstroBody* GetCentralBody() const { return CentralBody; } 
 	AAstroBody* GetOrbitingBody() const { return OrbitingBody; }
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetSemiMajorAxis() const {return SemiMajorAxis;}
 
 	double GetOrbitalSpeed() const { return OrbitalSpeed; }
 	double GetOrbitalPeriod() const { return OrbitalPeriod; }

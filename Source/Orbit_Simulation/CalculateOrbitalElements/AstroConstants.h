@@ -13,13 +13,15 @@ namespace Unit
 
 	constexpr double MASS_MULT = 1e24;
 	//constexpr double DISTANCE_MULT = 1e8; 1 in-editor unit = 10^8m
-	constexpr double DISTANCE_MULT = 1e7;
+	//constexpr double DISTANCE_MULT = 1e7;
+	constexpr double DISTANCE_MULT = 1e3; // 1 editor unit = 1km
 	
 	// Unit Conversion Multipliers
 	constexpr double SECONDS_IN_DAY = 86400.0; // 1 second in simulation = 1 day
 	constexpr double KM_TO_M = 1000.0;
 	constexpr double M_TO_KM = 1.0 / 1000.0;
-	
+
+	constexpr double EARTH_RADIUS = 6371.0084e3;
 }
 
 // Astronomical Bodies

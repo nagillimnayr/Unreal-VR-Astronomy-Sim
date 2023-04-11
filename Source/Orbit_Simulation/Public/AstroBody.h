@@ -8,6 +8,8 @@
 #include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "AstroBody.generated.h"
 
+class UMaterialBillboardComponent;
+class UBillboardComponent;
 class AObservationPoint;
 class UScalableSphereGizmo;
 class USpringArmComponent;
@@ -47,7 +49,6 @@ public:
 	void AimAccelerationArrow(const AActor* const Target);
 	
 protected:
-	virtual void PostLoad() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -70,6 +71,9 @@ public:
 	double GetMassOfBody() const {return Mass;}
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMeanRadius() const {return MeanRadius;}
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetMeanRadiusScale() const {return SphereMesh->GetComponentScale().X;} // Returns the scale of the Sphere Mesh
+	
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	USpringArmComponent* GetCameraBoom() { return CameraBoom; }
@@ -82,18 +86,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
 	void SetMass(const double NewMass) { Mass = NewMass; }
 	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
-	void SetMeanRadius(const double NewMeanRadius)
-	{
-		MeanRadius = NewMeanRadius;
-		//SphereMesh->SetRelativeScale3D(FVector(1.0));
-		//SetActorScale3D(FVector(MeanRadius)); // Set size of Body
-		//SetActorScale3D(FVector(MeanRadius / (Unit::DISTANCE_MULT * 100.0))); // Set size of Sphere
-		SetActorRelativeScale3D(FVector(1.0));
-		SphereMesh->SetWorldScale3D(FVector(MeanRadius));
-		OutlineMesh->SetWorldScale3D(FVector(MeanRadius));
-	}
+	void SetMeanRadius(const double NewMeanRadius);
 	UFUNCTION(BlueprintCallable, Category = "Color")
 	void SetColor(const FLinearColor NewColor);
+	
+	UFUNCTION(BlueprintCallable, Category = "Billboard", CallInEditor)
+	void UpdateBillboardSpriteScreenSpace();
+	UFUNCTION(BlueprintCallable, Category = "Billboard", CallInEditor)
+	void UpdateBillboardSpriteAbsolute();
 
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetOrbit(AOrbit* NewOrbit) { Orbit = NewOrbit;}
@@ -112,10 +112,36 @@ public:
 	void CreateIcon();
 
 	UFUNCTION(BlueprintCallable)
-	void GoToSurface(AObservationPoint* ObservationPoint);
-protected:
-	virtual void PostInitializeComponents() override;
+	void SetObservationPoint(AObservationPoint* ObservationPoint);
+	UFUNCTION(BlueprintCallable)
+	void RemoveObservationPoint();
+
+	UFUNCTION(BlueprintCallable)
+	void HideOutline()
+	{
+		OutlineMesh->SetHiddenInGame(true);
+		OutlineMesh->SetVisibility(false);
+	}
+	UFUNCTION(BlueprintCallable)
+	void ShowOutline()
+	{
+		OutlineMesh->SetHiddenInGame(false);
+		OutlineMesh->SetVisibility(true);
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateParticleEmitter();
+	UFUNCTION(BlueprintCallable)
+	void DeactivateParticleEmitter();
+	UFUNCTION(BlueprintCallable)
+	void SetParticleTrailVisibility(bool bVisible);
+	UFUNCTION(BlueprintCallable)
+	void SetParticleTrailVisibile() {SetParticleTrailVisibility(true);}
+	UFUNCTION(BlueprintCallable)
+	void SetParticleTrailInvisibile() {SetParticleTrailVisibility(false);}
 	
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void UnPossessed() override;
 protected:
 	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
@@ -131,6 +157,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double MeanRadius; // Mean Radius of the body. (1.0 = Mean Radius of Earth)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	double Obliquity; // Axial Tilt (Degrees)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	double SiderealRotationPeriod; // The period in days for the body to make one full 360 degree revolution about its polar axis
 
@@ -167,6 +195,8 @@ protected:
 	// Scene Capture Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
 	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
+	TObjectPtr<USpringArmComponent> SceneCaptureArm;
 	// Icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
 	TObjectPtr<UTextureRenderTarget2D> IconRenderTarget;
@@ -186,7 +216,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> HorizonSphere;
 	
-	
+	// Billboard
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	TObjectPtr<UBillboardComponent> BillboardComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	TObjectPtr<UMaterialBillboardComponent> BillboardMaterialComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	UMaterialInterface* BillboardMaterialBase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	UMaterialInstanceDynamic* BillboardMaterialInstance;
+
+	UFUNCTION(BlueprintCallable, Category="Billboard")
+	void CreateBillboardMaterialInstance();
 	
 	// Implement SelectableInterface
 	virtual void Select() override;

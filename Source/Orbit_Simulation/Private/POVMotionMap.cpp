@@ -11,6 +11,10 @@
 
 #include "Components/SphereComponent.h"
 
+
+// Define collision channel for selection
+#define COLLISION_CHANNEL_CELESTIAL_SPHERE ECC_GameTraceChannel2
+
 // Sets default values
 APOVMotionMap::APOVMotionMap()
 {
@@ -20,10 +24,11 @@ APOVMotionMap::APOVMotionMap()
 	// Create Scene component
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(SceneRoot);
+
+	TraceChannel = COLLISION_CHANNEL_CELESTIAL_SPHERE;
 	
 	// Initialize collision sphere
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	CollisionSphere->SetCollisionResponseToChannel(TraceChannel, ECollisionResponse::ECR_Block);
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // Enable Collision
 	CollisionSphere->InitSphereRadius(4000.0);
 	CollisionSphere->SetupAttachment(SceneRoot);
@@ -52,6 +57,8 @@ void APOVMotionMap::OnConstruction(const FTransform& Transform)
 
 	SetSphereRadius();
 
+	CollisionSphere->SetCollisionResponseToChannel(TraceChannel, ECollisionResponse::ECR_Block);
+	
 	if(ProjectedBody && DefaultMaterial)
 	{
 		ProjectedBody->SetMaterial(0, DefaultMaterial);
@@ -167,7 +174,7 @@ void APOVMotionMap::TraceMotion()
 	// Set position of Projected Body to impact point
 	ProjectedBody->SetWorldLocation(HitResult.ImpactPoint);
 	// Draw debug line
-	DrawDebugLine(GetWorld(), TraceStart, HitResult.ImpactPoint, FColor::Blue, false, -1, 0, 10.0f);
+	//DrawDebugLine(GetWorld(), TraceStart, HitResult.ImpactPoint, FColor::Blue, false, -1, 0, 10.0f);
 
 
 	

@@ -8,6 +8,7 @@
 
 class AAstroBody;
 class AOrbit;
+class ACelestialSphere;
 class ARelativeMotionMap;
 class UCameraComponent;
 class USpringArmComponent;
@@ -43,16 +44,23 @@ UFUNCTION(BlueprintCallable)
 UFUNCTION(BlueprintCallable)
 	TArray<AOrbit*>& GetOrbits() {return Orbits;}
 	
+	UFUNCTION(BlueprintCallable, CallInEditor)
+	void ReinitializeAll();
 protected:
 	// References to other Actors
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TArray<AOrbit*> Orbits; // Array of all the Orbits in the system
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> PrimaryBody;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
+	TObjectPtr<UStaticMeshComponent> HeliocentricCelestialSphere;
 
 	// Scene Root
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> SceneRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double SystemRadius;
 	
 	// Camera
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -19,11 +19,11 @@ void ASimGameMode::BeginPlay()
 
 	check(IsValid(HUDWidgetClass));
 
-	ASimPlayerController* PlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	check(IsValid(PlayerController));
+	ASimPlayerController* SimPlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if(!IsValid(SimPlayerController)) return;
 
 	// Create HUD and add to viewport (use the subclass set in the editor)
-	MainHUD = Cast<UW_MainHUD>(CreateWidget(PlayerController, HUDWidgetClass, FName("Main HUD")));
+	MainHUD = Cast<UW_MainHUD>(CreateWidget(SimPlayerController, HUDWidgetClass, FName("Main HUD")));
 	MainHUD->AddToViewport();
 
 	

@@ -9,15 +9,17 @@
 //#include "RelativeMotionMap.h"
 //#include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "SimPlayerController.h"
+#include "SimulationSubsystem.h"
 #include "W_MainHUD.h"
 #include "W_OutlinerItem.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+//#include "GameFramework/SpringArmComponent.h"
 #include "Orbit_Simulation/SimGameMode.h"
 
 
 // Sets default values
-ASystem::ASystem()
+ASystem::ASystem() :
+SystemRadius(10000000000.0) // 10 billion meters
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -31,11 +33,17 @@ ASystem::ASystem()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	Camera->SetupAttachment(CameraBoom);
 	CameraBoom->SetupAttachment(SceneRoot);
+
+	// Celestial Sphere
+	HeliocentricCelestialSphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CelestialSphere"));
+	HeliocentricCelestialSphere->SetupAttachment(SceneRoot);
 	
 }
 
 void ASystem::Initialize()
 {
+	// Set scale of Celestial Sphere
+	HeliocentricCelestialSphere->SetWorldScale3D(FVector(SystemRadius / 100.0));
 	
 	if(!IsValid(PrimaryBody)) return;
 	
@@ -49,14 +57,9 @@ void ASystem::Initialize()
 				EAttachmentRule::KeepWorld,
 				false));
 	
-	// Attach Camera to Primary Body
-	/*CameraBoom->AttachToComponent(PrimaryBody->GetRootComponent(), 
-			FAttachmentTransformRules(
-				EAttachmentRule::SnapToTarget,
-				EAttachmentRule::SnapToTarget,
-				EAttachmentRule::KeepWorld,
-				false));*/
-	CameraBoom->TargetArmLength = 400.0 * PrimaryBody->GetMeanRadius();
+
+	// Camera
+	CameraBoom->TargetArmLength = 100.0 * PrimaryBody->GetMeanRadius();
 	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
 }
 
@@ -64,6 +67,12 @@ void ASystem::Initialize()
 void ASystem::BeginPlay()
 {
 	Super::BeginPlay();
+
+	USimulationSubsystem* Simulation = GetWorld()->GetSubsystem<USimulationSubsystem>();
+	if(Simulation)
+	{
+		Simulation->AddSystem(this);
+	}
 	FindOrbits();
 
 	// Add reference to self to Player Controller
@@ -130,7 +139,7 @@ void ASystem::OnConstruction(const FTransform& Transform)
 	Initialize();
 }
 
-void ASystem::UpdateOrbits(double DeltaTime)
+void ASystem::UpdateOrbits(const double DeltaTime)
 {
 	// Update each AOrbit actor in the System
 	for(AOrbit* Orbit : Orbits)
@@ -165,7 +174,15 @@ void ASystem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	// Set TimeScale
-	//GetWorldSettings()->SetTimeDilation(TimeScale);
 }
 #endif
+
+
+void ASystem::ReinitializeAll()
+{
+	// Reinitialize all Orbits
+	for(AOrbit* Orbit : Orbits)
+	{
+		Orbit->Initialize();
+	}
+}
