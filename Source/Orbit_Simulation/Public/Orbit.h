@@ -3,21 +3,48 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 
 #include "Orbit.generated.h"
 
 class AAstroBody;
 class ATrajectory;
-class UOrbitalPlaneComponent;
 class UArrowComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class USpotLightComponent;
 class UJsonParser;
-enum EOrbitPreset;
-class UEllipseMeshComponent;
+//enum EOrbitPreset;
+//class UEllipseMeshComponent;
 class UOrbitalPathComponent;
+
+
+UENUM(BlueprintType)
+enum EOrbitPreset
+{
+	None,
+	Mercury,
+	Venus,
+	Earth,
+	Mars,
+	Jupiter,
+	Saturn,
+	Uranus,
+	Neptune
+};
+
+const TMap<EOrbitPreset, FString> PresetNames = {
+	{None, "None"},
+	{Mercury, "Mercury"},
+	{Venus, "Venus"},
+	{Earth, "Earth"},
+	{Mars, "Mars"},
+	{Jupiter, "Jupiter"},
+	{Saturn, "Saturn"},
+	{Uranus, "Uranus"},
+	{Neptune, "Neptune"},
+};
+
 
 UCLASS(Blueprintable, HideCategories=(Physics, Advanced, Activation, Collision))
 class ORBIT_SIMULATION_API AOrbit : public APawn
@@ -29,11 +56,10 @@ public:
 	AOrbit();
 
 protected:
-	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void PostLoad() override;
+	//virtual void PostLoad() override;
 	
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	void UpdateOrbitalDistance();
@@ -62,6 +88,11 @@ public:
 	double GetOrbitalSpeed() const { return OrbitalSpeed; }
 	double GetOrbitalPeriod() const { return OrbitalPeriod; }
 	double GetOrbitalDistance() const { return OrbitalRadius; }
+
+	UFUNCTION(BlueprintCallable, CallInEditor)
+	void ShowOrbitalPath();
+	UFUNCTION(BlueprintCallable, CallInEditor)
+	void HideOrbitalPath();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Astro")
 	TObjectPtr<AAstroBody> CentralBody;
@@ -155,8 +186,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
 	TObjectPtr<UOrbitalPathComponent> OrbitalPath;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
-	TObjectPtr<UEllipseMeshComponent> OrbitalPlane;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
+	TObjectPtr<UEllipseMeshComponent> OrbitalPlane;*/
 	
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void LoadPreset();

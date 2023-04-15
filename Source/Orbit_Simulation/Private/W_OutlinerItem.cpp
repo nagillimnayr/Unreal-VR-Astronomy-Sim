@@ -26,17 +26,17 @@ void UW_OutlinerItem::Init()
 		
 		if(!IsValid(Body) && NameText)
 		{
-			NameText->SetText(FText::FromString(Body->GetActorNameOrLabel()));
+			NameText->SetText(FText::FromString(FString("")));
 		}
 		if(!Body) {return;}
 		if(IsValid(NameText))
 		{
-			NameText->SetText(FText::FromString(Body->GetActorNameOrLabel()));
+			NameText->SetText(FText::FromString(Body->GetBodyName()));
 		}
 		if(IsValid(IconImage))
 		{
 			UTextureRenderTarget2D* RenderTarget = Body->GetIconRenderTarget();
-			SetDisplayLabel("Outliner Entry: " + Body->GetActorNameOrLabel()); 
+			//SetDisplayLabel("Outliner Entry: " + Body->GetActorLabelGetBodyName()); 
 			if(!IsValid(RenderTarget))
 			{
 				GLog->Log("> Invalid Render Target!");

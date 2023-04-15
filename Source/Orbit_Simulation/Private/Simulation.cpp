@@ -14,7 +14,7 @@ const double ASimulation::FIXED_TIMESTEP = 1.0 / ASimulation::STEPS_PER_SECOND;
 
 // Sets default values
 ASimulation::ASimulation() :
-TimeScale(10)
+TimeScale(1)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;

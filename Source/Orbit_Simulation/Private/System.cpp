@@ -19,7 +19,7 @@
 
 // Sets default values
 ASystem::ASystem() :
-SystemRadius(10000000000.0) // 10 billion meters
+SystemRadius(10000000.0) 
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -59,7 +59,7 @@ void ASystem::Initialize()
 	
 
 	// Camera
-	CameraBoom->TargetArmLength = 100.0 * PrimaryBody->GetMeanRadius();
+	CameraBoom->TargetArmLength = 500.0 * PrimaryBody->GetMeanRadius();
 	CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.0, -30.0, 0.0)));
 }
 
@@ -113,7 +113,7 @@ void ASystem::FindOrbits()
 	
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOrbit::StaticClass(),  FoundActors);
 	
-	//Orbits.Empty(); // Clear Array
+	Orbits.Empty(); // Clear Array
 
 	for(AActor* Actor : FoundActors)
 	{
@@ -168,14 +168,29 @@ void ASystem::AddOrbit(AOrbit* Orbit)
 	});
 }
 
+TArray<AAstroBody*> ASystem::GetAstroBodies()
+{
+	TArray<AAstroBody*> AstroBodies;
+	//AstroBodies.Add(PrimaryBody);
 
-#if WITH_EDITOR
+	for(AOrbit* Orbit : Orbits)
+	{
+		if(AAstroBody* Body = Orbit->GetOrbitingBody())
+		{
+			AstroBodies.Add(Body);
+		}
+	}
+	return AstroBodies;
+}
+
+
+/*#if WITH_EDITOR
 void ASystem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 }
-#endif
+#endif*/
 
 
 void ASystem::ReinitializeAll()

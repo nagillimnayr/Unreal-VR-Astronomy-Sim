@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "SelectableInterface.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
+//#include "Components/MaterialBillboardComponent.h"
 #include "AstroBody.generated.h"
 
-class UMaterialBillboardComponent;
-class UBillboardComponent;
+//class UMaterialBillboardComponent;
+//class UBillboardComponent;
 class AObservationPoint;
-class UScalableSphereGizmo;
+//class UScalableSphereGizmo;
 class USpringArmComponent;
-class USpotLightComponent;
+//class USpotLightComponent;
 class AOrbit;
 class UNiagaraSystem;
 class UNiagaraComponent;
@@ -59,8 +60,6 @@ public:
 	virtual void Initialize();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void PostInitProperties() override;
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// Getters
 	UFUNCTION(BlueprintCallable, Category = "Motion")
@@ -72,8 +71,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMeanRadius() const {return MeanRadius;}
 	UFUNCTION(BlueprintCallable, Category = "Astro")
+	double GetMeanRadiusAdjusted() const {return MeanRadius / Unit::DISTANCE_MULT;}
+	UFUNCTION(BlueprintCallable, Category = "Astro")
 	double GetMeanRadiusScale() const {return SphereMesh->GetComponentScale().X;} // Returns the scale of the Sphere Mesh
 	
+	UFUNCTION(BlueprintCallable, Category = "Astro")
+	FLinearColor GetColor() {return Color;}
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	USpringArmComponent* GetCameraBoom() { return CameraBoom; }
@@ -87,13 +90,16 @@ public:
 	void SetMass(const double NewMass) { Mass = NewMass; }
 	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
 	void SetMeanRadius(const double NewMeanRadius);
+	UFUNCTION(BlueprintCallable, Category = "PhysicalParameters")
+	void SetObliquity(const double NewObliquity);
+	
 	UFUNCTION(BlueprintCallable, Category = "Color")
 	void SetColor(const FLinearColor NewColor);
 	
-	UFUNCTION(BlueprintCallable, Category = "Billboard", CallInEditor)
+	/*UFUNCTION(BlueprintCallable, Category = "Billboard")
 	void UpdateBillboardSpriteScreenSpace();
-	UFUNCTION(BlueprintCallable, Category = "Billboard", CallInEditor)
-	void UpdateBillboardSpriteAbsolute();
+	UFUNCTION(BlueprintCallable, Category = "Billboard")
+	void UpdateBillboardSpriteAbsolute();*/
 
 	UFUNCTION(BlueprintCallable, Category = "Orbit")
 	void SetOrbit(AOrbit* NewOrbit) { Orbit = NewOrbit;}
@@ -140,8 +146,26 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetParticleTrailInvisibile() {SetParticleTrailVisibility(false);}
 	
+	/*UFUNCTION(BlueprintCallable)
+	void ShowBillboard()
+	{
+		BillboardMaterialComponent->SetVisibility(true, true);
+		BillboardMaterialComponent->SetHiddenInGame(false, true);
+	}
+	UFUNCTION(BlueprintCallable)
+	void HideBillboard()
+	{
+		BillboardMaterialComponent->SetVisibility(false, true);
+		BillboardMaterialComponent->SetHiddenInGame(true, true);
+	}*/
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void UnPossessed() override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnTransitionToSurfaceView();
+	UFUNCTION(BlueprintCallable)
+	void OnTransitionToSpaceView();
 protected:
 	// Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Motion")
@@ -195,8 +219,7 @@ protected:
 	// Scene Capture Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
 	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Icon")
-	TObjectPtr<USpringArmComponent> SceneCaptureArm;
+	
 	// Icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Icon")
 	TObjectPtr<UTextureRenderTarget2D> IconRenderTarget;
@@ -217,9 +240,9 @@ protected:
 	TObjectPtr<USphereComponent> HorizonSphere;
 	
 	// Billboard
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
-	TObjectPtr<UBillboardComponent> BillboardComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
+	TObjectPtr<UBillboardComponent> BillboardComponent;*/
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
 	TObjectPtr<UMaterialBillboardComponent> BillboardMaterialComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Billboard")
 	UMaterialInterface* BillboardMaterialBase;
@@ -227,7 +250,15 @@ protected:
 	UMaterialInstanceDynamic* BillboardMaterialInstance;
 
 	UFUNCTION(BlueprintCallable, Category="Billboard")
-	void CreateBillboardMaterialInstance();
+	void CreateBillboardMaterialInstance();*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString BodyName;
+public:
+	UFUNCTION(BlueprintCallable)
+	FString GetBodyName() const {return BodyName;};
+	UFUNCTION(BlueprintCallable)
+	void SetBodyName(const FString NewName) { BodyName = NewName;};
 	
 	// Implement SelectableInterface
 	virtual void Select() override;

@@ -303,7 +303,7 @@ void ATrajectory::InitializeMaterial()
 	}
 }
 
-void ATrajectory::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+/*void ATrajectory::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	
@@ -324,7 +324,7 @@ void ATrajectory::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedE
 	{
 		if(IsValid(OrbitalPlane)) OrbitalPlane->SetAxes(SemiMajorAxis, SemiMinorAxis);
 	}
-}
+}*/
 
 void ATrajectory::InitializeSplineMesh()
 {

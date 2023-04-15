@@ -8,7 +8,7 @@
 
 class USphereComponent;
 class AAstroBody;
-class ASplineTrace;
+class USplineTraceComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
 
@@ -30,39 +30,57 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetSphereRadius();
-	void SetSphereRadius(const double Radius);
+	/*void SetSphereRadius();
+	void SetSphereRadius(const double Radius);*/
 
 	UFUNCTION(BlueprintCallable)
 	void TraceMotion();
+
+	UFUNCTION(BlueprintCallable)
+	void SetReferenceBody(AAstroBody* Body);
+	UFUNCTION(BlueprintCallable)
+	void SetOtherBody(AAstroBody* Body);
 	
+	/*UFUNCTION(BlueprintCallable)
+	void UpdatePosition();*/
+
+	UFUNCTION(BlueprintCallable)
+	void DestroySelf();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> SceneRoot;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AAstroBody> ReferenceBody;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AAstroBody> OtherBody;
+	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Transient)
-	TArray<FVector> MappedPoints; // Array of points mapped onto a 2D plane
-
-	// Sphere from which to calculate the intersections of the line drawn between the two bodies
+	/*// Sphere from which to calculate the intersections of the line drawn between the two bodies
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> CollisionSphere; // Every point vector on the sphere will have a magnitude equal to the radius
+	*/
 
 	// Collision / Line Trace
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
-	TEnumAsByte<ECollisionChannel> TraceChannel = ECC_PhysicsBody;
+	TEnumAsByte<ECollisionChannel> TraceChannel = ECC_GameTraceChannel2;
 	
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<ASplineTrace> SplineTrace;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USplineTraceComponent> SplineTrace;
 
-
+	UFUNCTION(BlueprintCallable)
+	void CreateMaterialInstance();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
-	UMaterialInterface* DefaultMaterial;
+	UMaterialInterface* SplineMaterialBase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	UMaterialInstanceDynamic* SplineMaterialInstance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+	UMaterialInterface* BodyMaterialBase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+	UMaterialInstanceDynamic* BodyMaterialInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* ProjectedBody;

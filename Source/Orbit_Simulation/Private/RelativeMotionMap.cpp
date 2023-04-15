@@ -4,7 +4,7 @@
 #include "RelativeMotionMap.h"
 #include "AstroBody.h"
 #include "Simulation.h"
-#include "ToolBuilderUtil.h"
+//#include "ToolBuilderUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "MeshAttributes.h"
 #include "StaticMeshAttributes.h"
@@ -58,11 +58,11 @@ SplineMeshCount(0)
 	}
 	
 	// initialize material
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat(TEXT("/Script/Engine.Material'/Game/Orbit_Sim/Materials/M_SimpleUnlitTranslucent.M_SimpleUnlitTranslucent'"));
+	/*ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat(TEXT("/Script/Engine.Material'/Game/Orbit_Sim/Materials/M_SimpleUnlitTranslucent.M_SimpleUnlitTranslucent'"));
 	if (Mat.Succeeded())
 	{
 		DefaultMaterial = Mat.Object;
-	}
+	}*/
 	
 	SplineComponent->ClearSplinePoints();
 	SplineMeshes.Empty();

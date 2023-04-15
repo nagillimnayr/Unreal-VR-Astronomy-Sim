@@ -2,11 +2,14 @@
 
 
 #include "OrbitalPathComponent.h"
+
+#include "SimPlayerController.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
+#include "Kismet/GameplayStatics.h"
 
 UOrbitalPathComponent::UOrbitalPathComponent() :
 bMeshVisibility(true),
-MeshScale(FVector2D(0.05, 0.05))
+MeshScale(FVector2D(0.15, 0.15))
 {
 	ClearSplinePoints();
 	
@@ -33,10 +36,13 @@ MeshScale(FVector2D(0.05, 0.05))
 	SetClosedLoop(true);
 	SetCanEverAffectNavigation(false);
 	SetDrawDebug(false);
+	bMeshVisibility = true;
 }
 
 void UOrbitalPathComponent::InitializeSpline(const double SemiMajorAxis, const double SemiMinorAxis)
 {
+	//bMeshVisibility = true;
+	
 	// Reset Spline Points
 	ClearSplinePoints();
 
@@ -63,6 +69,7 @@ void UOrbitalPathComponent::InitializeSplineMesh(const double SemiMajorAxis, con
 	
 	// Reset Meshes
 	SplineMeshes.Empty();
+	//ClearSplineMeshes();
 	
 	for (int PointIndex = 0; PointIndex < NumberOfPoints; PointIndex++)
 	{
@@ -92,7 +99,8 @@ void UOrbitalPathComponent::InitializeSplineMesh(const double SemiMajorAxis, con
 		SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SplineMeshComponent->SetCanEverAffectNavigation(false);
 
-		SplineMeshComponent->SetVisibility(bMeshVisibility);
+		//SplineMeshComponent->SetVisibility(bMeshVisibility);
+		SplineMeshComponent->SetVisibility(true);
 		
 		SplineMeshes.Add(SplineMeshComponent);
 
@@ -135,10 +143,44 @@ void UOrbitalPathComponent::CreateMaterialInstance()
 	}
 }
 
-void UOrbitalPathComponent::SetMeshVisibility(bool bVisibility)
+
+void UOrbitalPathComponent::ShowMesh()
 {
-	bMeshVisibility = bVisibility;
+	/*MeshScale = FVector2D(0.1, 0.1);
+	for(USplineMeshComponent* SplineMeshComponent : SplineMeshes)
+	{
+		SplineMeshComponent->SetEndScale(MeshScale);
+		SplineMeshComponent->SetStartScale(MeshScale);
+	}*/
+	for(USplineMeshComponent* SplineMeshComponent : SplineMeshes)
+	{
+		SplineMeshComponent->SetVisibility(true);
+	}
 }
+
+void UOrbitalPathComponent::HideMesh()
+{
+	/*MeshScale = FVector2D(0.0, 0.0);
+	for(USplineMeshComponent* SplineMeshComponent : SplineMeshes)
+	{
+		SplineMeshComponent->SetEndScale(MeshScale);
+		SplineMeshComponent->SetStartScale(MeshScale);
+	}*/
+	for(USplineMeshComponent* SplineMeshComponent : SplineMeshes)
+	{
+		SplineMeshComponent->SetVisibility(false);
+	}
+}
+
+/*void UOrbitalPathComponent::ClearSplineMeshes()
+{
+	for(USplineMeshComponent* SplineMeshComponent : SplineMeshes)
+	{
+		//SplineMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		SplineMeshComponent->DestroyComponent();
+	}
+	SplineMeshes.Empty();
+}*/
 
 void UOrbitalPathComponent::SetColor(const FLinearColor Color)
 {

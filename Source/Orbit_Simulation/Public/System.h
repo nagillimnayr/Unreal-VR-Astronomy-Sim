@@ -37,8 +37,11 @@ public:
 	virtual void UpdateOrbits(double DeltaTime);
 
 	void AddOrbit(AOrbit* Orbit);
+
+	UFUNCTION(BlueprintCallable, Category="Orbit")
+	TArray<AAstroBody*> GetAstroBodies();
 	
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 UFUNCTION(BlueprintCallable)
 	AAstroBody* GetPrimaryBody() {return PrimaryBody;}
 UFUNCTION(BlueprintCallable)

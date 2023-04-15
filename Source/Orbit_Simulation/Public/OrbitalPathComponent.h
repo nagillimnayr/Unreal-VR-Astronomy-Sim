@@ -39,7 +39,9 @@ public:
 	virtual void CreateMaterialInstance();
 	
 	UFUNCTION(BlueprintCallable, Category="Render")
-	void SetMeshVisibility(bool bVisibility);
+	void ShowMesh();
+	UFUNCTION(BlueprintCallable, Category="Render")
+	void HideMesh();
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Orbit")
@@ -58,4 +60,7 @@ protected:
 	UMaterialInterface* BaseMaterial;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineMesh")
 	UMaterialInstanceDynamic* MaterialInstance;
+
+	/*UFUNCTION(BlueprintCallable)
+	void ClearSplineMeshes();*/
 };

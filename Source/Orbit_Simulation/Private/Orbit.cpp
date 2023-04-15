@@ -4,9 +4,8 @@
 #include "Orbit.h"
 
 #include "AstroBody.h"
-#include "EllipseMeshComponent.h"
+//#include "EllipseMeshComponent.h"
 #include "JsonParser.h"
-//#include "Trajectory.h"
 #include "Components/ArrowComponent.h"
 #include "../CalculateOrbitalElements/OrbitalElements.h"
 #include "Camera/CameraComponent.h"
@@ -17,6 +16,7 @@
 #include "OrbitalPathComponent.h"
 #include "Selection.h"
 #include "SimPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AOrbit::AOrbit() :
@@ -44,13 +44,10 @@ Color(FLinearColor::White)
 	Camera->SetupAttachment(CameraBoom);*/
 	
 	// Create Orbital Plane Component
-	OrbitalPlane = CreateDefaultSubobject<UEllipseMeshComponent>(TEXT("Orbital Plane"));
+	/*OrbitalPlane = CreateDefaultSubobject<UEllipseMeshComponent>(TEXT("Orbital Plane"));
 	OrbitalPlane->SetupAttachment(SceneRoot);
-	OrbitalPlane->SetVisibility(false);
+	OrbitalPlane->SetVisibility(false);*/
 	
-	/*#if WITH_EDITORONLY_DATA
-	USelection::SelectObjectEvent.AddUObject(this, &AOrbit::OnObjectSelected);
-	#endif*/
 
 	// Create Orbital Path Component
 	OrbitalPath = CreateDefaultSubobject<UOrbitalPathComponent>(TEXT("Orbital Path"));
@@ -62,7 +59,6 @@ Color(FLinearColor::White)
 	AscendingNodeArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
 	AscendingNodeArrow->SetArrowColor(FColor::Purple);
 	AscendingNodeArrow->ArrowSize = 1.0;
-	AscendingNodeArrow->bUseInEditorScaling = false;
 	AscendingNodeArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	AscendingNodeArrow->SetVisibility(false);
 	AscendingNodeArrow->SetHiddenInGame(true);
@@ -72,7 +68,6 @@ Color(FLinearColor::White)
 	TrueAnomalyArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
 	TrueAnomalyArrow->SetArrowColor(FColor::White);
 	TrueAnomalyArrow->ArrowSize = 1.0;
-	TrueAnomalyArrow->bUseInEditorScaling = false;
 	TrueAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	TrueAnomalyArrow->SetVisibility(false);
 	TrueAnomalyArrow->SetHiddenInGame(true);
@@ -82,7 +77,6 @@ Color(FLinearColor::White)
 	MeanAnomalyArrow->SetRelativeLocation(FVector(0.0, 0.0, 0.0));
 	MeanAnomalyArrow->SetArrowColor(FColor::Emerald);
 	MeanAnomalyArrow->ArrowSize = 1.0;
-	MeanAnomalyArrow->bUseInEditorScaling = false;
 	MeanAnomalyArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 	MeanAnomalyArrow->SetVisibility(false);
 	MeanAnomalyArrow->SetHiddenInGame(true);
@@ -92,28 +86,38 @@ Color(FLinearColor::White)
 	
 } // End of Constructor
 
-void AOrbit::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	//Initialize();
-}
 
 // Called when the game starts or when spawned
 void AOrbit::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Subscribe to delegates
+	if(ASimPlayerController* SimPlayerController = Cast<ASimPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("> Orbit: Subscribing to Delegates"));
+		// Hide Outline when in Surface View
+		SimPlayerController->OnTransitionToSurfaceDelegate.AddUniqueDynamic(this, &AOrbit::HideOrbitalPath);
+
+		SimPlayerController->OnTransitionToSpaceDelegate.AddUniqueDynamic(this, &AOrbit::ShowOrbitalPath);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("> Orbit: Failed to cast to ASimPlayerController"));
+	}
+	
 	// If either body is invalid, destroy Orbit and return
 	if ((!IsValid(CentralBody) || !IsValid(OrbitingBody))) { Destroy(); }
 	InitializeOrbitingBody();
-	
+
 }
 
 
 void AOrbit::Initialize()
 {
+	
 	// Set Visibility of the Orbital Path
-	OrbitalPath->SetMeshVisibility(false);
+	//OrbitalPath->SetMeshVisibility(true);
 
 	// Set Orbiting Body's reference to Orbit
 	if(IsValid(OrbitingBody))
@@ -128,7 +132,7 @@ void AOrbit::Initialize()
 	Eccentricity = FMath::Clamp(Eccentricity, 0.0, 1.0);
 	
 	// Assertion
-	check(IsValid(OrbitalPath));
+	if(!IsValid(OrbitalPath)) return;
 
 	// Attach Anomaly Arrows to OrbitalPath so that they will continue to be pointing at
 	// The periapsis after OrbitalPath is rotated
@@ -150,19 +154,21 @@ void AOrbit::Initialize()
 	OrbitalPath->SetColor(Color);
 	
 	// Create Orbital Plane
-	OrbitalPlane->CreateMesh(64, SemiMajorAxis, SemiMinorAxis, Color);
+	/*OrbitalPlane->CreateMesh(64, SemiMajorAxis, SemiMinorAxis, Color);
 	OrbitalPlane->AttachToComponent(OrbitalPath, FAttachmentTransformRules(
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::KeepRelative,
 		false
-	));
+	));*/
 	
 	
 	OrientOrbit();
 
 	if(!OrbitingBody) return;
 	InitializeOrbitingBody();
+
+	
 }
 
 void AOrbit::OnConstruction(const FTransform& Transform)
@@ -172,11 +178,6 @@ void AOrbit::OnConstruction(const FTransform& Transform)
 	Initialize();
 }
 
-void AOrbit::PostLoad()
-{
-	Super::PostLoad();
-	Initialize();
-}
 
 
 void AOrbit::UpdateOrbitingBody(const float DeltaTime)
@@ -193,12 +194,37 @@ void AOrbit::UpdateOrbitingBody(const float DeltaTime)
 	OrbitingBody->UpdateVelocity(NewVelocity);
 	OrbitingBody->UpdatePosition(DeltaTime);
 
-	OrbitalSpeed = Acceleration.Length();
+	OrbitalSpeed = NewVelocity.Length();
 	UpdateOrbitalDistance();
 	
 	// Rotate TrueAnomalyArrow
 	MeanAnomaly += MeanAngularMotion * DeltaTime;
 	SetTrueAnomalyArrow();
+}
+
+void AOrbit::ShowOrbitalPath()
+{
+	/*OrbitalPath->SetVisibility(true, true);
+	OrbitalPath->SetHiddenInGame(false, true);*/
+	UE_LOG(LogTemp, Warning, TEXT("> Orbit: ShowOrbitalPath()"));
+	//OrbitalPath->SetMeshVisibility(true);
+	//OrbitalPath->DrawPath(SemiMajorAxis, SemiMinorAxis);
+	//OrbitalPath->ShowMesh();
+	//OrbitalPath->SetVisibility(true);
+	OrbitalPath->SetVisibility(true, true);
+}
+
+void AOrbit::HideOrbitalPath()
+{
+	/*OrbitalPath->SetVisibility(false, true);
+	OrbitalPath->SetHiddenInGame(true, true);*/
+	UE_LOG(LogTemp, Warning, TEXT("> Orbit: HideOrbitalPath()"));
+	//OrbitalPath->SetMeshVisibility(false);
+	//OrbitalPath->DrawPath(SemiMajorAxis, SemiMinorAxis);
+	//OrbitalPath->HideMesh();
+	//OrbitalPath->SetVisibility(false);
+	OrbitalPath->SetVisibility(false, true);
+	
 }
 
 void AOrbit::UpdateOrbitalDistance()
@@ -277,6 +303,7 @@ void AOrbit::LoadPreset()
 	}
 	GLog->Log("> Loading Preset: " + ObjectName);
 	
+	
 	TSharedPtr<FJsonObject> JsonObject = JsonParser->DeserializeFile(FString("Planets"), ObjectName);
 	
 	// Check that pointer is valid
@@ -332,10 +359,16 @@ void AOrbit::LoadPreset()
 	FieldName = "Mass_KG";
 	const double Mass = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) / Unit::SOLAR_MASS : 0.0;
 	OrbitingBody->SetMass(Mass);
+
+	// Obliquity
+	FieldName = "AxialTilt_Deg";
+	const double Obliquity = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 0.0;
+	OrbitingBody->SetObliquity(Obliquity);
 	
-	FieldName = "MeanRadius_M"; // Get Mean Radius as ratio to Earth's
-	//const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) / 6371.0084e3 : 1.0;
-	const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 1.0;
+	FieldName = "MeanRadius_M"; // Get Mean Radius as ratio to Earth's Radius
+	const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) / Unit::EARTH_RADIUS : 1.0;
+	
+	//const double MeanRadius = JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 1.0;
 	//const double MeanRadius = (JsonObject->HasField(FieldName) ? JsonObject->GetNumberField(FieldName) : 100000.0);
 	
 	OrbitingBody->SetMeanRadius(MeanRadius);
@@ -343,7 +376,7 @@ void AOrbit::LoadPreset()
 	AscendingNodeArrow->SetWorldScale3D(FVector(1.0, MeanRadiusEditorUnits, MeanRadiusEditorUnits));
 	TrueAnomalyArrow->SetWorldScale3D(FVector(1.0, MeanRadiusEditorUnits, MeanRadiusEditorUnits));
 	MeanAnomalyArrow->SetWorldScale3D(FVector(1.0, MeanRadiusEditorUnits, MeanRadiusEditorUnits));*/
-
+	
 }
 
 void AOrbit::CalculateOrbit()

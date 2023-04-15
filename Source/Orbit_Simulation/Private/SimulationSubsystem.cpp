@@ -21,7 +21,7 @@ void USimulationSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Warning, TEXT("> Initializing Simulation Subsystem"));
 	
 	// Set starting timescale
-	TimeScale = 5;
+	TimeScale = 1;
 
 	// Populate Systems array
 	FindSystems();
@@ -78,6 +78,7 @@ void USimulationSubsystem::Tick(float DeltaTime)
 			}
 			System->UpdateOrbits(FIXED_TIMESTEP);
 		}
+		//OnUpdatePositionsDelegate.Broadcast();
 	}
 }
 

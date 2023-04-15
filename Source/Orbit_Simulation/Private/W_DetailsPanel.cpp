@@ -14,6 +14,7 @@
 #include "Components/VerticalBox.h"
 #include "CommonVisibilitySwitcher.h"
 #include "CommonBorder.h"
+#include "../CalculateOrbitalElements/AstroConstants.h"
 
 void UW_DetailsPanel::SynchronizeProperties()
 {
@@ -65,9 +66,9 @@ void UW_DetailsPanel::Init()
 	// Set Numeric types
 	MassValue->SetNumericType(ECommonNumericType::Number);
 	MassValue->FormattingSpecification.UseGrouping = true;
-	MeanRadiusValue->SetNumericType(ECommonNumericType::Distance);
+	MeanRadiusValue->SetNumericType(ECommonNumericType::Number);
 	MeanRadiusValue->FormattingSpecification.UseGrouping = true;
-	MeanRadiusValue->SetText(FText::FromString(TEXT("*10^7")));
+	//MeanRadiusValue->SetText(FText::FromString(TEXT("*10^7")));
 
 	SpeedValue->SetNumericType(ECommonNumericType::Number);
 	SpeedValue->FormattingSpecification.UseGrouping = true;
@@ -123,9 +124,9 @@ void UW_DetailsPanel::SetSelected(AActor* SelectedActor)
 	// Set Name
 	NameText->SetText(FText::FromString(Body->GetActorLabel()));
 	// Set Mass
-	MassValue->SetCurrentValue(Body->GetMassOfBody());
+	MassValue->SetCurrentValue(Body->GetMassOfBody()/* * Unit::SOLAR_MASS*/);
 	// Set Mean Radius
-	MeanRadiusValue->SetCurrentValue(Body->GetMeanRadius());
+	MeanRadiusValue->SetCurrentValue(Body->GetMeanRadius() /** Unit::EARTH_RADIUS * Unit::M_TO_KM*/);
 
 	// Get the Body;s Orbit
 	AOrbit* Orbit = Body->GetOrbit();
@@ -137,8 +138,9 @@ void UW_DetailsPanel::SetSelected(AActor* SelectedActor)
 	else // Otherwise, update the Orbit Details 
 	{
 		OrbitDetailsBox->SetVisibility(ESlateVisibility::Visible); 
-		SpeedValue->SetCurrentValue(Orbit->GetOrbitalSpeed());
-		OrbitalDistanceValue->SetCurrentValue(Orbit->GetOrbitalDistance());
+		//SpeedValue->SetCurrentValue(Orbit->GetOrbitalSpeed());
+		SpeedValue->SetCurrentValue(Orbit->GetOrbitalSpeed() * Unit::M_TO_KM);
+		OrbitalDistanceValue->SetCurrentValue(Orbit->GetOrbitalDistance() / 10000.0);
 	}
 	
 }

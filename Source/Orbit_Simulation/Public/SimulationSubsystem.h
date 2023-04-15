@@ -10,6 +10,8 @@
 
 class ASystem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdatePositionsDelegate);
+
 /**
  * 
  */
@@ -51,6 +53,10 @@ public:
 	double GetDays() { return Days; }
 	UFUNCTION(BlueprintCallable)
 	double GetYears() { return Years; }
+
+	// Delegates
+	UPROPERTY(BlueprintAssignable, Category="Delegate")
+	FOnUpdatePositionsDelegate OnUpdatePositionsDelegate;
 	
 protected:
 	

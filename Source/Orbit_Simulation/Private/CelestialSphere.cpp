@@ -6,6 +6,13 @@
 #include "Components/SphereComponent.h"
 #include "SimPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "POVMotionMap.h"
+#include "AstroBody.h"
+#include "SimulationSubsystem.h"
+#include "System.h"
+
+// Define collision channel for Celestial Sphere
+#define COLLISION_CHANNEL_CELESTIAL_SPHERE ECC_GameTraceChannel2
 
 // Sets default values
 ACelestialSphere::ACelestialSphere()
@@ -60,6 +67,8 @@ void ACelestialSphere::OnConstruction(const FTransform& Transform)
 	{
 		SimPlayerController->OnTransitionToSpaceDelegate.AddUniqueDynamic(this, &ACelestialSphere::DestroySelf);
 	}
+
+	
 	
 }
 
@@ -70,9 +79,68 @@ void ACelestialSphere::Tick(float DeltaTime)
 
 }
 
+void ACelestialSphere::Initialize()
+{
+	GetTrackedBodies();
+}
+
 void ACelestialSphere::DestroySelf()
 {
 	UE_LOG(LogTemp, Warning, TEXT("> AObservationPoint: DestroySelf()"));
+
+	// Destroy MotionMaps
+	for(AAstroBody* AstroBody : TrackedBodies)
+	{
+		FString Key = AstroBody->GetActorLabel();
+
+		APOVMotionMap* MotionMap = MotionMaps.FindAndRemoveChecked(Key);
+		MotionMap->Destroy();
+	}
+	
 	Destroy();
+}
+
+void ACelestialSphere::GetTrackedBodies()
+{
+	check(IsValid(MotionMapSubclass));
+	
+	if(USimulationSubsystem* Simulation = Cast<USimulationSubsystem>(GetWorld()->GetSubsystem<USimulationSubsystem>()))
+	{
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		TArray<ASystem*> Systems = Simulation->GetSystems();
+
+		for(ASystem* System: Systems)
+		{
+			TArray<AAstroBody*> AstroBodies = System->GetAstroBodies();
+
+			for(AAstroBody* AstroBody : AstroBodies)
+			{
+				if(AstroBody == ParentBody) continue;
+				TrackedBodies.Add(AstroBody);
+
+				// Create POVMotionMap
+				if(APOVMotionMap* MotionMap = Cast<APOVMotionMap>(GetWorld()->SpawnActor(MotionMapSubclass,0, 0, SpawnParameters)))
+				{
+					MotionMap->SetReferenceBody(ParentBody);
+					MotionMap->SetOtherBody(AstroBody);
+					MotionMap->AttachToActor(ParentBody, FAttachmentTransformRules(
+						EAttachmentRule::SnapToTarget,
+						EAttachmentRule::SnapToTarget,
+						EAttachmentRule::KeepWorld,
+						true
+					));
+					// Add to Map
+					MotionMaps.Add(AstroBody->GetActorLabel(), MotionMap);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("> Error: Could not cast to APOVMotionMap"));
+				}
+
+			}
+		}
+	}
 }
 

@@ -118,5 +118,5 @@ protected:
 
 public:
 	void InitializeMaterial();
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "W_UserWidgetBase.h"
+#include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "W_OutlinerItem.generated.h"
 

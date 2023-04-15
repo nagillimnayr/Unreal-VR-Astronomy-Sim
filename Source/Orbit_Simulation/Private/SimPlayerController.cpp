@@ -118,8 +118,8 @@ void ASimPlayerController::SetupInputComponent()
 	InputComponent->BindAction<FInputSwitchPawnDelegate>(FName("Index_9"), IE_Pressed, this, &ASimPlayerController::SwitchPawn, 9);
 
 	
-	InputComponent->BindAction<FInputIncrementTimeScaleDelegate>(FName("IncreaseTimeScale"), EInputEvent::IE_Pressed, this, &ASimPlayerController::IncreaseTimeScale, 5);
-	InputComponent->BindAction<FInputIncrementTimeScaleDelegate>(FName("DecreaseTimeScale"), EInputEvent::IE_Pressed, this, &ASimPlayerController::IncreaseTimeScale, -5);
+	InputComponent->BindAction<FInputIncrementTimeScaleDelegate>(FName("IncreaseTimeScale"), EInputEvent::IE_Pressed, this, &ASimPlayerController::IncreaseTimeScale, 1);
+	InputComponent->BindAction<FInputIncrementTimeScaleDelegate>(FName("DecreaseTimeScale"), EInputEvent::IE_Pressed, this, &ASimPlayerController::IncreaseTimeScale, -1);
 	
 	// Rotate camera
 	//InputComponent->BindAxis(FName("YawAxis"),this, &ASimPlayerController::CameraYaw);
@@ -295,6 +295,7 @@ void ASimPlayerController::TransitionToSurface()
 {
 	check(IsValid(ObserverSubclass));
 	check(IsValid(ObservationPointSubclass));
+	check(IsValid(CelestialSphereSubclass));
 	
 	// These shouldn't be possible, so something has gone wrong
 	checkf(SelectedActor, TEXT("> Error: Selected Actor is invalid. Something has gone wrong."));
@@ -322,7 +323,7 @@ void ASimPlayerController::TransitionToSurface()
 	Observer->AttachToActor(ObservationPoint, FAttachmentTransformRules(
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::KeepRelative,
+		EAttachmentRule::KeepWorld,
 		true
 		));
 	
@@ -336,20 +337,25 @@ void ASimPlayerController::TransitionToSurface()
 	CelestialSphere->AttachToActor(Body, FAttachmentTransformRules(
 		EAttachmentRule::SnapToTarget,
 		EAttachmentRule::KeepRelative,
-		EAttachmentRule::KeepRelative,
+		EAttachmentRule::KeepWorld,
 		false
 		));
 
-	CelestialSphere->SetActorScale3D(FVector(Body->GetOrbit()->GetSemiMajorAxis() * 2.0));
+	//CelestialSphere->SetActorScale3D(FVector(Body->GetOrbit()->GetSemiMajorAxis() * 2.0));
+	
+	CelestialSphere->SetActorScale3D(FVector(Body->GetMeanRadius() * 20.0));
+
+	CelestialSphere->SetParentBody(Body);
 	
 	// Possess the observer
 	Possess(Observer);
 
+	// Switch Input Mapping Context
+	SetInputMappingContext(SurfaceViewInputMappingContext);
+	
 	// Broadcast Delegate
 	OnTransitionToSurfaceDelegate.Broadcast();
 
-	// Switch Input Mapping Context
-	SetInputMappingContext(SurfaceViewInputMappingContext);
 
 	// Disable Cursor
 	SetShowMouseCursor(false);
@@ -365,10 +371,12 @@ void ASimPlayerController::TransitionToSurface()
 		UE_LOG(LogTemp, Warning, TEXT("> Error: Material Parameter Collection Instance is invalid"));
 	}
 
-	// Set Particle Trail Visibility
-	//Body->SetParticleTrailVisibility(false);
 
 	SurfaceBody = Body;
+	SurfaceBody->GetRootComponent()->SetVisibility(true, true);
+	// Set Particle Trail Visibility
+	SurfaceBody->SetParticleTrailInvisibile();
+	ObservationPoint->GetRootComponent()->SetVisibility(true, true);
 }
 
 void ASimPlayerController::TransitionToSpace()
@@ -389,14 +397,15 @@ void ASimPlayerController::TransitionToSpace()
 
 	//SurfaceBody->RemoveObservationPoint(); // Destroy Observation Point
 	
-	// Broadcast Delegate
-	OnTransitionToSpaceDelegate.Broadcast(); // Should destroy the AObservationPoint and ACelestialSphere
-	
 	// Switch Input Mapping Context
 	SetInputMappingContext(SpaceViewInputMappingContext);
 
 	// Enable Cursor
 	SetShowMouseCursor(true);
+	
+	// Broadcast Delegate
+	OnTransitionToSpaceDelegate.Broadcast(); // Should destroy the AObservationPoint and ACelestialSphere
+	
 
 	// Set Global Material Parameters
 	if(GlobalMaterialParameters)
