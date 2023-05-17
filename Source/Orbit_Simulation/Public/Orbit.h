@@ -231,8 +231,8 @@ public:
 		return PeriapsisRadius > OtherOrbit.PeriapsisRadius;
 	}
 	
-	virtual void PostInitProperties() override;
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	/*
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;*/
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Astro")

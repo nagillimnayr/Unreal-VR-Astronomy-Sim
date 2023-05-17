@@ -100,8 +100,8 @@ void APOVMotionMap::BeginPlay()
 		TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(TrailSystem, ProjectedBody, NAME_None,
 			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset,
 			false);
-		/*TrailComponent->SetVisibility(true);
-		TrailComponent->SetHiddenInGame(false);#1#
+		//TrailComponent->SetVisibility(true);
+		//TrailComponent->SetHiddenInGame(false);
 	}
 	else
 	{
@@ -123,41 +123,10 @@ void APOVMotionMap::BeginPlay()
 void APOVMotionMap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	/*if(!IsValid(ReferenceBody) ||
-		!IsValid(OtherBody) /*||
-		/*!IsValid(CollisionSphere)  ||
-		!SplineTrace->IsValidLowLevel()#2##1#)
-	{return;}*/
 	
 	TraceMotion();
-	//UpdatePosition();
 }
 
-/*void APOVMotionMap::SetSphereRadius()
-{
-	if(!IsValid(ReferenceBody) ||
-		!IsValid(OtherBody) /*||
-		!IsValid(CollisionSphere) /* ||
-		!SplineTrace->IsValidLowLevel()#2##1#)
-	{return;}
-
-	const double Dist1 = FVector::Distance(ReferenceBody->GetActorLocation(), GetActorLocation());
-	const double Dist2 = FVector::Distance(OtherBody->GetActorLocation(), GetActorLocation());
-
-	// Set the sphere's radius to be twice the sum of the distances between each body and the center
-	CollisionSphere->SetSphereRadius((Dist1 + Dist2) * 2);
-}*/
-
-/*
-void APOVMotionMap::SetSphereRadius(const double Radius)
-{
-	if(!CollisionSphere->IsValidLowLevel()) {return;}
-
-	CollisionSphere->SetSphereRadius(Radius);
-	
-}
-*/
 
 void APOVMotionMap::TraceMotion()
 {
@@ -168,13 +137,13 @@ void APOVMotionMap::TraceMotion()
 	FHitResult HitResult;
 
 	// Get direction vector between the two bodies
-	/*FVector Direction = OtherBody->GetActorLocation() - ReferenceBody->GetActorLocation();
-	Direction.Normalize(); // Normalize the Direction vector*/
+	//FVector Direction = OtherBody->GetActorLocation() - ReferenceBody->GetActorLocation();
+	//Direction.Normalize(); // Normalize the Direction vector
 	
 	// Get start and end points of line trace
-	/*const FVector TraceStart = ReferenceBody->GetActorLocation();
+	//const FVector TraceStart = ReferenceBody->GetActorLocation();
 	//const FVector TraceEnd = ReferenceBody->GetActorLocation() + (Direction * (CollisionSphere->GetScaledSphereRadius() * 2));
-	const FVector TraceEnd = OtherBody->GetActorLocation();*/
+	//const FVector TraceEnd = OtherBody->GetActorLocation();
 	// Since both bodies are within the sphere, the distance between either of them and the surface of the sphere in any
 	// direction cannot be greater than the diameter of the sphere
 

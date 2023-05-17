@@ -151,7 +151,6 @@ void ASimPlayerController::Select(AActor* NewSelectedActor)
 {
 	check(NewSelectedActor);
 
-	UE_LOG(LogTemp, Warning, TEXT("> Selected: %s"), *NewSelectedActor->GetActorLabel());
 	
 	// Deselect currently selected actor
 	Deselect();

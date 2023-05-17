@@ -183,24 +183,4 @@ void UOrbitalPlaneComponent::InitializeMaterial()
 	}
 }
 
-void UOrbitalPlaneComponent::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	Initialize();
-}
-
-void UOrbitalPlaneComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	Initialize();
-	const FName Name = PropertyChangedEvent.GetPropertyName();
-	if(Name == "BaseMaterial")
-	{
-		// If Base Material changed, reset Material Instance
-		MaterialInstance = nullptr;
-		InitializeMaterial();
-	}
-}
 

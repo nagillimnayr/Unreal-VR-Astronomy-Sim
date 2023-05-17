@@ -134,7 +134,7 @@ void UOrbitalPathComponent::CreateMaterialInstance()
 		{
 			if(!IsValid(SplineMeshComponent))
 			{
-				SplineMeshes.Remove(SplineMeshComponent);
+				//SplineMeshes.Remove(SplineMeshComponent);
 				continue;
 			}
 			// Set material for each spline mesh

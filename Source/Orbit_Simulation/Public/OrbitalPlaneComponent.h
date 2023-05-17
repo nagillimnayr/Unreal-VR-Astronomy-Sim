@@ -68,7 +68,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Material")
 	void InitializeMaterial();
 	
-	virtual void PostInitProperties() override;
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 };

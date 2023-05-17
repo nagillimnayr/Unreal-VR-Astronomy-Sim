@@ -14,7 +14,6 @@
 #include "Orbit_Simulation/CalculateOrbitalElements/Motion.h"
 #include "Dom/JsonObject.h"
 #include "OrbitalPathComponent.h"
-#include "Selection.h"
 #include "SimPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -319,15 +318,13 @@ void AOrbit::LoadPreset()
 	FString FieldName = "Color";
 	const FString ColorHexString = JsonObject->HasField(FieldName) ? JsonObject->GetStringField(FieldName) : "FFFFFF";
 	GLog->Log("Color: " + ColorHexString);
-	try
-	{
-		Color = FColor::FromHex(ColorHexString);
-	}
-	catch(...)
+	
+	Color = FColor::FromHex(ColorHexString);
+	/*catch(...)
 	{
 		GLog->Log("> Error: Could not load color: " + ColorHexString);
 		Color = FLinearColor::White;
-	}
+	}*/
 
 	// Orbital Elements
 	FieldName = "SemiMajorAxis_M";
@@ -501,69 +498,3 @@ void AOrbit::DrawTrajectory()
 	// Draw Trajectory
 	OrbitalPath->DrawPath(SemiMajorAxis, SemiMinorAxis);
 }
-
-void AOrbit::PostInitProperties()
-{
-	Super::PostInitProperties();
-}
-
-
-#if WITH_EDITOR
-void AOrbit::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	if(!PropertyChangedEvent.Property) return;
-	
-	const FName PropertyName = PropertyChangedEvent.Property->GetFName();
-	
-	/*if(PropertyName == TEXT("Eccentricity"))
-	{
-		CalculateOrbitFromEccentricity();
-	}*/
-	if(PropertyName == FName("TrueAnomaly"))
-	{
-		// Adjust angle to be within range [0, 360) degrees
-		TrueAnomaly = AdjustAngle(TrueAnomaly);
-		SetTrueAnomalyArrow();
-	}
-	else if(PropertyName == FName("ArgumentOfPeriapsis"))
-	{
-		// Adjust angle to be within range [0, 360) degrees
-		ArgumentOfPeriapsis = AdjustAngle(ArgumentOfPeriapsis);
-	}
-	else if(PropertyName == FName("Inclination"))
-	{
-		// Adjust angle to be within range [0, 360) degrees
-		Inclination = AdjustAngle(Inclination);
-	}
-	else if(PropertyName == FName("LongitudeOfAscendingNode"))
-	{
-		// Adjust angle to be within range [0, 360) degrees
-		LongitudeOfAscendingNode = AdjustAngle(LongitudeOfAscendingNode);
-	}
-	else if(PropertyName == FName("Color"))
-	{
-		if(IsValid(OrbitalPath)) OrbitalPath->SetColor(Color);
-		if(IsValid(OrbitingBody)) OrbitingBody->SetColor(Color);
-	}
-}
-
-#endif
-
-/*#if WITH_EDITORONLY_DATA
-void AOrbit::OnObjectSelected(UObject* Object)
-{
-	
-	if (Object == this)
-	{
-		SelectedInEditor = true;
-		OrbitalPlane->SetVisibility(true);
-	}
-	else if (SelectedInEditor && !IsSelected())
-	{
-		SelectedInEditor = false;
-		OrbitalPlane->SetVisibility(false);
-	}
-}
-#endif*/

@@ -471,10 +471,8 @@ void AAstroBody::SetColor(const FLinearColor NewColor)
 	}
 	//BillboardMaterialComponent->Elements.Empty();
 	// Adjust size of Sprite
-	/*double BaseSizeX = 0.001 * MeanRadius / Unit::EARTH_RADIUS;
+	double BaseSizeX = 0.001 * MeanRadius / Unit::EARTH_RADIUS;
 	//double BaseSizeX = 0.01 * AdjustedRadius / Unit::EARTH_RADIUS;
-	double BaseSizeY = BaseSizeX * AspectRatio;#1#
-	double BaseSizeX = 0.01 /** MeanRadius#1#;
 	//double BaseSizeX = 0.01 * AdjustedRadius / Unit::EARTH_RADIUS;
 	double BaseSizeY = BaseSizeX * AspectRatio;
 	
@@ -517,7 +515,8 @@ void AAstroBody::UpdateBillboardSpriteAbsolute()
 	BillboardMaterialComponent->AddElement(BillboardMaterialInstance, nullptr, false, BaseSizeX, BaseSizeY, nullptr);
 	//BillboardMaterialComponent->MinDrawDistance = MeanRadius * 5.0;
 	
-}*/
+}
+*/
 
 UTextureRenderTarget2D* AAstroBody::GetIconRenderTarget()
 {

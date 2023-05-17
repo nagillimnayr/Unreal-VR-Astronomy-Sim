@@ -91,7 +91,7 @@ void ACelestialSphere::DestroySelf()
 	// Destroy MotionMaps
 	for(AAstroBody* AstroBody : TrackedBodies)
 	{
-		FString Key = AstroBody->GetActorLabel();
+		FString Key = AstroBody->GetBodyName();
 
 		APOVMotionMap* MotionMap = MotionMaps.FindAndRemoveChecked(Key);
 		MotionMap->Destroy();
@@ -132,7 +132,7 @@ void ACelestialSphere::GetTrackedBodies()
 						true
 					));
 					// Add to Map
-					MotionMaps.Add(AstroBody->GetActorLabel(), MotionMap);
+					MotionMaps.Add(AstroBody->GetBodyName(), MotionMap);
 				}
 				else
 				{

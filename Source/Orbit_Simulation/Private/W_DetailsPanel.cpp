@@ -122,7 +122,7 @@ void UW_DetailsPanel::SetSelected(AActor* SelectedActor)
 	SetVisibility(ESlateVisibility::Visible);
 	
 	// Set Name
-	NameText->SetText(FText::FromString(Body->GetActorLabel()));
+	NameText->SetText(FText::FromString(Body->GetBodyName()));
 	// Set Mass
 	MassValue->SetCurrentValue(Body->GetMassOfBody()/* * Unit::SOLAR_MASS*/);
 	// Set Mean Radius

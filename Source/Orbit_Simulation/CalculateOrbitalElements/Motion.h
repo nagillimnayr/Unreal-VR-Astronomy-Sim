@@ -7,8 +7,11 @@ namespace Motion
 	inline FVector CalculateAcceleration(const AAstroBody* OrbitingBody, const AAstroBody* CentralBody)
 	{
 		// If either body is invalid, throw an exception
-		if (!OrbitingBody ) { throw std::exception("> Error: OrbitingBody is NULL"); }
-		if (!CentralBody ) { throw std::exception("> Error: CentralBody is NULL"); }
+		/*if (!OrbitingBody ) { throw std::exception("> Error: OrbitingBody is NULL"); }
+		if (!CentralBody ) { throw std::exception("> Error: CentralBody is NULL"); }*/
+		// If either body is invalid, throw an exception
+		if (!OrbitingBody ) { return FVector::ZeroVector; }
+		if (!CentralBody ) { return FVector::ZeroVector; }
 
 		const FVector CentralPos = CentralBody->GetActorLocation();
 		const FVector OrbitPos = OrbitingBody->GetActorLocation();

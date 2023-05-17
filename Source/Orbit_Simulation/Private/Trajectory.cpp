@@ -59,7 +59,6 @@ Color(FLinearColor::White)
 		SemiMajorAxisArrow->SetArrowColor(FLinearColor::Red);
 		SemiMajorAxisArrow->ArrowSize = 1.0;
 		SemiMajorAxisArrow->ArrowLength = SemiMajorAxis;
-		SemiMajorAxisArrow->bUseInEditorScaling = false;
 		SemiMajorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
 		SemiMajorAxisArrow->SetVisibility(true);
 		SemiMajorAxisArrow->SetHiddenInGame(true);
@@ -72,7 +71,6 @@ Color(FLinearColor::White)
 		SemiMinorAxisArrow->SetArrowColor(FLinearColor::Blue);
 		SemiMinorAxisArrow->ArrowSize = 1.0;
 		SemiMinorAxisArrow->ArrowLength = SemiMinorAxis;
-		SemiMinorAxisArrow->bUseInEditorScaling = false;
 		FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
 		SemiMinorAxisArrow->SetRelativeRotation(Rotation);
 		SemiMinorAxisArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
@@ -84,7 +82,6 @@ Color(FLinearColor::White)
 	SemiLatusRectumArrow->SetupAttachment(SceneRoot);
 	SemiLatusRectumArrow->SetArrowColor(FLinearColor::Green);
 	SemiLatusRectumArrow->ArrowSize = 1.0;
-	SemiLatusRectumArrow->bUseInEditorScaling = false;
 	FRotator Rotation = FRotationMatrix::MakeFromX(FVector(0.0, -1.0, 0.0)).Rotator();
 	SemiLatusRectumArrow->SetRelativeRotation(Rotation);
 	SemiLatusRectumArrow->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
@@ -298,7 +295,6 @@ void ATrajectory::InitializeMaterial()
 	if(IsValid(MaterialInstance))
 	{
 		MaterialInstance->SetVectorParameterValue(FName("Color"), Color);
-		Mesh->SetMaterial(0, MaterialInstance);
 		//UpdateSplineMesh();
 	}
 }
