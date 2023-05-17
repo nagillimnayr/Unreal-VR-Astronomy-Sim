@@ -1,0 +1,12 @@
+Data gathered from:
+https://nssdc.gsfc.nasa.gov/planetary/planetfact.html
+
+https://www.princeton.edu/~willman/planetary_systems/Sol/
+
+
+https://ssd.jpl.nasa.gov/planets/phys_par.html
+https://ssd.jpl.nasa.gov/sats/elem/
+https://ssd.jpl.nasa.gov/planets/approx_pos.html
+
+// Where one table has higher precision for an element than 
+// another, the one with the higher precision is used
